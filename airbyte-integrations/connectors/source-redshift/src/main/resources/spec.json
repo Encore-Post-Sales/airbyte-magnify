@@ -4,7 +4,13 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Redshift Source Spec",
     "type": "object",
-    "required": ["host", "port", "database", "username", "password"],
+    "required": [
+      "host",
+      "port",
+      "database",
+      "username",
+      "password"
+    ],
     "properties": {
       "host": {
         "title": "Host",
@@ -19,14 +25,18 @@
         "minimum": 0,
         "maximum": 65536,
         "default": 5439,
-        "examples": ["5439"],
+        "examples": [
+          "5439"
+        ],
         "order": 2
       },
       "database": {
         "title": "Database",
         "description": "Name of the database.",
         "type": "string",
-        "examples": ["master"],
+        "examples": [
+          "master"
+        ],
         "order": 3
       },
       "schemas": {
@@ -38,7 +48,9 @@
         },
         "minItems": 0,
         "uniqueItems": true,
-        "examples": ["public"],
+        "examples": [
+          "public"
+        ],
         "order": 4
       },
       "username": {
@@ -55,10 +67,31 @@
         "order": 6
       },
       "jdbc_url_params": {
-        "title": "JDBC URL Params",
+        "title": "JDBC URL Paramss",
         "description": "Additional properties to pass to the JDBC URL string when connecting to the database formatted as 'key=value' pairs separated by the symbol '&'. (example: key1=value1&key2=value2&key3=value3).",
         "type": "string",
         "order": 7
+      },
+      "tables_to_include": {
+        "type": "array",
+        "order": 8,
+        "title": "Tables to Include",
+        "items": {
+          "type": "object",
+          "properties": {
+            "schema": {
+              "type": "string",
+              "title": "Schema"
+            },
+            "tables": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "title": "Tables"
+            }
+          }
+        }
       }
     }
   }

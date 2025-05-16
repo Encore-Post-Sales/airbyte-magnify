@@ -34,6 +34,7 @@ public class RedshiftSource extends AbstractJdbcSource<JDBCType> {
 
   public static final String DRIVER_CLASS = DatabaseDriver.REDSHIFT.getDriverClassName();
   private List<String> schemas;
+  private JsonNode tablesToInclude;
 
   // todo (cgardens) - clean up passing the dialect as null versus explicitly adding the case to the
   // constructor.
@@ -58,6 +59,10 @@ public class RedshiftSource extends AbstractJdbcSource<JDBCType> {
       if (schemas != null && !schemas.isEmpty()) {
         additionalProperties.add("currentSchema=" + String.join(",", schemas));
       }
+    }
+
+    if (redshiftConfig.has("tables_to_include")) {
+      tablesToInclude = redshiftConfig.get("tables_to_include");
     }
 
     addSsl(additionalProperties);
@@ -111,23 +116,76 @@ public class RedshiftSource extends AbstractJdbcSource<JDBCType> {
   @Override
   @SuppressWarnings("unchecked")
   public Set<JdbcPrivilegeDto> getPrivilegesTableForCurrentUser(final JdbcDatabase database, final String schema) throws SQLException {
-    return new HashSet<>(database.bufferedResultSetQuery(
-        connection -> {
-          connection.setAutoCommit(true);
-          final PreparedStatement ps = connection.prepareStatement(
-              "SELECT schemaname, tablename "
-                  + "FROM   pg_tables "
-                  + "WHERE  has_table_privilege(schemaname||'.'||tablename, 'select') = true AND schemaname = ?;");
-          ps.setString(1, schema);
-          return ps.executeQuery();
-        },
-        resultSet -> {
-          final JsonNode json = sourceOperations.rowToJson(resultSet);
-          return JdbcPrivilegeDto.builder()
-              .schemaName(json.get("schemaname").asText())
-              .tableName(json.get("tablename").asText())
-              .build();
-        }));
+    final Set<JdbcPrivilegeDto> privileges = new HashSet<>();
+    System.out.println("Getting privileges for schema: " + schema);
+  
+    // Get table privileges
+    privileges.addAll(database.bufferedResultSetQuery(
+      connection -> {
+        connection.setAutoCommit(true);
+        StringBuilder query = new StringBuilder(
+            "SELECT schemaname, tablename "
+            + "FROM   pg_tables "
+            + "WHERE  has_table_privilege(schemaname||'.'||quote_ident(tablename), 'select') = true AND schemaname = ?");
+        
+        // Add table filtering if tables_to_include is specified for this schema
+        if (tablesToInclude != null && tablesToInclude.isArray()) {
+          List<String> tablesForSchema = new ArrayList<>();
+          for (JsonNode entry : tablesToInclude) {
+            if (entry.has("schema") && entry.get("schema").asText().equals(schema) && entry.has("tables")) {
+              JsonNode tables = entry.get("tables");
+              if (tables.isArray()) {
+                for (JsonNode table : tables) {
+                  tablesForSchema.add(table.asText());
+                }
+              }
+            }
+          }
+          
+          if (!tablesForSchema.isEmpty()) {
+            query.append(" AND tablename IN (");
+            for (int i = 0; i < tablesForSchema.size(); i++) {
+              if (i > 0) {
+                query.append(",");
+              }
+              query.append("?");
+            }
+            query.append(")");
+          }
+        }
+        
+        final PreparedStatement ps = connection.prepareStatement(query.toString());
+        ps.setString(1, schema);
+        
+        // Set table name parameters if tables_to_include is specified
+        if (tablesToInclude != null && tablesToInclude.isArray()) {
+          List<String> tablesForSchema = new ArrayList<>();
+          for (JsonNode entry : tablesToInclude) {
+            if (entry.has("schema") && entry.get("schema").asText().equals(schema) && entry.has("tables")) {
+              JsonNode tables = entry.get("tables");
+              if (tables.isArray()) {
+                for (JsonNode table : tables) {
+                  tablesForSchema.add(table.asText());
+                }
+              }
+            }
+          }
+          
+          for (int i = 0; i < tablesForSchema.size(); i++) {
+            ps.setString(i + 2, tablesForSchema.get(i));
+          }
+        }
+
+        return ps.executeQuery();
+      },
+      resultSet -> {
+        final JsonNode json = sourceOperations.rowToJson(resultSet);
+        return JdbcPrivilegeDto.builder()
+            .schemaName(json.get("schemaname").asText())
+            .tableName(json.get("tablename").asText())
+            .build();
+      }));
+    return privileges;
   }
 
   @Override

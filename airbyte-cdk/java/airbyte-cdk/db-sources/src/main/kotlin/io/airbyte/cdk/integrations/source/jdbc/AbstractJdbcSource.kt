@@ -333,7 +333,7 @@ abstract class AbstractJdbcSource<Datatype>(
                 .put(INTERNAL_COLUMN_TYPE, resultSet.getString(JDBC_COLUMN_DATA_TYPE))
                 .put(INTERNAL_COLUMN_TYPE_NAME, resultSet.getString(JDBC_COLUMN_TYPE_NAME))
                 .put(INTERNAL_COLUMN_SIZE, resultSet.getInt(JDBC_COLUMN_SIZE))
-                .put(INTERNAL_IS_NULLABLE, resultSet.getString(JDBC_IS_NULLABLE))
+                .put(INTERNAL_IS_NULLABLE, resultSet.getString(JDBC_IS_NULLABLE) ?: true) // defaults to nullable if not present
         if (resultSet.getString(JDBC_DECIMAL_DIGITS) != null) {
             fieldMap.put(INTERNAL_DECIMAL_DIGITS, resultSet.getString(JDBC_DECIMAL_DIGITS))
         }
