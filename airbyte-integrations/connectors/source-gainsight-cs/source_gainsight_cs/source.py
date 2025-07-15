@@ -27,25 +27,24 @@ class SourceGainsightCs(AbstractSource):
         except requests.exceptions.RequestException as e:
             return False, e
 
-    def get_objects(self, config):
-        authenticator = GainsightCsAuthenticator(config)
+    def get_objects(self, config, authenticator=None):
+        if authenticator is None:
+            authenticator = GainsightCsAuthenticator(config)
         url = f"{authenticator.domain_url}/v1/meta/services/objects"
         try:
             payload = {
                 "externalUse": "true",
                 "sortByLabel": "false"
             }
-            session = requests.post(url, json=payload, auth=authenticator)
-            body = session.json()
-            data = body.get("data", [])
-            return [obj["objectName"] for obj in data]
+            response = requests.post(url, json=payload, auth=authenticator)
+            response.raise_for_status()
+            return [obj["objectName"] for obj in response.json().get("data", []) 
+                    if obj.get("objectType") != "SYSTEM"]
         except requests.exceptions.RequestException as e:
             return False, e
 
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         authenticator = GainsightCsAuthenticator(config)
-        all_objects = self.get_objects(config)
-        result = []
-        for object_name in all_objects:
-            result.append(GainsightCsObjectStream(name=object_name, authenticator=authenticator))
-        return result
+        all_objects = self.get_objects(config, authenticator)
+        return [GainsightCsObjectStream(name=object_name, authenticator=authenticator) 
+                for object_name in all_objects]
