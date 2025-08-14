@@ -43,10 +43,31 @@ The Gainsight-API source connector supports the following [sync modes](https://d
 | Feature                       | Supported? |
 | :---------------------------- | :--------- |
 | Full Refresh Sync             | Yes        |
-| Incremental Sync              | No         |
+| Incremental Sync              | Yes        |
 | Replicate Incremental Deletes | No         |
 | SSL connection                | Yes        |
 | Namespaces                    | No         |
+
+### Incremental Sync Support
+
+The following streams support incremental synchronization based on their timestamp fields:
+
+| Stream          | Cursor Field     | Description                                        |
+| :-------------- | :--------------- | :------------------------------------------------- |
+| accounts        | lastModifiedDate | Account data updated after the cursor date         |
+| users           | lastModifiedDate | User data updated after the cursor date            |
+| feature_events  | timestamp        | Feature events created after the cursor timestamp  |
+| page_events     | timestamp        | Page events created after the cursor timestamp     |
+| session_events  | timestamp        | Session events created after the cursor timestamp  |
+| identify_events | timestamp        | Identify events created after the cursor timestamp |
+| custom_events   | timestamp        | Custom events created after the cursor timestamp   |
+| click_events    | timestamp        | Click events created after the cursor timestamp    |
+| articles        | modifiedDate     | Articles modified after the cursor date            |
+| kcbot           | modifiedDate     | Knowledge center bots modified after date          |
+| page_views      | timestamp        | Page views created after the cursor timestamp      |
+| engagements     | modifiedDate     | Engagements modified after the cursor date         |
+
+**Note:** When using incremental sync, you can specify a `start_date` in the connector configuration to define the initial sync point.
 
 ## Supported Streams
 
@@ -58,6 +79,18 @@ The Gainsight-API source connector supports the following [sync modes](https://d
 - segments
 - user_attributes
 - users
+
+### Event Streams
+
+- feature_events - Feature usage and interaction events
+- page_events - Page view and navigation events
+- session_events - Session start/end and lifecycle events
+- identify_events - User identification and profile events
+- custom_events - Custom application-specific events (up to 2,000 unique event names, 50 properties per event)
+- click_events - UI element click and interaction events
+- sessions - User session data including duration, page views, and engagement metrics
+- page_views - Page view events with timing, scroll depth, and engagement data
+- engagements - In-app engagement configurations (dialogs, tooltips, guides, surveys, announcements)
 
 ## API method example
 

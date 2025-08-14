@@ -4,16 +4,28 @@
       "stream": {
         "name": "accounts",
         "json_schema": {},
-        "supported_sync_modes": ["full_refresh"]
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "lastModifiedDate"
+        ]
       },
-      "sync_mode": "full_refresh",
-      "destination_sync_mode": "overwrite"
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "lastModifiedDate"
+      ]
     },
     {
       "stream": {
         "name": "articles",
         "json_schema": {},
-        "supported_sync_modes": ["full_refresh"]
+        "supported_sync_modes": [
+          "full_refresh"
+        ]
       },
       "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"
@@ -22,7 +34,9 @@
       "stream": {
         "name": "admin_attributes",
         "json_schema": {},
-        "supported_sync_modes": ["full_refresh"]
+        "supported_sync_modes": [
+          "full_refresh"
+        ]
       },
       "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"
@@ -31,7 +45,9 @@
       "stream": {
         "name": "feature",
         "json_schema": {},
-        "supported_sync_modes": ["full_refresh"]
+        "supported_sync_modes": [
+          "full_refresh"
+        ]
       },
       "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"
@@ -40,7 +56,9 @@
       "stream": {
         "name": "segments",
         "json_schema": {},
-        "supported_sync_modes": ["full_refresh"]
+        "supported_sync_modes": [
+          "full_refresh"
+        ]
       },
       "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"
@@ -49,7 +67,9 @@
       "stream": {
         "name": "kcbot",
         "json_schema": {},
-        "supported_sync_modes": ["full_refresh"]
+        "supported_sync_modes": [
+          "full_refresh"
+        ]
       },
       "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"
@@ -58,7 +78,9 @@
       "stream": {
         "name": "user_attributes",
         "json_schema": {},
-        "supported_sync_modes": ["full_refresh"]
+        "supported_sync_modes": [
+          "full_refresh"
+        ]
       },
       "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"
@@ -67,7 +89,172 @@
       "stream": {
         "name": "users",
         "json_schema": {},
-        "supported_sync_modes": ["full_refresh"]
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "lastModifiedDate"
+        ]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "lastModifiedDate"
+      ]
+    },
+    {
+      "stream": {
+        "name": "feature_events",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "timestamp"
+        ]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "timestamp"
+      ]
+    },
+    {
+      "stream": {
+        "name": "page_events",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "timestamp"
+        ]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "timestamp"
+      ]
+    },
+    {
+      "stream": {
+        "name": "session_events",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "timestamp"
+        ]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "timestamp"
+      ]
+    },
+    {
+      "stream": {
+        "name": "identify_events",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "timestamp"
+        ]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "timestamp"
+      ]
+    },
+    {
+      "stream": {
+        "name": "custom_events",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "timestamp"
+        ]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "timestamp"
+      ]
+    },
+    {
+      "stream": {
+        "name": "click_events",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "timestamp"
+        ]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "timestamp"
+      ]
+    },
+    {
+      "stream": {
+        "name": "sessions",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh"
+        ]
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "page_views",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh",
+          "incremental"
+        ],
+        "source_defined_cursor": true,
+        "default_cursor_field": [
+          "timestamp"
+        ]
+      },
+      "sync_mode": "incremental",
+      "destination_sync_mode": "append",
+      "cursor_field": [
+        "timestamp"
+      ]
+    },
+    {
+      "stream": {
+        "name": "engagements",
+        "json_schema": {},
+        "supported_sync_modes": [
+          "full_refresh"
+        ]
       },
       "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"

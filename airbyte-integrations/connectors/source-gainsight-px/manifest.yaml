@@ -26,12 +26,23 @@ definitions:
               field_name: X-APTRINSIC-API-KEY
           path: /accounts
           http_method: GET
+          request_parameters:
+            lastModifiedDate: "{{ stream_slice.get('lastModifiedDate', '') }}"
         record_selector:
           type: RecordSelector
           extractor:
             type: DpathExtractor
             field_path:
               - accounts
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: lastModifiedDate
+        datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
       schema_loader:
         type: InlineSchemaLoader
         schema:
@@ -231,12 +242,23 @@ definitions:
               field_name: X-APTRINSIC-API-KEY
           path: /articles
           http_method: GET
+          request_parameters:
+            modifiedDate: "{{ stream_slice.get('modifiedDate', '') }}"
         record_selector:
           type: RecordSelector
           extractor:
             type: DpathExtractor
             field_path:
               - articleExternalViewList
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: modifiedDate
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
       schema_loader:
         type: InlineSchemaLoader
         schema:
@@ -460,12 +482,23 @@ definitions:
               field_name: X-APTRINSIC-API-KEY
           path: /kcbot
           http_method: GET
+          request_parameters:
+            modifiedDate: "{{ stream_slice.get('modifiedDate', '') }}"
         record_selector:
           type: RecordSelector
           extractor:
             type: DpathExtractor
             field_path:
               - kcList
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: modifiedDate
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
       schema_loader:
         type: InlineSchemaLoader
         schema:
@@ -655,12 +688,23 @@ definitions:
               field_name: X-APTRINSIC-API-KEY
           path: /users
           http_method: GET
+          request_parameters:
+            lastModifiedDate: "{{ stream_slice.get('lastModifiedDate', '') }}"
         record_selector:
           type: RecordSelector
           extractor:
             type: DpathExtractor
             field_path:
               - users
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: lastModifiedDate
+        datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
       schema_loader:
         type: InlineSchemaLoader
         schema:
@@ -891,6 +935,1141 @@ definitions:
                 - "null"
                 - string
           title: Users Schema
+    feature_events:
+      type: DeclarativeStream
+      name: feature_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /events
+          http_method: GET
+          request_parameters:
+            eventType: "FEATURE"
+            startDate: "{{ stream_slice.get('start_time', '') }}"
+            endDate: "{{ stream_slice.get('end_time', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - events
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: timestamp
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            eventType:
+              type:
+                - "null"
+                - string
+              enum:
+                - FEATURE
+            eventName:
+              type:
+                - "null"
+                - string
+            userId:
+              type:
+                - "null"
+                - string
+            accountId:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            timestamp:
+              type:
+                - "null"
+                - integer
+              format: int64
+            properties:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+            featureId:
+              type:
+                - "null"
+                - string
+            featureName:
+              type:
+                - "null"
+                - string
+            userAgent:
+              type:
+                - "null"
+                - string
+            ipAddress:
+              type:
+                - "null"
+                - string
+            location:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                city:
+                  type:
+                    - "null"
+                    - string
+                country:
+                  type:
+                    - "null"
+                    - string
+                region:
+                  type:
+                    - "null"
+                    - string
+          title: Feature Events Schema
+    page_events:
+      type: DeclarativeStream
+      name: page_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /events
+          http_method: GET
+          request_parameters:
+            eventType: "PAGE"
+            startDate: "{{ stream_slice.get('start_time', '') }}"
+            endDate: "{{ stream_slice.get('end_time', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - events
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: timestamp
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            eventType:
+              type:
+                - "null"
+                - string
+              enum:
+                - PAGE
+            eventName:
+              type:
+                - "null"
+                - string
+            userId:
+              type:
+                - "null"
+                - string
+            accountId:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            timestamp:
+              type:
+                - "null"
+                - integer
+              format: int64
+            properties:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+            pageUrl:
+              type:
+                - "null"
+                - string
+            pageTitle:
+              type:
+                - "null"
+                - string
+            userAgent:
+              type:
+                - "null"
+                - string
+            ipAddress:
+              type:
+                - "null"
+                - string
+            location:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                city:
+                  type:
+                    - "null"
+                    - string
+                country:
+                  type:
+                    - "null"
+                    - string
+                region:
+                  type:
+                    - "null"
+                    - string
+          title: Page Events Schema
+    session_events:
+      type: DeclarativeStream
+      name: session_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /events
+          http_method: GET
+          request_parameters:
+            eventType: "SESSION"
+            startDate: "{{ stream_slice.get('start_time', '') }}"
+            endDate: "{{ stream_slice.get('end_time', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - events
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: timestamp
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            eventType:
+              type:
+                - "null"
+                - string
+              enum:
+                - SESSION
+            eventName:
+              type:
+                - "null"
+                - string
+            userId:
+              type:
+                - "null"
+                - string
+            accountId:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            timestamp:
+              type:
+                - "null"
+                - integer
+              format: int64
+            properties:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+            userAgent:
+              type:
+                - "null"
+                - string
+            ipAddress:
+              type:
+                - "null"
+                - string
+            location:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                city:
+                  type:
+                    - "null"
+                    - string
+                country:
+                  type:
+                    - "null"
+                    - string
+                region:
+                  type:
+                    - "null"
+                    - string
+          title: Session Events Schema
+    identify_events:
+      type: DeclarativeStream
+      name: identify_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /events
+          http_method: GET
+          request_parameters:
+            eventType: "IDENTIFY"
+            startDate: "{{ stream_slice.get('start_time', '') }}"
+            endDate: "{{ stream_slice.get('end_time', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - events
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: timestamp
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            eventType:
+              type:
+                - "null"
+                - string
+              enum:
+                - IDENTIFY
+            eventName:
+              type:
+                - "null"
+                - string
+            userId:
+              type:
+                - "null"
+                - string
+            accountId:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            timestamp:
+              type:
+                - "null"
+                - integer
+              format: int64
+            properties:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+            userAgent:
+              type:
+                - "null"
+                - string
+            ipAddress:
+              type:
+                - "null"
+                - string
+            location:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                city:
+                  type:
+                    - "null"
+                    - string
+                country:
+                  type:
+                    - "null"
+                    - string
+                region:
+                  type:
+                    - "null"
+                    - string
+          title: Identify Events Schema
+    custom_events:
+      type: DeclarativeStream
+      name: custom_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /events
+          http_method: GET
+          request_parameters:
+            eventType: "CUSTOM"
+            startDate: "{{ stream_slice.get('start_time', '') }}"
+            endDate: "{{ stream_slice.get('end_time', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - events
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: timestamp
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            eventType:
+              type:
+                - "null"
+                - string
+              enum:
+                - CUSTOM
+            eventName:
+              type:
+                - "null"
+                - string
+            userId:
+              type:
+                - "null"
+                - string
+            accountId:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            timestamp:
+              type:
+                - "null"
+                - integer
+              format: int64
+            properties:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              description: "Custom event properties - up to 50 properties per event"
+            userAgent:
+              type:
+                - "null"
+                - string
+            ipAddress:
+              type:
+                - "null"
+                - string
+            location:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                city:
+                  type:
+                    - "null"
+                    - string
+                country:
+                  type:
+                    - "null"
+                    - string
+                region:
+                  type:
+                    - "null"
+                    - string
+          title: Custom Events Schema
+    click_events:
+      type: DeclarativeStream
+      name: click_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /events
+          http_method: GET
+          request_parameters:
+            eventType: "CLICK"
+            startDate: "{{ stream_slice.get('start_time', '') }}"
+            endDate: "{{ stream_slice.get('end_time', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - events
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: timestamp
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            eventType:
+              type:
+                - "null"
+                - string
+              enum:
+                - CLICK
+            eventName:
+              type:
+                - "null"
+                - string
+            userId:
+              type:
+                - "null"
+                - string
+            accountId:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            timestamp:
+              type:
+                - "null"
+                - integer
+              format: int64
+            properties:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+            featureId:
+              type:
+                - "null"
+                - string
+            featureName:
+              type:
+                - "null"
+                - string
+            pageUrl:
+              type:
+                - "null"
+                - string
+            pageTitle:
+              type:
+                - "null"
+                - string
+            elementText:
+              type:
+                - "null"
+                - string
+            elementSelector:
+              type:
+                - "null"
+                - string
+            userAgent:
+              type:
+                - "null"
+                - string
+            ipAddress:
+              type:
+                - "null"
+                - string
+            location:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                city:
+                  type:
+                    - "null"
+                    - string
+                country:
+                  type:
+                    - "null"
+                    - string
+                region:
+                  type:
+                    - "null"
+                    - string
+          title: Events Schema
+    sessions:
+      type: DeclarativeStream
+      name: sessions
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /sessions
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - sessions
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            userId:
+              type:
+                - "null"
+                - string
+            accountId:
+              type:
+                - "null"
+                - string
+            startTime:
+              type:
+                - "null"
+                - integer
+              format: int64
+            endTime:
+              type:
+                - "null"
+                - integer
+              format: int64
+            duration:
+              type:
+                - "null"
+                - number
+            pageViews:
+              type:
+                - "null"
+                - integer
+            events:
+              type:
+                - "null"
+                - integer
+            userAgent:
+              type:
+                - "null"
+                - string
+            ipAddress:
+              type:
+                - "null"
+                - string
+            referrer:
+              type:
+                - "null"
+                - string
+            landingPage:
+              type:
+                - "null"
+                - string
+            exitPage:
+              type:
+                - "null"
+                - string
+            location:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                city:
+                  type:
+                    - "null"
+                    - string
+                country:
+                  type:
+                    - "null"
+                    - string
+                region:
+                  type:
+                    - "null"
+                    - string
+          title: Sessions Schema
+    page_views:
+      type: DeclarativeStream
+      name: page_views
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /pageviews
+          http_method: GET
+          request_parameters:
+            startDate: "{{ stream_slice.get('start_time', '') }}"
+            endDate: "{{ stream_slice.get('end_time', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - pageViews
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: timestamp
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            userId:
+              type:
+                - "null"
+                - string
+            accountId:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            timestamp:
+              type:
+                - "null"
+                - integer
+              format: int64
+            url:
+              type:
+                - "null"
+                - string
+            title:
+              type:
+                - "null"
+                - string
+            referrer:
+              type:
+                - "null"
+                - string
+            timeOnPage:
+              type:
+                - "null"
+                - number
+            engagementTime:
+              type:
+                - "null"
+                - number
+            scrollDepth:
+              type:
+                - "null"
+                - number
+            userAgent:
+              type:
+                - "null"
+                - string
+            loadTime:
+              type:
+                - "null"
+                - number
+          title: Page Views Schema
+    engagements:
+      type: DeclarativeStream
+      name: engagements
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /engagements
+          http_method: GET
+          request_parameters:
+            modifiedDate: "{{ stream_slice.get('modifiedDate', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - engagements
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            page_size: 500
+            cursor_value: "{{ last_record['scrollId'] }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: modifiedDate
+        datetime_format: "%s"
+        cursor_granularity: PT1S
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+            name:
+              type:
+                - "null"
+                - string
+            type:
+              type:
+                - "null"
+                - string
+              enum:
+                - DIALOG
+                - TOOLTIP
+                - GUIDE
+                - SURVEY
+                - ANNOUNCEMENT
+            state:
+              type:
+                - "null"
+                - string
+              enum:
+                - ACTIVE
+                - INACTIVE
+                - DRAFT
+            createdBy:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                id:
+                  type:
+                    - "null"
+                    - string
+                name:
+                  type:
+                    - "null"
+                    - string
+            createdDate:
+              type:
+                - "null"
+                - integer
+              format: int64
+            modifiedBy:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                id:
+                  type:
+                    - "null"
+                    - string
+                name:
+                  type:
+                    - "null"
+                    - string
+            modifiedDate:
+              type:
+                - "null"
+                - integer
+              format: int64
+            audienceRules:
+              type:
+                - "null"
+                - array
+              items:
+                type:
+                  - "null"
+                  - object
+                additionalProperties: true
+            stats:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                views:
+                  type:
+                    - "null"
+                    - integer
+                completions:
+                  type:
+                    - "null"
+                    - integer
+                dismissals:
+                  type:
+                    - "null"
+                    - integer
+          title: Engagements Schema
   base_requester:
     type: HttpRequester
     url_base: https://api.aptrinsic.com/v1
@@ -920,12 +2099,23 @@ streams:
             field_name: X-APTRINSIC-API-KEY
         path: /accounts
         http_method: GET
+        request_parameters:
+          lastModifiedDate: "{{ stream_slice.get('lastModifiedDate', '') }}"
       record_selector:
         type: RecordSelector
         extractor:
           type: DpathExtractor
           field_path:
             - accounts
+    incremental_sync:
+      type: DatetimeBasedCursor
+      cursor_field: lastModifiedDate
+      datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      cursor_granularity: PT1S
+      start_datetime:
+        type: MinMaxDatetime
+        datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+        datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
     schema_loader:
       type: InlineSchemaLoader
       schema:
@@ -1778,6 +2968,489 @@ streams:
               - "null"
               - string
         title: Users Schema
+  - type: DeclarativeStream
+    name: events
+    primary_key:
+      - id
+    retriever:
+      type: SimpleRetriever
+      requester:
+        type: HttpRequester
+        url_base: https://api.aptrinsic.com/v1
+        authenticator:
+          type: ApiKeyAuthenticator
+          api_token: "{{ config['api_key'] }}"
+          inject_into:
+            type: RequestOption
+            inject_into: header
+            field_name: X-APTRINSIC-API-KEY
+        path: /events
+        http_method: GET
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - events
+      paginator:
+        type: DefaultPaginator
+        page_token_option:
+          type: RequestOption
+          inject_into: request_parameter
+          field_name: scrollId
+        pagination_strategy:
+          type: CursorPagination
+          page_size: 500
+          cursor_value: "{{ last_record['scrollId'] }}"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        type:
+          - "null"
+          - object
+        $schema: http://json-schema.org/draft-07/schema#
+        additionalProperties: true
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+          eventType:
+            type:
+              - "null"
+              - string
+            enum:
+              - FEATURE
+              - PAGE
+              - SESSION
+              - IDENTIFY
+              - CUSTOM
+              - CLICK
+          eventName:
+            type:
+              - "null"
+              - string
+          userId:
+            type:
+              - "null"
+              - string
+          accountId:
+            type:
+              - "null"
+              - string
+          sessionId:
+            type:
+              - "null"
+              - string
+          timestamp:
+            type:
+              - "null"
+              - integer
+            format: int64
+          properties:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+          featureId:
+            type:
+              - "null"
+              - string
+          featureName:
+            type:
+              - "null"
+              - string
+          pageUrl:
+            type:
+              - "null"
+              - string
+          pageTitle:
+            type:
+              - "null"
+              - string
+          elementText:
+            type:
+              - "null"
+              - string
+          elementSelector:
+            type:
+              - "null"
+              - string
+          userAgent:
+            type:
+              - "null"
+              - string
+          ipAddress:
+            type:
+              - "null"
+              - string
+          location:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              city:
+                type:
+                  - "null"
+                  - string
+              country:
+                type:
+                  - "null"
+                  - string
+              region:
+                type:
+                  - "null"
+                  - string
+        title: Events Schema
+  - type: DeclarativeStream
+    name: sessions
+    primary_key:
+      - id
+    retriever:
+      type: SimpleRetriever
+      requester:
+        type: HttpRequester
+        url_base: https://api.aptrinsic.com/v1
+        authenticator:
+          type: ApiKeyAuthenticator
+          api_token: "{{ config['api_key'] }}"
+          inject_into:
+            type: RequestOption
+            inject_into: header
+            field_name: X-APTRINSIC-API-KEY
+        path: /sessions
+        http_method: GET
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - sessions
+      paginator:
+        type: DefaultPaginator
+        page_token_option:
+          type: RequestOption
+          inject_into: request_parameter
+          field_name: scrollId
+        pagination_strategy:
+          type: CursorPagination
+          page_size: 500
+          cursor_value: "{{ last_record['scrollId'] }}"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        type:
+          - "null"
+          - object
+        $schema: http://json-schema.org/draft-07/schema#
+        additionalProperties: true
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+          userId:
+            type:
+              - "null"
+              - string
+          accountId:
+            type:
+              - "null"
+              - string
+          startTime:
+            type:
+              - "null"
+              - integer
+            format: int64
+          endTime:
+            type:
+              - "null"
+              - integer
+            format: int64
+          duration:
+            type:
+              - "null"
+              - number
+          pageViews:
+            type:
+              - "null"
+              - integer
+          events:
+            type:
+              - "null"
+              - integer
+          userAgent:
+            type:
+              - "null"
+              - string
+          ipAddress:
+            type:
+              - "null"
+              - string
+          referrer:
+            type:
+              - "null"
+              - string
+          landingPage:
+            type:
+              - "null"
+              - string
+          exitPage:
+            type:
+              - "null"
+              - string
+          location:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              city:
+                type:
+                  - "null"
+                  - string
+              country:
+                type:
+                  - "null"
+                  - string
+              region:
+                type:
+                  - "null"
+                  - string
+        title: Sessions Schema
+  - type: DeclarativeStream
+    name: page_views
+    primary_key:
+      - id
+    retriever:
+      type: SimpleRetriever
+      requester:
+        type: HttpRequester
+        url_base: https://api.aptrinsic.com/v1
+        authenticator:
+          type: ApiKeyAuthenticator
+          api_token: "{{ config['api_key'] }}"
+          inject_into:
+            type: RequestOption
+            inject_into: header
+            field_name: X-APTRINSIC-API-KEY
+        path: /pageviews
+        http_method: GET
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - pageViews
+      paginator:
+        type: DefaultPaginator
+        page_token_option:
+          type: RequestOption
+          inject_into: request_parameter
+          field_name: scrollId
+        pagination_strategy:
+          type: CursorPagination
+          page_size: 500
+          cursor_value: "{{ last_record['scrollId'] }}"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        type:
+          - "null"
+          - object
+        $schema: http://json-schema.org/draft-07/schema#
+        additionalProperties: true
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+          userId:
+            type:
+              - "null"
+              - string
+          accountId:
+            type:
+              - "null"
+              - string
+          sessionId:
+            type:
+              - "null"
+              - string
+          timestamp:
+            type:
+              - "null"
+              - integer
+            format: int64
+          url:
+            type:
+              - "null"
+              - string
+          title:
+            type:
+              - "null"
+              - string
+          referrer:
+            type:
+              - "null"
+              - string
+          timeOnPage:
+            type:
+              - "null"
+              - number
+          engagementTime:
+            type:
+              - "null"
+              - number
+          scrollDepth:
+            type:
+              - "null"
+              - number
+          userAgent:
+            type:
+              - "null"
+              - string
+          loadTime:
+            type:
+              - "null"
+              - number
+        title: Page Views Schema
+  - type: DeclarativeStream
+    name: engagements
+    primary_key:
+      - id
+    retriever:
+      type: SimpleRetriever
+      requester:
+        type: HttpRequester
+        url_base: https://api.aptrinsic.com/v1
+        authenticator:
+          type: ApiKeyAuthenticator
+          api_token: "{{ config['api_key'] }}"
+          inject_into:
+            type: RequestOption
+            inject_into: header
+            field_name: X-APTRINSIC-API-KEY
+        path: /engagements
+        http_method: GET
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - engagements
+      paginator:
+        type: DefaultPaginator
+        page_token_option:
+          type: RequestOption
+          inject_into: request_parameter
+          field_name: scrollId
+        pagination_strategy:
+          type: CursorPagination
+          page_size: 500
+          cursor_value: "{{ last_record['scrollId'] }}"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        type:
+          - "null"
+          - object
+        $schema: http://json-schema.org/draft-07/schema#
+        additionalProperties: true
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+          name:
+            type:
+              - "null"
+              - string
+          type:
+            type:
+              - "null"
+              - string
+            enum:
+              - DIALOG
+              - TOOLTIP
+              - GUIDE
+              - SURVEY
+              - ANNOUNCEMENT
+          state:
+            type:
+              - "null"
+              - string
+            enum:
+              - ACTIVE
+              - INACTIVE
+              - DRAFT
+          createdBy:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              id:
+                type:
+                  - "null"
+                  - string
+              name:
+                type:
+                  - "null"
+                  - string
+          createdDate:
+            type:
+              - "null"
+              - integer
+            format: int64
+          modifiedBy:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              id:
+                type:
+                  - "null"
+                  - string
+              name:
+                type:
+                  - "null"
+                  - string
+          modifiedDate:
+            type:
+              - "null"
+              - integer
+            format: int64
+          audienceRules:
+            type:
+              - "null"
+              - array
+            items:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+          stats:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              views:
+                type:
+                  - "null"
+                  - integer
+              completions:
+                type:
+                  - "null"
+                  - integer
+              dismissals:
+                type:
+                  - "null"
+                  - integer
+        title: Engagements Schema
 spec:
   type: Spec
   connection_specification:
@@ -1794,6 +3467,17 @@ spec:
           The Aptrinsic API Key which is recieved from the dashboard settings
           (ref - https://app.aptrinsic.com/settings/api-keys)
         order: 0
+      start_date:
+        type: string
+        title: Start Date
+        description: >-
+          The date from which you'd like to replicate data for incremental streams, in the format YYYY-MM-DDTHH:mm:ss.SSSZ.
+          All data generated after this date will be replicated.
+        examples:
+          - "2020-01-01T00:00:00.000Z"
+        pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z$"
+        format: date-time
+        order: 1
     additionalProperties: true
 metadata:
   autoImportSchema:
@@ -1805,6 +3489,15 @@ metadata:
     kcbot: false
     user_attributes: false
     users: false
+    feature_events: false
+    page_events: false
+    session_events: false
+    identify_events: false
+    custom_events: false
+    click_events: false
+    sessions: false
+    page_views: false
+    engagements: false
 schemas:
   accounts:
     type:
@@ -2228,6 +3921,699 @@ schemas:
           - "null"
           - string
     title: User Attributes Schema
+  feature_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      eventType:
+        type:
+          - "null"
+          - string
+        enum:
+          - FEATURE
+      eventName:
+        type:
+          - "null"
+          - string
+      userId:
+        type:
+          - "null"
+          - string
+      accountId:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      timestamp:
+        type:
+          - "null"
+          - integer
+        format: int64
+      properties:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      featureId:
+        type:
+          - "null"
+          - string
+      featureName:
+        type:
+          - "null"
+          - string
+      userAgent:
+        type:
+          - "null"
+          - string
+      ipAddress:
+        type:
+          - "null"
+          - string
+      location:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          city:
+            type:
+              - "null"
+              - string
+          country:
+            type:
+              - "null"
+              - string
+          region:
+            type:
+              - "null"
+              - string
+    title: Feature Events Schema
+  page_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      eventType:
+        type:
+          - "null"
+          - string
+        enum:
+          - PAGE
+      eventName:
+        type:
+          - "null"
+          - string
+      userId:
+        type:
+          - "null"
+          - string
+      accountId:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      timestamp:
+        type:
+          - "null"
+          - integer
+        format: int64
+      properties:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      pageUrl:
+        type:
+          - "null"
+          - string
+      pageTitle:
+        type:
+          - "null"
+          - string
+      userAgent:
+        type:
+          - "null"
+          - string
+      ipAddress:
+        type:
+          - "null"
+          - string
+      location:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          city:
+            type:
+              - "null"
+              - string
+          country:
+            type:
+              - "null"
+              - string
+          region:
+            type:
+              - "null"
+              - string
+    title: Page Events Schema
+  session_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      eventType:
+        type:
+          - "null"
+          - string
+        enum:
+          - SESSION
+      eventName:
+        type:
+          - "null"
+          - string
+      userId:
+        type:
+          - "null"
+          - string
+      accountId:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      timestamp:
+        type:
+          - "null"
+          - integer
+        format: int64
+      properties:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      userAgent:
+        type:
+          - "null"
+          - string
+      ipAddress:
+        type:
+          - "null"
+          - string
+      location:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          city:
+            type:
+              - "null"
+              - string
+          country:
+            type:
+              - "null"
+              - string
+          region:
+            type:
+              - "null"
+              - string
+    title: Session Events Schema
+  identify_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      eventType:
+        type:
+          - "null"
+          - string
+        enum:
+          - IDENTIFY
+      eventName:
+        type:
+          - "null"
+          - string
+      userId:
+        type:
+          - "null"
+          - string
+      accountId:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      timestamp:
+        type:
+          - "null"
+          - integer
+        format: int64
+      properties:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      userAgent:
+        type:
+          - "null"
+          - string
+      ipAddress:
+        type:
+          - "null"
+          - string
+      location:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          city:
+            type:
+              - "null"
+              - string
+          country:
+            type:
+              - "null"
+              - string
+          region:
+            type:
+              - "null"
+              - string
+    title: Identify Events Schema
+  custom_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      eventType:
+        type:
+          - "null"
+          - string
+        enum:
+          - CUSTOM
+      eventName:
+        type:
+          - "null"
+          - string
+      userId:
+        type:
+          - "null"
+          - string
+      accountId:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      timestamp:
+        type:
+          - "null"
+          - integer
+        format: int64
+      properties:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        description: "Custom event properties - up to 50 properties per event"
+      userAgent:
+        type:
+          - "null"
+          - string
+      ipAddress:
+        type:
+          - "null"
+          - string
+      location:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          city:
+            type:
+              - "null"
+              - string
+          country:
+            type:
+              - "null"
+              - string
+          region:
+            type:
+              - "null"
+              - string
+    title: Custom Events Schema
+  click_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      eventType:
+        type:
+          - "null"
+          - string
+        enum:
+          - CLICK
+      eventName:
+        type:
+          - "null"
+          - string
+      userId:
+        type:
+          - "null"
+          - string
+      accountId:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      timestamp:
+        type:
+          - "null"
+          - integer
+        format: int64
+      properties:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      elementText:
+        type:
+          - "null"
+          - string
+      elementSelector:
+        type:
+          - "null"
+          - string
+      pageUrl:
+        type:
+          - "null"
+          - string
+      pageTitle:
+        type:
+          - "null"
+          - string
+      userAgent:
+        type:
+          - "null"
+          - string
+      ipAddress:
+        type:
+          - "null"
+          - string
+      location:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          city:
+            type:
+              - "null"
+              - string
+          country:
+            type:
+              - "null"
+              - string
+          region:
+            type:
+              - "null"
+              - string
+    title: Click Events Schema
+  sessions:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      userId:
+        type:
+          - "null"
+          - string
+      accountId:
+        type:
+          - "null"
+          - string
+      startTime:
+        type:
+          - "null"
+          - integer
+        format: int64
+      endTime:
+        type:
+          - "null"
+          - integer
+        format: int64
+      duration:
+        type:
+          - "null"
+          - number
+      pageViews:
+        type:
+          - "null"
+          - integer
+      events:
+        type:
+          - "null"
+          - integer
+      userAgent:
+        type:
+          - "null"
+          - string
+      ipAddress:
+        type:
+          - "null"
+          - string
+      referrer:
+        type:
+          - "null"
+          - string
+      landingPage:
+        type:
+          - "null"
+          - string
+      exitPage:
+        type:
+          - "null"
+          - string
+      location:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          city:
+            type:
+              - "null"
+              - string
+          country:
+            type:
+              - "null"
+              - string
+          region:
+            type:
+              - "null"
+              - string
+    title: Sessions Schema
+  page_views:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      userId:
+        type:
+          - "null"
+          - string
+      accountId:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      timestamp:
+        type:
+          - "null"
+          - integer
+        format: int64
+      url:
+        type:
+          - "null"
+          - string
+      title:
+        type:
+          - "null"
+          - string
+      referrer:
+        type:
+          - "null"
+          - string
+      timeOnPage:
+        type:
+          - "null"
+          - number
+      engagementTime:
+        type:
+          - "null"
+          - number
+      scrollDepth:
+        type:
+          - "null"
+          - number
+      userAgent:
+        type:
+          - "null"
+          - string
+      loadTime:
+        type:
+          - "null"
+          - number
+    title: Page Views Schema
+  engagements:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      name:
+        type:
+          - "null"
+          - string
+      type:
+        type:
+          - "null"
+          - string
+        enum:
+          - DIALOG
+          - TOOLTIP
+          - GUIDE
+          - SURVEY
+          - ANNOUNCEMENT
+      state:
+        type:
+          - "null"
+          - string
+        enum:
+          - ACTIVE
+          - INACTIVE
+          - DRAFT
+      createdBy:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+          name:
+            type:
+              - "null"
+              - string
+      createdDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      modifiedBy:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+          name:
+            type:
+              - "null"
+              - string
+      modifiedDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      audienceRules:
+        type:
+          - "null"
+          - array
+        items:
+          type:
+            - "null"
+            - object
+          additionalProperties: true
+      stats:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          views:
+            type:
+              - "null"
+              - integer
+          completions:
+            type:
+              - "null"
+              - integer
+          dismissals:
+            type:
+              - "null"
+              - integer
+    title: Engagements Schema
   users:
     type:
       - "null"
