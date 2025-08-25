@@ -1781,6 +1781,175 @@ definitions:
                 - "null"
                 - string
           title: Form Submit Events Schema
+    identify_events:
+      type: DeclarativeStream
+      name: identify_events
+      primary_key:
+        - eventId
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /events/identify
+          http_method: GET
+          request_parameters:
+            date: "{{ stream_slice.get('date', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - results
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            cursor_value: "{{ response.scrollId }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: date
+        datetime_format: "%s"
+        cursor_granularity: P1D
+        step: P1D
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            eventId:
+              type:
+                - "null"
+                - string
+            identifyId:
+              type:
+                - "null"
+                - string
+            propertyKey:
+              type:
+                - "null"
+                - string
+            date:
+              type:
+                - "null"
+                - integer
+              format: int64
+            eventType:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            userType:
+              type:
+                - "null"
+                - string
+              enum:
+                - LEAD
+                - USER
+                - VISITOR
+                - EMPTY_USER_TYPE
+            accountId:
+              type:
+                - "null"
+                - string
+            globalContext:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+            scheme:
+              type:
+                - "null"
+                - string
+            host:
+              type:
+                - "null"
+                - string
+            path:
+              type:
+                - "null"
+                - string
+            queryString:
+              type:
+                - "null"
+                - string
+            hash:
+              type:
+                - "null"
+                - string
+            queryParams:
+              type:
+                - "null"
+                - object
+              additionalProperties:
+                type:
+                  - "null"
+                  - array
+                items:
+                  type:
+                    - "null"
+                    - string
+            remoteHost:
+              type:
+                - "null"
+                - string
+            referrer:
+              type:
+                - "null"
+                - string
+            screenHeight:
+              type:
+                - "null"
+                - integer
+              format: int32
+            screenWidth:
+              type:
+                - "null"
+                - integer
+              format: int32
+            languages:
+              type:
+                - "null"
+                - array
+              items:
+                type:
+                  - "null"
+                  - string
+            pageTitle:
+              type:
+                - "null"
+                - string
+            formData:
+              type:
+                - "null"
+                - object
+              additionalProperties:
+                type:
+                  - "null"
+                  - string
+          title: Identify Events Schema
   base_requester:
     type: HttpRequester
     url_base: https://api.aptrinsic.com/v1
@@ -3518,6 +3687,174 @@ streams:
               - "null"
               - string
         title: Form Submit Events Schema
+  - type: DeclarativeStream
+    name: identify_events
+    primary_key:
+      - eventId
+    retriever:
+      type: SimpleRetriever
+      requester:
+        type: HttpRequester
+        url_base: https://api.aptrinsic.com/v1
+        authenticator:
+          type: ApiKeyAuthenticator
+          api_token: "{{ config['api_key'] }}"
+          inject_into:
+            type: RequestOption
+            inject_into: header
+            field_name: X-APTRINSIC-API-KEY
+        path: /events/identify
+        http_method: GET
+        request_parameters:
+          date: "{{ stream_slice.get('date', '') }}"
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - results
+      paginator:
+        type: DefaultPaginator
+        page_token_option:
+          type: RequestOption
+          inject_into: request_parameter
+          field_name: scrollId
+        pagination_strategy:
+          type: CursorPagination
+          cursor_value: "{{ response.scrollId }}"
+    incremental_sync:
+      type: DatetimeBasedCursor
+      cursor_field: date
+      datetime_format: "%s"
+      cursor_granularity: P1D
+      step: P1D
+      start_datetime:
+        type: MinMaxDatetime
+        datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+        datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        type:
+          - "null"
+          - object
+        $schema: http://json-schema.org/draft-07/schema#
+        additionalProperties: true
+        properties:
+          eventId:
+            type:
+              - "null"
+              - string
+          identifyId:
+            type:
+              - "null"
+              - string
+          propertyKey:
+            type:
+              - "null"
+              - string
+          date:
+            type:
+              - "null"
+              - integer
+            format: int64
+          eventType:
+            type:
+              - "null"
+              - string
+          sessionId:
+            type:
+              - "null"
+              - string
+          userType:
+            type:
+              - "null"
+              - string
+            enum:
+              - LEAD
+              - USER
+              - VISITOR
+              - EMPTY_USER_TYPE
+          accountId:
+            type:
+              - "null"
+              - string
+          globalContext:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+          scheme:
+            type:
+              - "null"
+              - string
+          host:
+            type:
+              - "null"
+              - string
+          path:
+            type:
+              - "null"
+              - string
+          queryString:
+            type:
+              - "null"
+              - string
+          hash:
+            type:
+              - "null"
+              - string
+          queryParams:
+            type:
+              - "null"
+              - object
+            additionalProperties:
+              type:
+                - "null"
+                - array
+              items:
+                type:
+                  - "null"
+                  - string
+          remoteHost:
+            type:
+              - "null"
+              - string
+          referrer:
+            type:
+              - "null"
+              - string
+          screenHeight:
+            type:
+              - "null"
+              - integer
+            format: int32
+          screenWidth:
+            type:
+              - "null"
+              - integer
+            format: int32
+          languages:
+            type:
+              - "null"
+              - array
+            items:
+              type:
+                - "null"
+                - string
+          pageTitle:
+            type:
+              - "null"
+              - string
+          formData:
+            type:
+              - "null"
+              - object
+            additionalProperties:
+              type:
+                - "null"
+                - string
+        title: Identify Events Schema
 spec:
   type: Spec
   connection_specification:
@@ -3560,6 +3897,7 @@ metadata:
     engagement_view_events: true
     feature_match_events: true
     form_submit_events: true
+    identify_events: true
     sessions: true
 schemas:
   accounts:
@@ -4942,3 +5280,124 @@ schemas:
           - "null"
           - string
     title: Form Submit Events Schema
+  identify_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+      identifyId:
+        type:
+          - "null"
+          - string
+      propertyKey:
+        type:
+          - "null"
+          - string
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+      eventType:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+      accountId:
+        type:
+          - "null"
+          - string
+      globalContext:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      scheme:
+        type:
+          - "null"
+          - string
+      host:
+        type:
+          - "null"
+          - string
+      path:
+        type:
+          - "null"
+          - string
+      queryString:
+        type:
+          - "null"
+          - string
+      hash:
+        type:
+          - "null"
+          - string
+      queryParams:
+        type:
+          - "null"
+          - object
+        additionalProperties:
+          type:
+            - "null"
+            - array
+          items:
+            type:
+              - "null"
+              - string
+      remoteHost:
+        type:
+          - "null"
+          - string
+      referrer:
+        type:
+          - "null"
+          - string
+      screenHeight:
+        type:
+          - "null"
+          - integer
+        format: int32
+      screenWidth:
+        type:
+          - "null"
+          - integer
+        format: int32
+      languages:
+        type:
+          - "null"
+          - array
+        items:
+          type:
+            - "null"
+            - string
+      pageTitle:
+        type:
+          - "null"
+          - string
+      formData:
+        type:
+          - "null"
+          - object
+        additionalProperties:
+          type:
+            - "null"
+            - string
+    title: Identify Events Schema
