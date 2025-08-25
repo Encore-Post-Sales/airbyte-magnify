@@ -1157,6 +1157,214 @@ definitions:
                         - number
                       format: double
           title: Email Events Schema
+    engagement_view_events:
+      type: DeclarativeStream
+      name: engagement_view_events
+      primary_key:
+        - eventId
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: /events/engagementView
+          http_method: GET
+          request_parameters:
+            date: "{{ stream_slice.get('date', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - results
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            cursor_value: "{{ response.scrollId }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: date
+        datetime_format: "%s"
+        cursor_granularity: P1D
+        step: P1D
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            eventId:
+              type:
+                - "null"
+                - string
+            identifyId:
+              type:
+                - "null"
+                - string
+            propertyKey:
+              type:
+                - "null"
+                - string
+            date:
+              type:
+                - "null"
+                - integer
+              format: int64
+            eventType:
+              type:
+                - "null"
+                - string
+            sessionId:
+              type:
+                - "null"
+                - string
+            userType:
+              type:
+                - "null"
+                - string
+              enum:
+                - LEAD
+                - USER
+                - VISITOR
+                - EMPTY_USER_TYPE
+            accountId:
+              type:
+                - "null"
+                - string
+            globalContext:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+            engagementId:
+              type:
+                - "null"
+                - string
+            engagementTrackType:
+              type:
+                - "null"
+                - string
+              enum:
+                - ENGAGEMENT_VIEW
+                - ENGAGEMENT_CLICK
+            contentId:
+              type:
+                - "null"
+                - string
+            contentType:
+              type:
+                - "null"
+                - string
+              enum:
+                - IN_APP_DIALOG
+                - IN_APP_GUIDE
+                - IN_APP_CAROUSEL
+                - IN_APP_SURVEY_NPS
+                - IN_APP_SURVEY_CES
+                - IN_APP_SURVEY_BOOLEAN
+                - IN_APP_SURVEY_RATING
+            executionDate:
+              type:
+                - "null"
+                - integer
+              format: int64
+              description: "Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys"
+            executionId:
+              type:
+                - "null"
+                - string
+              description: "Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys"
+            viewEventId:
+              type:
+                - "null"
+                - string
+            carouselState:
+              type:
+                - "null"
+                - string
+              enum:
+                - VIEWED
+                - COMPLETED
+            slideId:
+              type:
+                - "null"
+                - string
+            sequenceNumber:
+              type:
+                - "null"
+                - integer
+              format: int64
+            linkUrl:
+              type:
+                - "null"
+                - string
+            guideState:
+              type:
+                - "null"
+                - string
+              enum:
+                - VIEWED
+                - COMPLETED
+            stepId:
+              type:
+                - "null"
+                - string
+            surveyState:
+              type:
+                - "null"
+                - string
+              enum:
+                - VIEWED
+                - COMPLETED
+            contactMeAllowed:
+              type:
+                - "null"
+                - boolean
+            score:
+              type:
+                - "null"
+                - integer
+              format: int32
+            comment:
+              type:
+                - "null"
+                - string
+            questionType:
+              type:
+                - "null"
+                - string
+            selectionIds:
+              type:
+                - "null"
+                - array
+              items:
+                type:
+                  - "null"
+                  - string
+            path:
+              type:
+                - "null"
+                - string
+          title: Engagement View Events Schema
   base_requester:
     type: HttpRequester
     url_base: https://api.aptrinsic.com/v1
@@ -2273,6 +2481,213 @@ streams:
                       - number
                     format: double
         title: Email Events Schema
+  - type: DeclarativeStream
+    name: engagement_view_events
+    primary_key:
+      - eventId
+    retriever:
+      type: SimpleRetriever
+      requester:
+        type: HttpRequester
+        url_base: https://api.aptrinsic.com/v1
+        authenticator:
+          type: ApiKeyAuthenticator
+          api_token: "{{ config['api_key'] }}"
+          inject_into:
+            type: RequestOption
+            inject_into: header
+            field_name: X-APTRINSIC-API-KEY
+        path: /events/engagementView
+        http_method: GET
+        request_parameters:
+          date: "{{ stream_slice.get('date', '') }}"
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - results
+      paginator:
+        type: DefaultPaginator
+        page_token_option:
+          type: RequestOption
+          inject_into: request_parameter
+          field_name: scrollId
+        pagination_strategy:
+          type: CursorPagination
+          cursor_value: "{{ response.scrollId }}"
+    incremental_sync:
+      type: DatetimeBasedCursor
+      cursor_field: date
+      datetime_format: "%s"
+      cursor_granularity: P1D
+      step: P1D
+      start_datetime:
+        type: MinMaxDatetime
+        datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+        datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        type:
+          - "null"
+          - object
+        $schema: http://json-schema.org/draft-07/schema#
+        additionalProperties: true
+        properties:
+          eventId:
+            type:
+              - "null"
+              - string
+          identifyId:
+            type:
+              - "null"
+              - string
+          propertyKey:
+            type:
+              - "null"
+              - string
+          date:
+            type:
+              - "null"
+              - integer
+            format: int64
+          eventType:
+            type:
+              - "null"
+              - string
+          sessionId:
+            type:
+              - "null"
+              - string
+          userType:
+            type:
+              - "null"
+              - string
+            enum:
+              - LEAD
+              - USER
+              - VISITOR
+              - EMPTY_USER_TYPE
+          accountId:
+            type:
+              - "null"
+              - string
+          globalContext:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+          engagementId:
+            type:
+              - "null"
+              - string
+          engagementTrackType:
+            type:
+              - "null"
+              - string
+            enum:
+              - ENGAGEMENT_VIEW
+              - ENGAGEMENT_CLICK
+          contentId:
+            type:
+              - "null"
+              - string
+          contentType:
+            type:
+              - "null"
+              - string
+            enum:
+              - IN_APP_DIALOG
+              - IN_APP_GUIDE
+              - IN_APP_CAROUSEL
+              - IN_APP_SURVEY_NPS
+              - IN_APP_SURVEY_CES
+              - IN_APP_SURVEY_BOOLEAN
+              - IN_APP_SURVEY_RATING
+          executionDate:
+            type:
+              - "null"
+              - integer
+            format: int64
+            description: "Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys"
+          executionId:
+            type:
+              - "null"
+              - string
+            description: "Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys"
+          viewEventId:
+            type:
+              - "null"
+              - string
+          carouselState:
+            type:
+              - "null"
+              - string
+            enum:
+              - VIEWED
+              - COMPLETED
+          slideId:
+            type:
+              - "null"
+              - string
+          sequenceNumber:
+            type:
+              - "null"
+              - integer
+            format: int64
+          linkUrl:
+            type:
+              - "null"
+              - string
+          guideState:
+            type:
+              - "null"
+              - string
+            enum:
+              - VIEWED
+              - COMPLETED
+          stepId:
+            type:
+              - "null"
+              - string
+          surveyState:
+            type:
+              - "null"
+              - string
+            enum:
+              - VIEWED
+              - COMPLETED
+          contactMeAllowed:
+            type:
+              - "null"
+              - boolean
+          score:
+            type:
+              - "null"
+              - integer
+            format: int32
+          comment:
+            type:
+              - "null"
+              - string
+          questionType:
+            type:
+              - "null"
+              - string
+          selectionIds:
+            type:
+              - "null"
+              - array
+            items:
+              type:
+                - "null"
+                - string
+          path:
+            type:
+              - "null"
+              - string
+        title: Engagement View Events Schema
 spec:
   type: Spec
   connection_specification:
@@ -2312,13 +2727,13 @@ metadata:
     user_attributes: true
     users: true
     email_events: true
+    engagement_view_events: true
     feature_events: true
     page_events: true
     session_events: true
     identify_events: true
     custom_events: true
     sessions: true
-    page_views: true
 schemas:
   accounts:
     type:
@@ -2822,67 +3237,6 @@ schemas:
               - "null"
               - string
     title: Sessions Schema
-  page_views:
-    type:
-      - "null"
-      - object
-    $schema: http://json-schema.org/draft-07/schema#
-    additionalProperties: true
-    properties:
-      id:
-        type:
-          - "null"
-          - string
-      userId:
-        type:
-          - "null"
-          - string
-      accountId:
-        type:
-          - "null"
-          - string
-      sessionId:
-        type:
-          - "null"
-          - string
-      timestamp:
-        type:
-          - "null"
-          - integer
-        format: int64
-      url:
-        type:
-          - "null"
-          - string
-      title:
-        type:
-          - "null"
-          - string
-      referrer:
-        type:
-          - "null"
-          - string
-      timeOnPage:
-        type:
-          - "null"
-          - number
-      engagementTime:
-        type:
-          - "null"
-          - number
-      scrollDepth:
-        type:
-          - "null"
-          - number
-      userAgent:
-        type:
-          - "null"
-          - string
-      loadTime:
-        type:
-          - "null"
-          - number
-    title: Page Views Schema
   users:
     type:
       - "null"
@@ -3281,3 +3635,163 @@ schemas:
                   - number
                 format: double
     title: Email Events Schema
+  engagement_view_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+      identifyId:
+        type:
+          - "null"
+          - string
+      propertyKey:
+        type:
+          - "null"
+          - string
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+      eventType:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+      accountId:
+        type:
+          - "null"
+          - string
+      globalContext:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      engagementId:
+        type:
+          - "null"
+          - string
+      engagementTrackType:
+        type:
+          - "null"
+          - string
+        enum:
+          - ENGAGEMENT_VIEW
+          - ENGAGEMENT_CLICK
+      contentId:
+        type:
+          - "null"
+          - string
+      contentType:
+        type:
+          - "null"
+          - string
+        enum:
+          - IN_APP_DIALOG
+          - IN_APP_GUIDE
+          - IN_APP_CAROUSEL
+          - IN_APP_SURVEY_NPS
+          - IN_APP_SURVEY_CES
+          - IN_APP_SURVEY_BOOLEAN
+          - IN_APP_SURVEY_RATING
+      executionDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: "Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys"
+      executionId:
+        type:
+          - "null"
+          - string
+        description: "Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys"
+      viewEventId:
+        type:
+          - "null"
+          - string
+      carouselState:
+        type:
+          - "null"
+          - string
+        enum:
+          - VIEWED
+          - COMPLETED
+      slideId:
+        type:
+          - "null"
+          - string
+      sequenceNumber:
+        type:
+          - "null"
+          - integer
+        format: int64
+      linkUrl:
+        type:
+          - "null"
+          - string
+      guideState:
+        type:
+          - "null"
+          - string
+        enum:
+          - VIEWED
+          - COMPLETED
+      stepId:
+        type:
+          - "null"
+          - string
+      surveyState:
+        type:
+          - "null"
+          - string
+        enum:
+          - VIEWED
+          - COMPLETED
+      contactMeAllowed:
+        type:
+          - "null"
+          - boolean
+      score:
+        type:
+          - "null"
+          - integer
+        format: int32
+      comment:
+        type:
+          - "null"
+          - string
+      questionType:
+        type:
+          - "null"
+          - string
+      selectionIds:
+        type:
+          - "null"
+          - array
+        items:
+          type:
+            - "null"
+            - string
+      path:
+        type:
+          - "null"
+          - string
+    title: Engagement View Events Schema

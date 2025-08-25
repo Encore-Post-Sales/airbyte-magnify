@@ -1,0 +1,170 @@
+{
+    "allOf": [
+        {
+            "$ref": "#/definitions/EngagementAllTypesViewEventsPage"
+        }
+    ],
+    "definitions": {
+        "EngagementAllTypesViewEventsPage": {
+            "type": "object",
+            "properties": {
+                "results": {
+                    "type": "array",
+                    "description": "Array of result records",
+                    "items": {
+                        "$ref": "#/definitions/EngagementAllTypesViewEvent"
+                    }
+                },
+                "totalHits": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Total number of records matching filters"
+                },
+                "scrollId": {
+                    "type": "string",
+                    "description": "If passed on subsequent requests as the scrollId parameter, will fetch the next page"
+                }
+            },
+            "title": "EngagementAllTypesViewEventsPage"
+        },
+        "EngagementAllTypesViewEvent": {
+            "type": "object",
+            "required": [
+                "identifyId",
+                "propertyKey",
+                "userType"
+            ],
+            "properties": {
+                "eventId": {
+                    "type": "string"
+                },
+                "identifyId": {
+                    "type": "string"
+                },
+                "propertyKey": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "eventType": {
+                    "type": "string"
+                },
+                "sessionId": {
+                    "type": "string"
+                },
+                "userType": {
+                    "type": "string",
+                    "enum": [
+                        "LEAD",
+                        "USER",
+                        "VISITOR",
+                        "EMPTY_USER_TYPE"
+                    ]
+                },
+                "accountId": {
+                    "type": "string"
+                },
+                "globalContext": {
+                    "type": "object"
+                },
+                "engagementId": {
+                    "type": "string"
+                },
+                "engagementTrackType": {
+                    "type": "string",
+                    "enum": [
+                        "ENGAGEMENT_VIEW",
+                        "ENGAGEMENT_CLICK"
+                    ]
+                },
+                "contentId": {
+                    "type": "string"
+                },
+                "contentType": {
+                    "type": "string",
+                    "enum": [
+                        "IN_APP_DIALOG",
+                        "IN_APP_GUIDE",
+                        "IN_APP_CAROUSEL",
+                        "IN_APP_SURVEY_NPS",
+                        "IN_APP_SURVEY_CES",
+                        "IN_APP_SURVEY_BOOLEAN",
+                        "IN_APP_SURVEY_RATING"
+                    ]
+                },
+                "executionDate": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys"
+                },
+                "executionId": {
+                    "type": "string",
+                    "description": "Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys"
+                },
+                "viewEventId": {
+                    "type": "string"
+                },
+                "carouselState": {
+                    "type": "string",
+                    "enum": [
+                        "VIEWED",
+                        "COMPLETED"
+                    ]
+                },
+                "slideId": {
+                    "type": "string"
+                },
+                "sequenceNumber": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "linkUrl": {
+                    "type": "string"
+                },
+                "guideState": {
+                    "type": "string",
+                    "enum": [
+                        "VIEWED",
+                        "COMPLETED"
+                    ]
+                },
+                "stepId": {
+                    "type": "string"
+                },
+                "surveyState": {
+                    "type": "string",
+                    "enum": [
+                        "VIEWED",
+                        "COMPLETED"
+                    ]
+                },
+                "contactMeAllowed": {
+                    "type": "boolean"
+                },
+                "score": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "questionType": {
+                    "type": "string"
+                },
+                "selectionIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "path": {
+                    "type": "string"
+                }
+            },
+            "title": "EngagementAllTypesViewEvent",
+            "description": "Engagement View Event object"
+        }
+    }
+}
