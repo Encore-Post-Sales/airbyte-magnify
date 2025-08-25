@@ -2728,11 +2728,6 @@ metadata:
     users: true
     email_events: true
     engagement_view_events: true
-    feature_events: true
-    page_events: true
-    session_events: true
-    identify_events: true
-    custom_events: true
     sessions: true
 schemas:
   accounts:
