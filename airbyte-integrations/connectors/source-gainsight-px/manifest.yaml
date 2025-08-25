@@ -38,7 +38,7 @@ definitions:
         type: DatetimeBasedCursor
         cursor_field: lastModifiedDate
         datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
-        cursor_granularity: PT1S
+        cursor_granularity: P1D
         step: P1D
         start_datetime:
           type: MinMaxDatetime
@@ -255,7 +255,7 @@ definitions:
         type: DatetimeBasedCursor
         cursor_field: modifiedDate
         datetime_format: "%s"
-        cursor_granularity: PT1S
+        cursor_granularity: P1D
         step: P1D
         start_datetime:
           type: MinMaxDatetime
@@ -496,7 +496,7 @@ definitions:
         type: DatetimeBasedCursor
         cursor_field: modifiedDate
         datetime_format: "%s"
-        cursor_granularity: PT1S
+        cursor_granularity: P1D
         step: P1D
         start_datetime:
           type: MinMaxDatetime
@@ -703,7 +703,7 @@ definitions:
         type: DatetimeBasedCursor
         cursor_field: lastModifiedDate
         datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
-        cursor_granularity: PT1S
+        cursor_granularity: P1D
         step: P1D
         start_datetime:
           type: MinMaxDatetime
@@ -939,6 +939,224 @@ definitions:
                 - "null"
                 - string
           title: Users Schema
+    email_events:
+      type: DeclarativeStream
+      name: email_events
+      primary_key:
+        - eventId
+      retriever:
+        type: SimpleRetriever
+        requester:
+          type: HttpRequester
+          url_base: https://api.aptrinsic.com/v1
+          authenticator:
+            type: ApiKeyAuthenticator
+            api_token: "{{ config['api_key'] }}"
+            inject_into:
+              type: RequestOption
+              inject_into: header
+              field_name: X-APTRINSIC-API-KEY
+          path: events/email
+          http_method: GET
+          request_parameters:
+            date: "{{ stream_slice.get('date', '') }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - results
+        paginator:
+          type: DefaultPaginator
+          page_token_option:
+            type: RequestOption
+            inject_into: request_parameter
+            field_name: scrollId
+          pagination_strategy:
+            type: CursorPagination
+            cursor_value: "{{ response.scrollId }}"
+      incremental_sync:
+        type: DatetimeBasedCursor
+        cursor_field: date
+        datetime_format: "%s"
+        cursor_granularity: P1D
+        step: P1D
+        start_datetime:
+          type: MinMaxDatetime
+          datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+          datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          type:
+            - "null"
+            - object
+          $schema: http://json-schema.org/draft-07/schema#
+          additionalProperties: true
+          properties:
+            eventId:
+              type:
+                - "null"
+                - string
+            identifyId:
+              type:
+                - "null"
+                - string
+            propertyKey:
+              type:
+                - "null"
+                - string
+            date:
+              type:
+                - "null"
+                - integer
+              format: int64
+            eventType:
+              type:
+                - "null"
+                - string
+            userType:
+              type:
+                - "null"
+                - string
+              enum:
+                - LEAD
+                - USER
+                - VISITOR
+                - EMPTY_USER_TYPE
+            globalContext:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+            engagementId:
+              type:
+                - "null"
+                - string
+            email:
+              type:
+                - "null"
+                - string
+            emailTrackType:
+              type:
+                - "null"
+                - string
+              enum:
+                - EMPTY_EMAIL_TRACK_TYPE
+                - EMAIL_TRACK_BOUNCE
+                - EMAIL_TRACK_DEFERRED
+                - EMAIL_TRACK_DELIVERED
+                - EMAIL_TRACK_DROPPED
+                - EMAIL_TRACK_PROCESSED
+                - EMAIL_TRACK_OPEN
+                - EMAIL_TRACK_CLICK
+                - EMAIL_TRACK_UNSUBSCRIBE
+            status:
+              type:
+                - "null"
+                - string
+            reason:
+              type:
+                - "null"
+                - string
+            bounceType:
+              type:
+                - "null"
+                - string
+              enum:
+                - EMPTY_BOUNCE_TYPE
+                - DELIVER_BOUNCE
+                - DELIVER_BLOCKED
+                - DELIVER_EXIPERED
+            mtaResponse:
+              type:
+                - "null"
+                - string
+            attempt:
+              type:
+                - "null"
+                - string
+            linkIndex:
+              type:
+                - "null"
+                - integer
+              format: int32
+            linkType:
+              type:
+                - "null"
+                - string
+              enum:
+                - EMPTY_LINK_TYPE
+                - HTML_LINK_TYPE
+                - HEADER_LINK_TYPE
+                - TEXT_LINK_TYPE
+            linkUrl:
+              type:
+                - "null"
+                - string
+            inferredLocation:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
+              properties:
+                countryName:
+                  type:
+                    - "null"
+                    - string
+                countryCode:
+                  type:
+                    - "null"
+                    - string
+                stateName:
+                  type:
+                    - "null"
+                    - string
+                stateCode:
+                  type:
+                    - "null"
+                    - string
+                city:
+                  type:
+                    - "null"
+                    - string
+                street:
+                  type:
+                    - "null"
+                    - string
+                postalCode:
+                  type:
+                    - "null"
+                    - string
+                continent:
+                  type:
+                    - "null"
+                    - string
+                regionName:
+                  type:
+                    - "null"
+                    - string
+                timeZone:
+                  type:
+                    - "null"
+                    - string
+                coordinates:
+                  type:
+                    - "null"
+                    - object
+                  additionalProperties: true
+                  properties:
+                    latitude:
+                      type:
+                        - "null"
+                        - number
+                      format: double
+                    longitude:
+                      type:
+                        - "null"
+                        - number
+                      format: double
+          title: Email Events Schema
   base_requester:
     type: HttpRequester
     url_base: https://api.aptrinsic.com/v1
@@ -980,7 +1198,7 @@ streams:
       type: DatetimeBasedCursor
       cursor_field: lastModifiedDate
       datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
-      cursor_granularity: PT1S
+      cursor_granularity: P1D
       step: P1D
       start_datetime:
         type: MinMaxDatetime
@@ -1838,6 +2056,223 @@ streams:
               - "null"
               - string
         title: Users Schema
+  - type: DeclarativeStream
+    name: email_events
+    primary_key:
+      - eventId
+    retriever:
+      type: SimpleRetriever
+      requester:
+        type: HttpRequester
+        url_base: https://api.aptrinsic.com/v1
+        authenticator:
+          type: ApiKeyAuthenticator
+          api_token: "{{ config['api_key'] }}"
+          inject_into:
+            type: RequestOption
+            inject_into: header
+            field_name: X-APTRINSIC-API-KEY
+        path: events/email
+        http_method: GET
+        request_parameters:
+          date: "{{ stream_slice.get('date', '') }}"
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path:
+            - results
+      paginator:
+        type: DefaultPaginator
+        page_token_option:
+          type: RequestOption
+          inject_into: request_parameter
+          field_name: scrollId
+        pagination_strategy:
+          type: CursorPagination
+          cursor_value: "{{ response.scrollId }}"
+    incremental_sync:
+      type: DatetimeBasedCursor
+      cursor_field: date
+      datetime_format: "%s"
+      cursor_granularity: P1D
+      step: P1D
+      start_datetime:
+        type: MinMaxDatetime
+        datetime: "{{ config.get('start_date', '2020-01-01T00:00:00.000Z') }}"
+        datetime_format: "%Y-%m-%dT%H:%M:%S.%fZ"
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        type:
+          - "null"
+          - object
+        $schema: http://json-schema.org/draft-07/schema#
+        additionalProperties: true
+        properties:
+          eventId:
+            type:
+              - "null"
+              - string
+          identifyId:
+            type:
+              - "null"
+              - string
+          propertyKey:
+            type:
+              - "null"
+              - string
+          date:
+            type:
+              - "null"
+              - integer
+            format: int64
+          eventType:
+            type:
+              - "null"
+              - string
+          userType:
+            type:
+              - "null"
+              - string
+            enum:
+              - LEAD
+              - USER
+              - VISITOR
+              - EMPTY_USER_TYPE
+          globalContext:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+          engagementId:
+            type:
+              - "null"
+              - string
+          email:
+            type:
+              - "null"
+              - string
+          emailTrackType:
+            type:
+              - "null"
+              - string
+            enum:
+              - EMPTY_EMAIL_TRACK_TYPE
+              - EMAIL_TRACK_BOUNCE
+              - EMAIL_TRACK_DEFERRED
+              - EMAIL_TRACK_DELIVERED
+              - EMAIL_TRACK_DROPPED
+              - EMAIL_TRACK_PROCESSED
+              - EMAIL_TRACK_OPEN
+              - EMAIL_TRACK_CLICK
+              - EMAIL_TRACK_UNSUBSCRIBE
+          status:
+            type:
+              - "null"
+              - string
+          reason:
+            type:
+              - "null"
+              - string
+          bounceType:
+            type:
+              - "null"
+              - string
+            enum:
+              - EMPTY_BOUNCE_TYPE
+              - DELIVER_BOUNCE
+              - DELIVER_BLOCKED
+              - DELIVER_EXIPERED
+          mtaResponse:
+            type:
+              - "null"
+              - string
+          attempt:
+            type:
+              - "null"
+              - string
+          linkIndex:
+            type:
+              - "null"
+              - integer
+            format: int32
+          linkType:
+            type:
+              - "null"
+              - string
+            enum:
+              - EMPTY_LINK_TYPE
+              - HTML_LINK_TYPE
+              - HEADER_LINK_TYPE
+              - TEXT_LINK_TYPE
+          linkUrl:
+            type:
+              - "null"
+              - string
+          inferredLocation:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              countryName:
+                type:
+                  - "null"
+                  - string
+              countryCode:
+                type:
+                  - "null"
+                  - string
+              stateName:
+                type:
+                  - "null"
+                  - string
+              stateCode:
+                type:
+                  - "null"
+                  - string
+              city:
+                type:
+                  - "null"
+                  - string
+              street:
+                type:
+                  - "null"
+                  - string
+              postalCode:
+                type:
+                  - "null"
+                  - string
+              continent:
+                type:
+                  - "null"
+                  - string
+              regionName:
+                type:
+                  - "null"
+                  - string
+              timeZone:
+                type:
+                  - "null"
+                  - string
+              coordinates:
+                type:
+                  - "null"
+                  - object
+                additionalProperties: true
+                properties:
+                  latitude:
+                    type:
+                      - "null"
+                      - number
+                    format: double
+                  longitude:
+                    type:
+                      - "null"
+                      - number
+                    format: double
+        title: Email Events Schema
 spec:
   type: Spec
   connection_specification:
@@ -1876,6 +2311,7 @@ metadata:
     kcbot: true
     user_attributes: true
     users: true
+    email_events: true
     feature_events: true
     page_events: true
     session_events: true
@@ -2306,7 +2742,7 @@ schemas:
           - "null"
           - string
     title: User Attributes Schema
-sessions:
+  sessions:
     type:
       - "null"
       - object
@@ -2675,3 +3111,173 @@ sessions:
           - "null"
           - string
     title: Users Schema
+  email_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+      identifyId:
+        type:
+          - "null"
+          - string
+      propertyKey:
+        type:
+          - "null"
+          - string
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+      eventType:
+        type:
+          - "null"
+          - string
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+      globalContext:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      engagementId:
+        type:
+          - "null"
+          - string
+      email:
+        type:
+          - "null"
+          - string
+      emailTrackType:
+        type:
+          - "null"
+          - string
+        enum:
+          - EMPTY_EMAIL_TRACK_TYPE
+          - EMAIL_TRACK_BOUNCE
+          - EMAIL_TRACK_DEFERRED
+          - EMAIL_TRACK_DELIVERED
+          - EMAIL_TRACK_DROPPED
+          - EMAIL_TRACK_PROCESSED
+          - EMAIL_TRACK_OPEN
+          - EMAIL_TRACK_CLICK
+          - EMAIL_TRACK_UNSUBSCRIBE
+      status:
+        type:
+          - "null"
+          - string
+      reason:
+        type:
+          - "null"
+          - string
+      bounceType:
+        type:
+          - "null"
+          - string
+        enum:
+          - EMPTY_BOUNCE_TYPE
+          - DELIVER_BOUNCE
+          - DELIVER_BLOCKED
+          - DELIVER_EXIPERED
+      mtaResponse:
+        type:
+          - "null"
+          - string
+      attempt:
+        type:
+          - "null"
+          - string
+      linkIndex:
+        type:
+          - "null"
+          - integer
+        format: int32
+      linkType:
+        type:
+          - "null"
+          - string
+        enum:
+          - EMPTY_LINK_TYPE
+          - HTML_LINK_TYPE
+          - HEADER_LINK_TYPE
+          - TEXT_LINK_TYPE
+      linkUrl:
+        type:
+          - "null"
+          - string
+      inferredLocation:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          countryName:
+            type:
+              - "null"
+              - string
+          countryCode:
+            type:
+              - "null"
+              - string
+          stateName:
+            type:
+              - "null"
+              - string
+          stateCode:
+            type:
+              - "null"
+              - string
+          city:
+            type:
+              - "null"
+              - string
+          street:
+            type:
+              - "null"
+              - string
+          postalCode:
+            type:
+              - "null"
+              - string
+          continent:
+            type:
+              - "null"
+              - string
+          regionName:
+            type:
+              - "null"
+              - string
+          timeZone:
+            type:
+              - "null"
+              - string
+          coordinates:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              latitude:
+                type:
+                  - "null"
+                  - number
+                format: double
+              longitude:
+                type:
+                  - "null"
+                  - number
+                format: double
+    title: Email Events Schema

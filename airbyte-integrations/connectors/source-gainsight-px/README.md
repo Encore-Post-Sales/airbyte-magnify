@@ -40,7 +40,7 @@ Then run any of the standard source connector commands:
 docker run --rm airbyte/source-gainsight-px:dev spec
 docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-gainsight-px:dev check --config /secrets/config.json
 docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-gainsight-px:dev discover --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-gainsight-px:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
+docker run --rm -v /secrets:/secrets -v /integration_tests:/integration_tests airbyte/source-gainsight-px:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
 ```
 
 ### Running the CI test suite
