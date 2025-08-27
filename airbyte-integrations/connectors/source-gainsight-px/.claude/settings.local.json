@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:gainsightpx.docs.apiary.io)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}
