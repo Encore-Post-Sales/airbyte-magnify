@@ -102,7 +102,7 @@ definitions:
                 postalCode:
                   type:
                     - "null"
-                    - number
+                    - string
                 continent:
                   type:
                     - "null"
@@ -2313,7 +2313,7 @@ streams:
               postalCode:
                 type:
                   - "null"
-                  - number
+                  - string
               continent:
                 type:
                   - "null"
