@@ -801,11 +801,11 @@ definitions:
                 - object
               additionalProperties: true
               properties:
-                city:
+                countryName:
                   type:
                     - "null"
                     - string
-                continent:
+                countryCode:
                   type:
                     - "null"
                     - string
@@ -823,19 +823,7 @@ definitions:
                       type:
                         - "null"
                         - number
-                countryCode:
-                  type:
-                    - "null"
-                    - string
-                countryName:
-                  type:
-                    - "null"
-                    - string
-                postalCode:
-                  type:
-                    - "null"
-                    - string
-                regionName:
+                stateName:
                   type:
                     - "null"
                     - string
@@ -843,11 +831,23 @@ definitions:
                   type:
                     - "null"
                     - string
-                stateName:
+                city:
                   type:
                     - "null"
                     - string
                 street:
+                  type:
+                    - "null"
+                    - string
+                postalCode:
+                  type:
+                    - "null"
+                    - string
+                continent:
+                  type:
+                    - "null"
+                    - string
+                regionName:
                   type:
                     - "null"
                     - string
@@ -911,7 +911,75 @@ definitions:
             location:
               type:
                 - "null"
-                - string
+                - object
+              properties:
+                countryName:
+                  type:
+                    - "null"
+                    - string
+                countryCode:
+                  type:
+                    - "null"
+                    - string
+                coordinates:
+                  type:
+                    - "null"
+                    - object
+                  additionalProperties: true
+                  properties:
+                    latitude:
+                      type:
+                        - "null"
+                        - number
+                    longitude:
+                      type:
+                        - "null"
+                        - number
+                stateName:
+                  type:
+                    - "null"
+                    - string
+                stateCode:
+                  type:
+                    - "null"
+                    - string
+                city:
+                  type:
+                    - "null"
+                    - string
+                street:
+                  type:
+                    - "null"
+                    - string
+                postalCode:
+                  type:
+                    - "null"
+                    - string
+                continent:
+                  type:
+                    - "null"
+                    - string
+                regionName:
+                  type:
+                    - "null"
+                    - string
+                timeZone:
+                  type:
+                    - "null"
+                    - string
+                coordinates:
+                  type:
+                    - "null"
+                    - object
+                  properties:
+                    latitude:
+                      type:
+                        - "null"
+                        - number
+                    longitude:
+                      type:
+                        - "null"
+                        - number
             numberOfVisits:
               type:
                 - "null"
@@ -958,6 +1026,11 @@ definitions:
               type:
                 - "null"
                 - string
+            customAttributes:
+              type:
+                - "null"
+                - object
+              additionalProperties: true
           title: Users Schema
     email_events:
       type: DeclarativeStream
@@ -2986,11 +3059,11 @@ streams:
               - object
             additionalProperties: true
             properties:
-              city:
+              countryName:
                 type:
                   - "null"
                   - string
-              continent:
+              countryCode:
                 type:
                   - "null"
                   - string
@@ -3008,19 +3081,7 @@ streams:
                     type:
                       - "null"
                       - number
-              countryCode:
-                type:
-                  - "null"
-                  - string
-              countryName:
-                type:
-                  - "null"
-                  - string
-              postalCode:
-                type:
-                  - "null"
-                  - string
-              regionName:
+              stateName:
                 type:
                   - "null"
                   - string
@@ -3028,11 +3089,23 @@ streams:
                 type:
                   - "null"
                   - string
-              stateName:
+              city:
                 type:
                   - "null"
                   - string
               street:
+                type:
+                  - "null"
+                  - string
+              postalCode:
+                type:
+                  - "null"
+                  - string
+              continent:
+                type:
+                  - "null"
+                  - string
+              regionName:
                 type:
                   - "null"
                   - string
@@ -3096,7 +3169,75 @@ streams:
           location:
             type:
               - "null"
-              - string
+              - object
+            properties:
+              countryName:
+                type:
+                  - "null"
+                  - string
+              countryCode:
+                type:
+                  - "null"
+                  - string
+              coordinates:
+                type:
+                  - "null"
+                  - object
+                additionalProperties: true
+                properties:
+                  latitude:
+                    type:
+                      - "null"
+                      - number
+                  longitude:
+                    type:
+                      - "null"
+                      - number
+              stateName:
+                type:
+                  - "null"
+                  - string
+              stateCode:
+                type:
+                  - "null"
+                  - string
+              city:
+                type:
+                  - "null"
+                  - string
+              street:
+                type:
+                  - "null"
+                  - string
+              postalCode:
+                type:
+                  - "null"
+                  - string
+              continent:
+                type:
+                  - "null"
+                  - string
+              regionName:
+                type:
+                  - "null"
+                  - string
+              timeZone:
+                type:
+                  - "null"
+                  - string
+              coordinates:
+                type:
+                  - "null"
+                  - object
+                properties:
+                  latitude:
+                    type:
+                      - "null"
+                      - number
+                  longitude:
+                    type:
+                      - "null"
+                      - number
           numberOfVisits:
             type:
               - "null"
@@ -3143,6 +3284,11 @@ streams:
             type:
               - "null"
               - string
+          customAttributes:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
         title: Users Schema
   - type: DeclarativeStream
     name: email_events
@@ -5054,11 +5200,11 @@ schemas:
           - object
         additionalProperties: true
         properties:
-          city:
+          countryName:
             type:
               - "null"
               - string
-          continent:
+          countryCode:
             type:
               - "null"
               - string
@@ -5076,19 +5222,7 @@ schemas:
                 type:
                   - "null"
                   - number
-          countryCode:
-            type:
-              - "null"
-              - string
-          countryName:
-            type:
-              - "null"
-              - string
-          postalCode:
-            type:
-              - "null"
-              - string
-          regionName:
+          stateName:
             type:
               - "null"
               - string
@@ -5096,11 +5230,23 @@ schemas:
             type:
               - "null"
               - string
-          stateName:
+          city:
             type:
               - "null"
               - string
           street:
+            type:
+              - "null"
+              - string
+          postalCode:
+            type:
+              - "null"
+              - string
+          continent:
+            type:
+              - "null"
+              - string
+          regionName:
             type:
               - "null"
               - string
@@ -5164,7 +5310,75 @@ schemas:
       location:
         type:
           - "null"
-          - string
+          - object
+        properties:
+          countryName:
+            type:
+              - "null"
+              - string
+          countryCode:
+            type:
+              - "null"
+              - string
+          coordinates:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              latitude:
+                type:
+                  - "null"
+                  - number
+              longitude:
+                type:
+                  - "null"
+                  - number
+          stateName:
+            type:
+              - "null"
+              - string
+          stateCode:
+            type:
+              - "null"
+              - string
+          city:
+            type:
+              - "null"
+              - string
+          street:
+            type:
+              - "null"
+              - string
+          postalCode:
+            type:
+              - "null"
+              - string
+          continent:
+            type:
+              - "null"
+              - string
+          regionName:
+            type:
+              - "null"
+              - string
+          timeZone:
+            type:
+              - "null"
+              - string
+          coordinates:
+            type:
+              - "null"
+              - object
+            properties:
+              latitude:
+                type:
+                  - "null"
+                  - number
+              longitude:
+                type:
+                  - "null"
+                  - number
       numberOfVisits:
         type:
           - "null"
@@ -5211,6 +5425,11 @@ schemas:
         type:
           - "null"
           - string
+      customAttributes:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
     title: Users Schema
   email_events:
     type:
