@@ -1,0 +1,2899 @@
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Starting syncing SourceLocalYaml"
+    }
+}
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Marking stream accounts as STARTED"
+    }
+}
+{
+    "type": "TRACE",
+    "trace": {
+        "type": "STREAM_STATUS",
+        "emitted_at": 1757011680976.733,
+        "stream_status": {
+            "stream_descriptor": {
+                "name": "accounts",
+                "namespace": null
+            },
+            "status": "STARTED",
+            "reasons": null
+        }
+    }
+}
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Setting state of SourceLocalYaml stream to {}"
+    }
+}
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Syncing stream: accounts "
+    }
+}
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Marking stream accounts as RUNNING"
+    }
+}
+{
+    "type": "TRACE",
+    "trace": {
+        "type": "STREAM_STATUS",
+        "emitted_at": 1757011682365.559,
+        "stream_status": {
+            "stream_descriptor": {
+                "name": "accounts",
+                "namespace": null
+            },
+            "status": "RUNNING",
+            "reasons": null
+        }
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "6192980e871a280013e66366",
+            "name": "qa.tlc.20211115t092531",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1636997177562,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1636997177490,
+            "lastModifiedDate": 1673252494345,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682364
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "61e9ed2b4086d0000fddfa0d",
+            "name": "qa.tlc.20220120t151553",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1642720607087,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1642720607014,
+            "lastModifiedDate": 1673252499305,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682373
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "6227a40418c9740016a71c9b",
+            "name": "qa.tlc.20220308t104417",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1646765112927,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1646765112831,
+            "lastModifiedDate": 1673252503179,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682382
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "62279efd3ca0f50010fc7f1f",
+            "name": "qa.tlc.20220308t102251",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1646763823759,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1646763823638,
+            "lastModifiedDate": 1673252503175,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682389
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "61e9ede70e9dd9000efacb37",
+            "name": "qa.tlc.20220120t151901",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1642720806457,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1642720806384,
+            "lastModifiedDate": 1673252499104,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682396
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63c6f5b66eb513001458920f",
+            "name": "Jasmine Smith IOP",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1677251511382,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-CIOYAJIKJEIK-2-2",
+                "AP-QYEAI6WR0NAN-2-1"
+            ],
+            "createDate": 1674656346727,
+            "lastModifiedDate": 1716712518915,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682401
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "61d65cab62fd13000d3f8c12",
+            "name": "qa1641438377950",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1692374125780,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-CIOYAJIKJEIK-2-2"
+            ],
+            "createDate": 1641438675788,
+            "lastModifiedDate": 1716712518916,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682405
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63e40e68136d1d001305f2bc",
+            "name": "qa1675890280120",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1715289181211,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-1",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1675890457919,
+            "lastModifiedDate": 1716712518918,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682408
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "60dcc72375252b55d0dc20f6",
+            "name": "FloQast TLC 1625081635481",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1653506613826,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-UMQTXS0RDMD1-2-2"
+            ],
+            "createDate": 1653160929313,
+            "lastModifiedDate": 1716712518919,
+            "customAttributes": null,
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682412
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "628d3fab17fff30016cdc422",
+            "name": "qa1653424043185",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1680801113073,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 17,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-QYEAI6WR0NAN-2-1"
+            ],
+            "createDate": 1653424300679,
+            "lastModifiedDate": 1716712518927,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682416
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "628d39214e9c9500157ba1e2",
+            "name": "qa1653422368725",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1680508566721,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-QYEAI6WR0NAN-2-1"
+            ],
+            "createDate": 1653422614595,
+            "lastModifiedDate": 1716712518927,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682419
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "65a07e5b803fe5001973f2a6",
+            "name": "test tlc sso 324344",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1705536464290,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-CIOYAJIKJEIK-2-2"
+            ],
+            "createDate": 1705019974459,
+            "lastModifiedDate": 1716712518928,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682424
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "620ed88576dc770014af3f55",
+            "name": "qa1645140101407",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1685639035268,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-QYEAI6WR0NAN-2-1",
+                "AP-UMQTXS0RDMD1-2-2"
+            ],
+            "createDate": 1645142582605,
+            "lastModifiedDate": 1716712518929,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682428
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63ebcb9717907c000e7d823f",
+            "name": "TEST TLC 1676397462490",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1685984262352,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-UMQTXS0RDMD1-2-2"
+            ],
+            "createDate": 1676397975595,
+            "lastModifiedDate": 1716712518931,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682431
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "5e1e2a08bd8607002138c59a",
+            "name": "TEST TLC 1579035143878",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1707786942678,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-QYEAI6WR0NAN-2-1"
+            ],
+            "createDate": 1629923707210,
+            "lastModifiedDate": 1716712518932,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682435
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63e40d8fca386c000d6a5aba",
+            "name": "qa1675890062816",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1715289181103,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-1",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1675890237047,
+            "lastModifiedDate": 1716712518936,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682438
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63e40f4452b5df000d312f9a",
+            "name": "qa1675890499683",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1715289293017,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-1",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1675890659447,
+            "lastModifiedDate": 1716712518937,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682444
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "61ca5175131eeb000ff677dc",
+            "name": "TEST TLC 1640649076940",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1648750459679,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-CIOYAJIKJEIK-2-2"
+            ],
+            "createDate": 1645723856710,
+            "lastModifiedDate": 1716712518937,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682448
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "60a2ee4ee44934000e528e89",
+            "name": "Stephanie TLC",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1658964041114,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-CIOYAJIKJEIK-2-2"
+            ],
+            "createDate": 1629403529302,
+            "lastModifiedDate": 1716712518938,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682451
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "6195604583ef3c000e174229",
+            "name": "TEST TLC 1637179460931",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1653667896213,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-UMQTXS0RDMD1-2-2"
+            ],
+            "createDate": 1653667896082,
+            "lastModifiedDate": 1716712518944,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682455
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "5f90b293257feb000ff5cc48",
+            "name": "qa1603318418804",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1701990221929,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-UMQTXS0RDMD1-2-2"
+            ],
+            "createDate": 1701990221877,
+            "lastModifiedDate": 1716712518945,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682459
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63e40cc1136d1d001305f1e8",
+            "name": "qa1675889857124",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1715289207466,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-1",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1675890021354,
+            "lastModifiedDate": 1716712518946,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682464
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "618979d8c88dfd000f8c2604",
+            "name": "TEST TLC 1636399576268",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1652896408969,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-UMQTXS0RDMD1-2-2"
+            ],
+            "createDate": 1652896408885,
+            "lastModifiedDate": 1716712518947,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682468
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63658243dc5e69000eea61a4",
+            "name": "TEST TLC 1667596866514",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1705450381861,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 1,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2",
+                "AP-QYEAI6WR0NAN-2-1",
+                "AP-UMQTXS0RDMD1-2-2",
+                "AP-CIOYAJIKJEIK-2-2"
+            ],
+            "createDate": 1667597179531,
+            "lastModifiedDate": 1716712518951,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682473
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "61facd7388b60d000f819b0d",
+            "name": "qa.tlc.20220202t102905",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1643826597511,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1643826597439,
+            "lastModifiedDate": 1716712520685,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011682477
+    }
+}
+{
+    "type": "STATE",
+    "state": {
+        "type": "STREAM",
+        "stream": {
+            "stream_descriptor": {
+                "name": "accounts",
+                "namespace": null
+            },
+            "stream_state": {
+                "next_page_token": "DnF1ZXJ5VGhlbkZldGNoAwAAAABJS4yWFmtzMEtud3dPUktLcHExdi1KQVVBQncAAAAAIMoZ8BZ4MVQtdGZjcVJhZXVRcVkxRFE5dWlBAAAAAFOZKxIWQ1dKMVpmZXBUaUcydlRVeEJaeTlRZw=="
+            }
+        },
+        "sourceStats": {
+            "recordCount": 25.0
+        }
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "6319f5fa19bb2f000f58eb26",
+            "name": "qa.tlc.20220908t070232",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 0,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1662645828205,
+            "lastModifiedDate": 1716712520688,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683122
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "61679baca4a49f000ffe2e5b",
+            "name": "qa.tlc.20211013t195329",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1634180075571,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1634180075499,
+            "lastModifiedDate": 1716712520688,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683129
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "62017552cdea3c001a5883fc",
+            "name": "TEST TLC 1644262738801",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1646254966501,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1644263021829,
+            "lastModifiedDate": 1716712520688,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683134
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "6227a4b68d70940010b72626",
+            "name": "qa.tlc.20220308t104715",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 0,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1646765307147,
+            "lastModifiedDate": 1716712520688,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683138
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "623b7ced275d29000f4fdba1",
+            "name": "qa.tlc.20220323t130250",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1648065825157,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1648065825086,
+            "lastModifiedDate": 1716712520690,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683143
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "64c7e4291f54810018fb6784",
+            "name": "SallyEU",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1705968770747,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 4,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-1"
+            ],
+            "createDate": 1690823239580,
+            "lastModifiedDate": 1716712520690,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683147
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63dae732981ee20015f6ef2a",
+            "name": "qa.tlc.20230201t142655",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1675290532406,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1675290532319,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683151
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "633f6a8410ca50003890612f",
+            "name": "qa.tlc.20221006t165337",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1665100528074,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1665100527965,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683155
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "61b13b91339529000d94022c",
+            "name": "qa.tlc.20211208t151110",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1639005118844,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1639005118771,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683159
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "64234a32a02cfe000da2d648",
+            "name": "qa.tlc.20230328t131231",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1680034492213,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1680034491860,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683162
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "636d5044a33feb000e99306b",
+            "name": "qa.tlc.20221110t112553",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1668108476649,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1668108476579,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683166
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "6126ad40a743d8000d1f5db3",
+            "name": "qa.tlc.20210825t135109",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1629924726250,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1629924726182,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683170
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "64666f82e3694800188a89e1",
+            "name": "qa.tlc.20230518t113335",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1684434957994,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1684434957696,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683173
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "62857894ff7fd10010a87bc4",
+            "name": "qa.tlc.20220518t155202",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1652914398392,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1652914398321,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683177
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "611c1f26ec9f5400100f9634",
+            "name": "qa.tlc.20210817t134212",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1629233003894,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1629233003821,
+            "lastModifiedDate": 1716712520691,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683180
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "65b01309d99afb0019bdcdf3",
+            "name": "TEST TLC 1706038024375",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1706040757900,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1706040757816,
+            "lastModifiedDate": 1716712520692,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683184
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "62a361c6323a29000dc74a0f",
+            "name": "qa.tlc.20220610t082244",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1654874650696,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1654874650623,
+            "lastModifiedDate": 1716712520692,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683189
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63052d326728c10015b8ab78",
+            "name": "qa.tlc.20220823t124032",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1661283707442,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1661283707369,
+            "lastModifiedDate": 1716712520692,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683193
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "62754da6acf2fd001564173d",
+            "name": "qa.tlc.20220506t093235",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1651854837773,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1651854837704,
+            "lastModifiedDate": 1716712520692,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683197
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63fd38831cbde6000dfffbd9",
+            "name": "qa1677539458165",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1685142330301,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1677539729126,
+            "lastModifiedDate": 1716712520693,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683201
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "654a879d5d4d5a0018781c83",
+            "name": "Compliance TLC 1699383195966",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1699384872472,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1699383699681,
+            "lastModifiedDate": 1716712520693,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683204
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "6462c9a53825a00018bb1074",
+            "name": "qa.tlc.20230515t170906",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1684195958768,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1684195958696,
+            "lastModifiedDate": 1716712520693,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683208
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "62d712678543f5003cdd7c96",
+            "name": "qa.tlc.20220719t132156",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1658262202775,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1658262202700,
+            "lastModifiedDate": 1716712520693,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683212
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "63f6a2649ac397001503c991",
+            "name": "qa.tlc.20230222t151649",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1677107953930,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1677107953862,
+            "lastModifiedDate": 1716712520694,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683216
+    }
+}
+{
+    "type": "RECORD",
+    "record": {
+        "stream": "accounts",
+        "data": {
+            "id": "64513052799e310018052686",
+            "name": "qa.tlc.20230502t084623",
+            "trackedSubscriptionId": "",
+            "sfdcId": "",
+            "lastSeenDate": 1683042520906,
+            "dunsNumber": "",
+            "industry": "",
+            "numberOfEmployees": 0,
+            "sicCode": "",
+            "website": "",
+            "naicsCode": "",
+            "plan": "",
+            "location": {
+                "countryName": "",
+                "countryCode": "",
+                "stateName": "",
+                "stateCode": "",
+                "city": "",
+                "street": "",
+                "postalCode": "",
+                "continent": "",
+                "regionName": "",
+                "timeZone": "",
+                "coordinates": {
+                    "latitude": 0.0,
+                    "longitude": 0.0
+                }
+            },
+            "numberOfUsers": 0,
+            "propertyKeys": [
+                "AP-QYEAI6WR0NAN-2-2"
+            ],
+            "createDate": 1683042520611,
+            "lastModifiedDate": 1716712520694,
+            "customAttributes": {
+                "sfId": ""
+            },
+            "parentGroupId": "",
+            "renewalDate": 0,
+            "healthScore": 0,
+            "gsId": "",
+            "nps": 0.0,
+            "csm": ""
+        },
+        "emitted_at": 1757011683220
+    }
+}
+{
+    "type": "STATE",
+    "state": {
+        "type": "STREAM",
+        "stream": {
+            "stream_descriptor": {
+                "name": "accounts",
+                "namespace": null
+            },
+            "stream_state": {
+                "next_page_token": "DnF1ZXJ5VGhlbkZldGNoAwAAAABJS4yWFmtzMEtud3dPUktLcHExdi1KQVVBQncAAAAAIMoZ8BZ4MVQtdGZjcVJhZXVRcVkxRFE5dWlBAAAAAFOZKxIWQ1dKMVpmZXBUaUcydlRVeEJaeTlRZw=="
+            }
+        },
+        "sourceStats": {
+            "recordCount": 25.0
+        }
+    }
+}
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Backing off _send(...) for 0.0s (airbyte_cdk.sources.streams.http.exceptions.UserDefinedBackoffException: Rate limit exceeded. Retrying with backoff strategy.)"
+    }
+}
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Retrying. Sleeping for 30.0 seconds"
+    }
+}
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Backing off _send(...) for 0.0s (airbyte_cdk.sources.streams.http.exceptions.UserDefinedBackoffException: Rate limit exceeded. Retrying with backoff strategy.)"
+    }
+}
+{
+    "type": "LOG",
+    "log": {
+        "level": "INFO",
+        "message": "Retrying. Sleeping for 30.0 seconds"
+    }
+}
+^[
+    {
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "Backing off _send(...) for 0.0s (airbyte_cdk.sources.streams.http.exceptions.UserDefinedBackoffException: Rate limit exceeded. Retrying with backoff strategy.)"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "Retrying. Sleeping for 30.0 seconds"
+        }
+    }
+^R
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "Backing off _send(...) for 0.0s (airbyte_cdk.sources.streams.http.exceptions.UserDefinedBackoffException: Rate limit exceeded. Retrying with backoff strategy.)"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "Retrying. Sleeping for 30.0 seconds"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "Backing off _send(...) for 0.0s (airbyte_cdk.sources.streams.http.exceptions.UserDefinedBackoffException: Rate limit exceeded. Retrying with backoff strategy.)"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "Retrying. Sleeping for 30.0 seconds"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "ERROR",
+            "message": "Giving up _send(...) after 6 tries (airbyte_cdk.sources.streams.http.exceptions.UserDefinedBackoffException: Rate limit exceeded. Retrying with backoff strategy.)"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "ERROR",
+            "message": "Max retry limit reached in 156.156815s. Request: <PreparedRequest [GET]>, Response: <Response [429]>"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "ERROR",
+            "message": "Encountered an exception while reading stream accounts\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/abstract_source.py\", line 133, in read\n    yield from self._read_stream(\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/abstract_source.py\", line 239, in _read_stream\n    for record_data_or_message in record_iterator:\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/streams/core.py\", line 192, in read\n    for record_data_or_message in records:\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/declarative_stream.py\", line 136, in read_records\n    yield from self.retriever.read_records(self.get_json_schema(), stream_slice)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/retrievers/simple_retriever.py\", line 370, in read_records\n    yield from self._read_single_page(record_generator, stream_state, _slice)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/retrievers/simple_retriever.py\", line 317, in _read_single_page\n    response = self._fetch_next_page(stream_state, stream_slice)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/retrievers/simple_retriever.py\", line 273, in _fetch_next_page\n    return self.requester.send_request(\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/requesters/http_requester.py\", line 305, in send_request\n    request, response = self._http_client.send_request(\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/streams/http/http_client.py\", line 382, in send_request\n    response: requests.Response = self._send_with_retry(\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/streams/http/http_client.py\", line 228, in _send_with_retry\n    response = backoff_handler(rate_limit_backoff_handler(user_backoff_handler))(request, request_kwargs, log_formatter=log_formatter, exit_on_rate_limit=exit_on_rate_limit)  # type: ignore # mypy can't infer that backoff_handler wraps _send\n  File \"/usr/local/lib/python3.10/site-packages/backoff/_sync.py\", line 105, in retry\n    ret = target(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/backoff/_sync.py\", line 105, in retry\n    ret = target(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/backoff/_sync.py\", line 105, in retry\n    ret = target(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/streams/http/http_client.py\", line 334, in _send\n    raise UserDefinedBackoffException(\nairbyte_cdk.sources.streams.http.exceptions.UserDefinedBackoffException: Rate limit exceeded. Retrying with backoff strategy."
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "Marking stream accounts as STOPPED"
+        }
+    }
+{
+        "type": "TRACE",
+        "trace": {
+            "type": "STREAM_STATUS",
+            "emitted_at": 1757011839699.873,
+            "stream_status": {
+                "stream_descriptor": {
+                    "name": "accounts",
+                    "namespace": null
+                },
+                "status": "INCOMPLETE",
+                "reasons": null
+            }
+        }
+    }
+{
+        "type": "TRACE",
+        "trace": {
+            "type": "ERROR",
+            "emitted_at": 1757011839701.561,
+            "error": {
+                "message": "Something went wrong in the connector. See the logs for more details.",
+                "internal_message": "Rate limit exceeded. Retrying with backoff strategy.",
+                "stack_trace": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/abstract_source.py\", line 133, in read\n    yield from self._read_stream(\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/abstract_source.py\", line 239, in _read_stream\n    for record_data_or_message in record_iterator:\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/streams/core.py\", line 192, in read\n    for record_data_or_message in records:\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/declarative_stream.py\", line 136, in read_records\n    yield from self.retriever.read_records(self.get_json_schema(), stream_slice)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/retrievers/simple_retriever.py\", line 370, in read_records\n    yield from self._read_single_page(record_generator, stream_state, _slice)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/retrievers/simple_retriever.py\", line 317, in _read_single_page\n    response = self._fetch_next_page(stream_state, stream_slice)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/retrievers/simple_retriever.py\", line 273, in _fetch_next_page\n    return self.requester.send_request(\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/requesters/http_requester.py\", line 305, in send_request\n    request, response = self._http_client.send_request(\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/streams/http/http_client.py\", line 382, in send_request\n    response: requests.Response = self._send_with_retry(\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/streams/http/http_client.py\", line 228, in _send_with_retry\n    response = backoff_handler(rate_limit_backoff_handler(user_backoff_handler))(request, request_kwargs, log_formatter=log_formatter, exit_on_rate_limit=exit_on_rate_limit)  # type: ignore # mypy can't infer that backoff_handler wraps _send\n  File \"/usr/local/lib/python3.10/site-packages/backoff/_sync.py\", line 105, in retry\n    ret = target(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/backoff/_sync.py\", line 105, in retry\n    ret = target(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/backoff/_sync.py\", line 105, in retry\n    ret = target(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/streams/http/http_client.py\", line 334, in _send\n    raise UserDefinedBackoffException(\nairbyte_cdk.sources.streams.http.exceptions.UserDefinedBackoffException: Rate limit exceeded. Retrying with backoff strategy.\n",
+                "failure_type": "system_error",
+                "stream_descriptor": {
+                    "name": "accounts"
+                }
+            }
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "Finished syncing accounts"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "SourceLocalYaml runtimes:\nSyncing stream accounts 0:02:38.730629"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "INFO",
+            "message": "During the sync, the following streams did not sync successfully: accounts: AirbyteTracedException('Rate limit exceeded. Retrying with backoff strategy.')"
+        }
+    }
+{
+        "type": "LOG",
+        "log": {
+            "level": "FATAL",
+            "message": "None\nTraceback (most recent call last):\n  File \"/airbyte/integration_code/main.py\", line 8, in <module>\n    run()\n  File \"/airbyte/integration_code/source_declarative_manifest/run.py\", line 94, in run\n    handle_command(args)\n  File \"/airbyte/integration_code/source_declarative_manifest/run.py\", line 47, in handle_command\n    handle_local_manifest_command(args)\n  File \"/airbyte/integration_code/source_declarative_manifest/run.py\", line 54, in handle_local_manifest_command\n    launch(source, args)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/entrypoint.py\", line 234, in launch\n    for message in source_entrypoint.run(parsed_args):\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/entrypoint.py\", line 122, in run\n    yield from map(AirbyteEntrypoint.airbyte_message_to_string, self.read(source_spec, config, config_catalog, state))\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/entrypoint.py\", line 164, in read\n    for message in self.source.read(self.logger, config, catalog, state):\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/manifest_declarative_source.py\", line 165, in read\n    yield from super().read(logger, config, catalog, state)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/abstract_source.py\", line 186, in read\n    raise AirbyteTracedException(message=error_message, failure_type=FailureType.config_error)\nairbyte_cdk.utils.traced_exception.AirbyteTracedException: None"
+        }
+    }
+{
+        "type": "TRACE",
+        "trace": {
+            "type": "ERROR",
+            "emitted_at": 1757011839714.725,
+            "error": {
+                "message": "During the sync, the following streams did not sync successfully: accounts: AirbyteTracedException('Rate limit exceeded. Retrying with backoff strategy.')",
+                "internal_message": null,
+                "stack_trace": "Traceback (most recent call last):\n  File \"/airbyte/integration_code/main.py\", line 8, in <module>\n    run()\n  File \"/airbyte/integration_code/source_declarative_manifest/run.py\", line 94, in run\n    handle_command(args)\n  File \"/airbyte/integration_code/source_declarative_manifest/run.py\", line 47, in handle_command\n    handle_local_manifest_command(args)\n  File \"/airbyte/integration_code/source_declarative_manifest/run.py\", line 54, in handle_local_manifest_command\n    launch(source, args)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/entrypoint.py\", line 234, in launch\n    for message in source_entrypoint.run(parsed_args):\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/entrypoint.py\", line 122, in run\n    yield from map(AirbyteEntrypoint.airbyte_message_to_string, self.read(source_spec, config, config_catalog, state))\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/entrypoint.py\", line 164, in read\n    for message in self.source.read(self.logger, config, catalog, state):\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/declarative/manifest_declarative_source.py\", line 165, in read\n    yield from super().read(logger, config, catalog, state)\n  File \"/usr/local/lib/python3.10/site-packages/airbyte_cdk/sources/abstract_source.py\", line 186, in read\n    raise AirbyteTracedException(message=error_message, failure_type=FailureType.config_error)\nairbyte_cdk.utils.traced_exception.AirbyteTracedException: None\n",
+                "failure_type": "config_error",
+                "stream_descriptor": null
+            }
+        }
+    }

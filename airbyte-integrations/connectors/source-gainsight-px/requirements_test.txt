@@ -1,0 +1,2 @@
+# Requirements for the Gainsight PX API test script
+requests>=2.28.0
