@@ -40,7 +40,7 @@ Then run any of the standard source connector commands:
 docker run --rm airbyte/source-gainsight-px:dev spec
 docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-gainsight-px:dev check --config /secrets/config.json
 docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-gainsight-px:dev discover --config /secrets/config.json
-docker run --rm -v /secrets:/secrets -v /integration_tests:/integration_tests airbyte/source-gainsight-px:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
+docker run --rm -v "$(pwd)/secrets:/secrets" -v "$(pwd)/integration_tests:/integration_tests" airbyte/source-gainsight-px:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
 ```
 
 ### Running the CI test suite
@@ -54,10 +54,11 @@ airbyte-ci connectors --name=source-gainsight-px test
 ## Publishing a new version of the connector
 
 If you want to contribute changes to `source-gainsight-px`, here's how you can do that:
+
 1. Make your changes locally, or load the connector's manifest into Connector Builder and make changes there.
 2. Make sure your changes are passing our test suite with `airbyte-ci connectors --name=source-gainsight-px test`
 3. Bump the connector version (please follow [semantic versioning for connectors](https://docs.airbyte.com/contributing-to-airbyte/resources/pull-requests-handbook/#semantic-versioning-for-connectors)):
-    - bump the `dockerImageTag` value in in `metadata.yaml`
+   - bump the `dockerImageTag` value in in `metadata.yaml`
 4. Make sure the connector documentation and its changelog is up to date (`docs/integrations/sources/gainsight-px.md`).
 5. Create a Pull Request: use [our PR naming conventions](https://docs.airbyte.com/contributing-to-airbyte/resources/pull-requests-handbook/#pull-request-title-convention).
 6. Pat yourself on the back for being an awesome contributor.
