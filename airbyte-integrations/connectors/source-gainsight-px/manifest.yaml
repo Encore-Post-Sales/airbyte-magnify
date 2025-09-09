@@ -926,20 +926,6 @@ definitions:
                   type:
                     - "null"
                     - string
-                coordinates:
-                  type:
-                    - "null"
-                    - object
-                  additionalProperties: true
-                  properties:
-                    latitude:
-                      type:
-                        - "null"
-                        - number
-                    longitude:
-                      type:
-                        - "null"
-                        - number
                 stateName:
                   type:
                     - "null"
@@ -3104,20 +3090,6 @@ streams:
                 type:
                   - "null"
                   - string
-              coordinates:
-                type:
-                  - "null"
-                  - object
-                additionalProperties: true
-                properties:
-                  latitude:
-                    type:
-                      - "null"
-                      - number
-                  longitude:
-                    type:
-                      - "null"
-                      - number
               stateName:
                 type:
                   - "null"
@@ -5245,20 +5217,6 @@ schemas:
             type:
               - "null"
               - string
-          coordinates:
-            type:
-              - "null"
-              - object
-            additionalProperties: true
-            properties:
-              latitude:
-                type:
-                  - "null"
-                  - number
-              longitude:
-                type:
-                  - "null"
-                  - number
           stateName:
             type:
               - "null"
