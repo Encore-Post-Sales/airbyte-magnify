@@ -95,6 +95,24 @@ definitions:
       cursor_value: "{{ response.scrollId }}"
       stop_condition: "{{ response.users | length < 1000 }}"
 
+  # Articles-specific paginator - uses page number based pagination
+  articles_paginator:
+    type: DefaultPaginator
+    page_token_option:
+      type: RequestOption
+      inject_into: request_parameter
+      field_name: pageNumber
+    page_size_option:
+      type: RequestOption
+      inject_into: request_parameter
+      field_name: pageSize
+    pagination_strategy:
+      type: PageIncrement
+      page_size: 200
+      start_from_page: 0
+      inject_on_first_request: true
+      stop_condition: "{{ response.isLastPage == true }}"
+
   streams:
     accounts:
       type: DeclarativeStream
@@ -144,6 +162,29 @@ definitions:
         type: InlineSchemaLoader
         schema:
           $ref: "#/schemas/users"
+    articles:
+      type: DeclarativeStream
+      name: articles
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /articles
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - articleExternalViewList
+        paginator:
+          $ref: "#/definitions/articles_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/articles"
 
 spec:
   type: Spec
@@ -177,6 +218,7 @@ spec:
 streams:
   - $ref: "#/definitions/streams/accounts"
   - $ref: "#/definitions/streams/users"
+  - $ref: "#/definitions/streams/articles"
 
 schemas:
   accounts:
@@ -605,3 +647,101 @@ schemas:
           - object
         additionalProperties: true
     title: Users Schema
+  articles:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      articleKCs:
+        type:
+          - "null"
+          - array
+        items:
+          type: object
+          properties:
+            kcId:
+              type:
+                - "null"
+                - string
+            kcName:
+              type:
+                - "null"
+                - string
+      articleName:
+        type:
+          - "null"
+          - string
+      author:
+        type:
+          - "null"
+          - string
+      createdDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      defaultLanguage:
+        type:
+          - "null"
+          - string
+      id:
+        type:
+          - "null"
+          - string
+      languages:
+        type:
+          - "null"
+          - array
+        items:
+          type: object
+          properties:
+            languageCode:
+              type:
+                - "null"
+                - string
+            translated:
+              type:
+                - "null"
+                - boolean
+      modifiedBy:
+        type:
+          - "null"
+          - object
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+          name:
+            type:
+              - "null"
+              - string
+      modifiedDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      productId:
+        type:
+          - "null"
+          - string
+      productName:
+        type:
+          - "null"
+          - string
+      releaseDate:
+        type:
+          - "null"
+          - string
+        format: date-time
+      translationState:
+        type:
+          - "null"
+          - string
+      viewType:
+        type:
+          - "null"
+          - string
+    title: Articles Schema
