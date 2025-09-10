@@ -2279,6 +2279,7 @@ streams:
               - "null"
               - string
         title: Session Events Schema
+
 spec:
   type: Spec
   connection_specification:
@@ -2307,6 +2308,7 @@ spec:
         format: date-time
         order: 1
     additionalProperties: true
+
 metadata:
   autoImportSchema:
     accounts: true
@@ -2325,6 +2327,7 @@ metadata:
     page_view_events: true
     session_events: true
     sessions: true
+
 schemas:
   accounts:
     type:

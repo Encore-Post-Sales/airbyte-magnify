@@ -68,6 +68,33 @@ definitions:
     error_handler: "#/definitions/base_error_handler"
     api_budget: "#/definitions/api_budget"
 
+  # Base paginator for scroll-based pagination
+  scroll_paginator:
+    type: DefaultPaginator
+    page_token_option:
+      type: RequestOption
+      inject_into: request_parameter
+      field_name: scrollId
+    pagination_strategy:
+      type: CursorPagination
+      cursor_value: "{{ response.scrollId }}"
+
+  # Accounts-specific paginator
+  accounts_paginator:
+    $ref: "#/definitions/scroll_paginator"
+    pagination_strategy:
+      type: CursorPagination
+      cursor_value: "{{ response.scrollId }}"
+      stop_condition: "{{ response.accounts | length < 1000 }}"
+
+  # Users-specific paginator
+  users_paginator:
+    $ref: "#/definitions/scroll_paginator"
+    pagination_strategy:
+      type: CursorPagination
+      cursor_value: "{{ response.scrollId }}"
+      stop_condition: "{{ response.users | length < 1000 }}"
+
   streams:
     accounts:
       type: DeclarativeStream
@@ -88,15 +115,35 @@ definitions:
             field_path:
               - accounts
         paginator:
-          type: DefaultPaginator
-          page_token_option:
-            type: RequestOption
-            inject_into: request_parameter
-            field_name: scrollId
-          pagination_strategy:
-            type: CursorPagination
-            cursor_value: "{{ response.scrollId }}"
-            stop_condition: "{{ response.accounts | length < 1000 }}"
+          $ref: "#/definitions/accounts_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/accounts"
+    users:
+      type: DeclarativeStream
+      name: users
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /users
+          request_parameters:
+            pageSize: "1000"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - users
+        paginator:
+          $ref: "#/definitions/users_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/users"
 
 spec:
   type: Spec
@@ -129,3 +176,432 @@ spec:
 
 streams:
   - $ref: "#/definitions/streams/accounts"
+  - $ref: "#/definitions/streams/users"
+
+schemas:
+  accounts:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      createDate:
+        type:
+          - "null"
+          - number
+      customAttributes:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      dunsNumber:
+        type:
+          - "null"
+          - string
+      id:
+        type:
+          - "null"
+          - string
+      industry:
+        type:
+          - "null"
+          - string
+      lastModifiedDate:
+        type:
+          - "null"
+          - number
+      lastSeenDate:
+        type:
+          - "null"
+          - number
+      location:
+        type:
+          - "null"
+          - object
+        properties:
+          countryName:
+            type:
+              - "null"
+              - string
+          countryCode:
+            type:
+              - "null"
+              - string
+          stateName:
+            type:
+              - "null"
+              - string
+          stateCode:
+            type:
+              - "null"
+              - string
+          city:
+            type:
+              - "null"
+              - string
+          street:
+            type:
+              - "null"
+              - string
+          postalCode:
+            type:
+              - "null"
+              - string
+          continent:
+            type:
+              - "null"
+              - string
+          regionName:
+            type:
+              - "null"
+              - string
+          timeZone:
+            type:
+              - "null"
+              - string
+          coordinates:
+            type:
+              - "null"
+              - object
+            properties:
+              latitude:
+                type:
+                  - "null"
+                  - number
+              longitude:
+                type:
+                  - "null"
+                  - number
+      naicsCode:
+        type:
+          - "null"
+          - string
+      name:
+        type:
+          - "null"
+          - string
+      numberOfEmployees:
+        type:
+          - "null"
+          - number
+      numberOfUsers:
+        type:
+          - "null"
+          - number
+      parentGroupId:
+        type:
+          - "null"
+          - string
+      plan:
+        type:
+          - "null"
+          - string
+      propertyKeys:
+        type:
+          - "null"
+          - array
+      sfdcId:
+        type:
+          - "null"
+          - string
+      sicCode:
+        type:
+          - "null"
+          - string
+      trackedSubscriptionId:
+        type:
+          - "null"
+          - string
+      website:
+        type:
+          - "null"
+          - string
+    title: Accounts Schema
+  users:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      type:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+      accountId:
+        type:
+          - "null"
+          - string
+      aptrinsicId:
+        type:
+          - "null"
+          - string
+      createDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      email:
+        type:
+          - "null"
+          - string
+      firstName:
+        type:
+          - "null"
+          - string
+      firstVisitDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      gender:
+        type:
+          - "null"
+          - string
+        enum:
+          - MALE
+          - FEMALE
+          - OTHER
+          - EMPTY_GENDER
+      globalUnsubscribe:
+        type:
+          - "null"
+          - boolean
+      id:
+        type:
+          - "null"
+          - string
+        description: Synonym for identifyId, output only, not filterable
+      identifyId:
+        type:
+          - "null"
+          - string
+      lastInferredLocation:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        properties:
+          countryName:
+            type:
+              - "null"
+              - string
+          countryCode:
+            type:
+              - "null"
+              - string
+          coordinates:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              latitude:
+                type:
+                  - "null"
+                  - number
+              longitude:
+                type:
+                  - "null"
+                  - number
+          stateName:
+            type:
+              - "null"
+              - string
+          stateCode:
+            type:
+              - "null"
+              - string
+          city:
+            type:
+              - "null"
+              - string
+          street:
+            type:
+              - "null"
+              - string
+          postalCode:
+            type:
+              - "null"
+              - string
+          continent:
+            type:
+              - "null"
+              - string
+          regionName:
+            type:
+              - "null"
+              - string
+          timeZone:
+            type:
+              - "null"
+              - string
+      lastModifiedDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      lastName:
+        type:
+          - "null"
+          - string
+      lastSeenDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      lastVisitedUserAgentData:
+        type:
+          - "null"
+          - array
+        items:
+          propertyKey:
+            type:
+              - "null"
+              - string
+          userAgent:
+            type:
+              - "null"
+              - object
+            additionalProperties: true
+            properties:
+              browserType:
+                type:
+                  - "null"
+                  - string
+              browserVersion:
+                type:
+                  - "null"
+                  - string
+              device:
+                type:
+                  - "null"
+                  - string
+              platformType:
+                type:
+                  - "null"
+                  - string
+              platformVersion:
+                type:
+                  - "null"
+                  - string
+              rawUserAgent:
+                type:
+                  - "null"
+                  - string
+      location:
+        type:
+          - "null"
+          - object
+        properties:
+          countryName:
+            type:
+              - "null"
+              - string
+          countryCode:
+            type:
+              - "null"
+              - string
+          stateName:
+            type:
+              - "null"
+              - string
+          stateCode:
+            type:
+              - "null"
+              - string
+          city:
+            type:
+              - "null"
+              - string
+          street:
+            type:
+              - "null"
+              - string
+          postalCode:
+            type:
+              - "null"
+              - string
+          continent:
+            type:
+              - "null"
+              - string
+          regionName:
+            type:
+              - "null"
+              - string
+          timeZone:
+            type:
+              - "null"
+              - string
+          coordinates:
+            type:
+              - "null"
+              - object
+            properties:
+              latitude:
+                type:
+                  - "null"
+                  - number
+              longitude:
+                type:
+                  - "null"
+                  - number
+      numberOfVisits:
+        type:
+          - "null"
+          - integer
+        format: int32
+      phone:
+        type:
+          - "null"
+          - string
+      propertyKeys:
+        type:
+          - "null"
+          - array
+        description: Aptrinsic Tag Key, at least one is required
+        examples:
+          - - AP-XXXXXXXXXX-2
+        items:
+          type:
+            - "null"
+            - string
+      role:
+        type:
+          - "null"
+          - string
+      score:
+        type:
+          - "null"
+          - integer
+        format: int64
+      sfdcContactId:
+        type:
+          - "null"
+          - string
+      signUpDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+      subscriptionId:
+        type:
+          - "null"
+          - string
+      title:
+        type:
+          - "null"
+          - string
+      customAttributes:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+    title: Users Schema
