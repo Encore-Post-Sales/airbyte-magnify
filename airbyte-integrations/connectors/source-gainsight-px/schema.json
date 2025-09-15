@@ -1,0 +1,93 @@
+"PageViewEvent": {
+    "type": "object",
+    "required": [
+        "identifyId",
+        "propertyKey",
+        "userType"
+    ],
+    "properties": {
+        "eventId": {
+            "type": "string"
+        },
+        "identifyId": {
+            "type": "string"
+        },
+        "propertyKey": {
+            "type": "string"
+        },
+        "date": {
+            "type": "integer",
+            "format": "int64"
+        },
+        "eventType": {
+            "type": "string"
+        },
+        "sessionId": {
+            "type": "string"
+        },
+        "userType": {
+            "type": "string",
+            "enum": [
+                "LEAD",
+                "USER",
+                "VISITOR",
+                "EMPTY_USER_TYPE"
+            ]
+        },
+        "accountId": {
+            "type": "string"
+        },
+        "globalContext": {
+            "type": "object"
+        },
+        "scheme": {
+            "type": "string"
+        },
+        "host": {
+            "type": "string"
+        },
+        "path": {
+            "type": "string"
+        },
+        "queryString": {
+            "type": "string"
+        },
+        "hash": {
+            "type": "string"
+        },
+        "queryParams": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        },
+        "remoteHost": {
+            "type": "string"
+        },
+        "referrer": {
+            "type": "string"
+        },
+        "screenHeight": {
+            "type": "integer",
+            "format": "int32"
+        },
+        "screenWidth": {
+            "type": "integer",
+            "format": "int32"
+        },
+        "languages": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "pageTitle": {
+            "type": "string"
+        }
+    },
+    "title": "PageViewEvent",
+    "description": "Page Event object"
+}

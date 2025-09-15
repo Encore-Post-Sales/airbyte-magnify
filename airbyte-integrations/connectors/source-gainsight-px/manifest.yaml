@@ -1,5 +1,6 @@
 version: 4.3.0
 type: DeclarativeSource
+
 check:
   type: CheckStream
   stream_names:
@@ -95,8 +96,32 @@ definitions:
       cursor_value: "{{ response.scrollId }}"
       stop_condition: "{{ response.users | length < 1000 }}"
 
-  # Articles-specific paginator - uses page number based pagination
-  articles_paginator:
+  # Feature Match Events-specific paginator
+  feature_match_events_paginator:
+    $ref: "#/definitions/scroll_paginator"
+    pagination_strategy:
+      type: CursorPagination
+      cursor_value: "{{ response.scrollId }}"
+      stop_condition: "{{ response.featureMatchEvents | length < 1000 }}"
+
+  # Identify Events-specific paginator
+  identify_events_paginator:
+    $ref: "#/definitions/scroll_paginator"
+    pagination_strategy:
+      type: CursorPagination
+      cursor_value: "{{ response.scrollId }}"
+      stop_condition: "{{ response.identifyEvents | length < 1000 }}"
+
+  # Events specific paginator
+  events_paginator:
+    $ref: "#/definitions/scroll_paginator"
+    pagination_strategy:
+      type: CursorPagination
+      cursor_value: "{{ response.scrollId }}"
+      stop_condition: "{{ response.results | length < 1000 }}"
+
+  # Page paginator - uses page number based pagination
+  pages_paginator:
     type: DefaultPaginator
     page_token_option:
       type: RequestOption
@@ -180,11 +205,247 @@ definitions:
             field_path:
               - articleExternalViewList
         paginator:
-          $ref: "#/definitions/articles_paginator"
+          $ref: "#/definitions/pages_paginator"
       schema_loader:
         type: InlineSchemaLoader
         schema:
           $ref: "#/schemas/articles"
+    engagement:
+      type: DeclarativeStream
+      name: engagement
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /engagement
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - engagements
+        paginator:
+          $ref: "#/definitions/pages_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/engagement"
+    feature:
+      type: DeclarativeStream
+      name: feature
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /feature
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - features
+        paginator:
+          $ref: "#/definitions/pages_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/feature"
+    segment:
+      type: DeclarativeStream
+      name: segment
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /segment
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - segments
+        paginator:
+          $ref: "#/definitions/pages_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/segment"
+    kcbot:
+      type: DeclarativeStream
+      name: kcbot
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /kcbot
+          http_method: GET
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - kcList
+        paginator:
+          $ref: "#/definitions/pages_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/kcbot"
+    email_events:
+      type: DeclarativeStream
+      name: email_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /events/email
+          request_parameters:
+            pageSize: "1000"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - results
+        paginator:
+          $ref: "#/definitions/events_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/email_events"
+    engagement_view_events:
+      type: DeclarativeStream
+      name: engagement_view_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /events/engagementView
+          request_parameters:
+            pageSize: "1000"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - results
+        paginator:
+          $ref: "#/definitions/events_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/engagement_view_events"
+    feature_match_events:
+      type: DeclarativeStream
+      name: feature_match_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /events/feature_match
+          request_parameters:
+            pageSize: "1000"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - featureMatchEvents
+        paginator:
+          $ref: "#/definitions/feature_match_events_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/feature_match_events"
+    form_submit_events:
+      type: DeclarativeStream
+      name: form_submit_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /events/formSubmit
+          request_parameters:
+            pageSize: "1000"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - results
+        paginator:
+          $ref: "#/definitions/events_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/form_submit_events"
+    identify_events:
+      type: DeclarativeStream
+      name: identify_events
+      primary_key:
+        - id
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /events/identify
+          request_parameters:
+            pageSize: "1000"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - identifyEvents
+        paginator:
+          $ref: "#/definitions/identify_events_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/identify_events"
+    page_view_events:
+      type: DeclarativeStream
+      name: page_view_events
+      primary_key:
+        - eventId
+      retriever:
+        type: SimpleRetriever
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: /events/pageView
+          request_parameters:
+            pageSize: "1000"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - results
+        paginator:
+          $ref: "#/definitions/events_paginator"
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/page_view_events"
 
 spec:
   type: Spec
@@ -219,6 +480,16 @@ streams:
   - $ref: "#/definitions/streams/accounts"
   - $ref: "#/definitions/streams/users"
   - $ref: "#/definitions/streams/articles"
+  - $ref: "#/definitions/streams/engagement"
+  - $ref: "#/definitions/streams/feature"
+  - $ref: "#/definitions/streams/segment"
+  - $ref: "#/definitions/streams/kcbot"
+  - $ref: "#/definitions/streams/email_events"
+  - $ref: "#/definitions/streams/engagement_view_events"
+  - $ref: "#/definitions/streams/feature_match_events"
+  - $ref: "#/definitions/streams/form_submit_events"
+  - $ref: "#/definitions/streams/identify_events"
+  - $ref: "#/definitions/streams/page_view_events"
 
 schemas:
   accounts:
@@ -745,3 +1016,1080 @@ schemas:
           - "null"
           - string
     title: Articles Schema
+  engagement:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      defaultLanguage:
+        type:
+          - "null"
+          - string
+      id:
+        type:
+          - "null"
+          - string
+      languages:
+        type:
+          - "null"
+          - array
+        items:
+          type: object
+          properties:
+            languageCode:
+              type:
+                - "null"
+                - string
+            translated:
+              type:
+                - "null"
+                - boolean
+      translationState:
+        type:
+          - "null"
+          - string
+      name:
+        type:
+          - "null"
+          - string
+      description:
+        type:
+          - "null"
+          - string
+      type:
+        type:
+          - "null"
+          - string
+        enum:
+          - EMAIL
+          - IN_APP_DIALOG
+          - IN_APP_CAROUSEL
+          - IN_APP_GUIDE
+          - IN_APP_NOTIFICATION
+          - OUT_BOUND_EMAIL
+          - IN_APP_NPS_SURVEY
+          - IN_APP_CES_SURVEY
+          - IN_APP_RATING_SURVEY
+          - IN_APP_BOOLEAN_SURVEY
+          - IN_APP_MULTIPLE_QUESTION_SURVEY
+      state:
+        type:
+          - "null"
+          - string
+        enum:
+          - IN_PROGRESS
+          - STARTED
+          - PAUSED
+          - FAILED
+          - EDITING
+          - COMPLETED
+      propertyKeys:
+        type:
+          - "null"
+          - array
+        description: "Aptrinsic Tag Key, at least one is required"
+        examples:
+          - - "AP-XXXXXXXXXX-2"
+        items:
+          type:
+            - "null"
+            - string
+      envs:
+        type:
+          - "null"
+          - array
+        description: "A list of environments"
+        examples:
+          - - "Production"
+        items:
+          type:
+            - "null"
+            - string
+    title: Engagement Schema
+  feature:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+        description: Unique identifier for the feature
+      name:
+        type:
+          - "null"
+          - string
+        description: Name of the feature
+      type:
+        type:
+          - "null"
+          - string
+        enum:
+          - FEATURE
+          - MODULE
+        description: Type of the feature
+      parentFeatureId:
+        type:
+          - "null"
+          - string
+        description: ID of the parent feature if this is a sub-feature
+      propertyKey:
+        type:
+          - "null"
+          - string
+        description: Property key associated with the feature
+      status:
+        type:
+          - "null"
+          - string
+        enum:
+          - ACTIVATED
+          - DELETED
+        description: Current status of the feature
+      featureLabels:
+        type:
+          - "null"
+          - array
+        description: Array of labels associated with the feature
+        items:
+          type:
+            - "null"
+            - object
+          properties:
+            id:
+              type:
+                - "null"
+                - string
+              description: Unique identifier for the feature label
+            name:
+              type:
+                - "null"
+                - string
+              description: Name of the feature label
+            color:
+              type:
+                - "null"
+                - string
+              description: Color associated with the feature label
+    title: Feature Schema
+  segment:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+      name:
+        type:
+          - "null"
+          - string
+    title: Segment Schema
+  kcbot:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      id:
+        type:
+          - "null"
+          - string
+        description: Unique identifier for the knowledge center
+      name:
+        type:
+          - "null"
+          - string
+        description: Name of the knowledge center
+      description:
+        type:
+          - "null"
+          - string
+        description: Description of the knowledge center
+      status:
+        type:
+          - "null"
+          - string
+        description: Current status of the knowledge center
+      priority:
+        type:
+          - "null"
+          - integer
+        format: int32
+        description: Priority level of the knowledge center
+      productId:
+        type:
+          - "null"
+          - string
+        description: ID of the associated product
+      productName:
+        type:
+          - "null"
+          - string
+        description: Name of the associated product
+      defaultLanguage:
+        type:
+          - "null"
+          - string
+        description: Default language for the knowledge center
+      createdDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: Creation date timestamp
+      modifiedDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: Last modification date timestamp
+      createdBy:
+        type:
+          - "null"
+          - object
+        description: User who created the knowledge center
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+            description: User ID
+          name:
+            type:
+              - "null"
+              - string
+            description: User name
+      modifiedBy:
+        type:
+          - "null"
+          - object
+        description: User who last modified the knowledge center
+        properties:
+          id:
+            type:
+              - "null"
+              - string
+            description: User ID
+          name:
+            type:
+              - "null"
+              - string
+            description: User name
+      environments:
+        type:
+          - "null"
+          - array
+        description: List of environments where the knowledge center is available
+        items:
+          type:
+            - "null"
+            - string
+      languages:
+        type:
+          - "null"
+          - array
+        description: List of supported languages and their translation status
+        items:
+          type:
+            - "null"
+            - object
+          properties:
+            languageCode:
+              type:
+                - "null"
+                - string
+              description: Language code (e.g., en, fr, es)
+            translated:
+              type:
+                - "null"
+                - boolean
+              description: Whether content is translated for this language
+    title: KnowledgeCenter Schema
+  email_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+        description: Unique identifier for the email event
+      identifyId:
+        type:
+          - "null"
+          - string
+        description: User identifier (required field)
+      propertyKey:
+        type:
+          - "null"
+          - string
+        description: Property key associated with the event (required field)
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: Timestamp of the email event
+      eventType:
+        type:
+          - "null"
+          - string
+        description: Type of the email event
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+        description: Type of user (required field)
+      globalContext:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        description: Global context object for the event
+      engagementId:
+        type:
+          - "null"
+          - string
+        description: ID of the associated engagement
+      email:
+        type:
+          - "null"
+          - string
+        description: Email address associated with the event
+      emailTrackType:
+        type:
+          - "null"
+          - string
+        enum:
+          - EMPTY_EMAIL_TRACK_TYPE
+          - EMAIL_TRACK_BOUNCE
+          - EMAIL_TRACK_DEFERRED
+          - EMAIL_TRACK_DELIVERED
+          - EMAIL_TRACK_DROPPED
+          - EMAIL_TRACK_PROCESSED
+          - EMAIL_TRACK_OPEN
+          - EMAIL_TRACK_CLICK
+          - EMAIL_TRACK_UNSUBSCRIBE
+        description: Type of email tracking event
+      status:
+        type:
+          - "null"
+          - string
+        description: Status of the email event
+      reason:
+        type:
+          - "null"
+          - string
+        description: Reason for the email event status
+      bounceType:
+        type:
+          - "null"
+          - string
+        enum:
+          - EMPTY_BOUNCE_TYPE
+          - DELIVER_BOUNCE
+          - DELIVER_BLOCKED
+          - DELIVER_EXIPERED
+        description: Type of bounce if applicable
+      mtaResponse:
+        type:
+          - "null"
+          - string
+        description: MTA (Mail Transfer Agent) response
+      attempt:
+        type:
+          - "null"
+          - string
+        description: Delivery attempt information
+      linkIndex:
+        type:
+          - "null"
+          - integer
+        format: int32
+        description: Index of the clicked link
+      linkType:
+        type:
+          - "null"
+          - string
+        enum:
+          - EMPTY_LINK_TYPE
+          - HTML_LINK_TYPE
+          - HEADER_LINK_TYPE
+          - TEXT_LINK_TYPE
+        description: Type of link that was clicked
+      linkUrl:
+        type:
+          - "null"
+          - string
+        description: URL of the clicked link
+      inferredLocation:
+        type:
+          - "null"
+          - object
+        description: Inferred location of the user when the event occurred
+        properties:
+          countryName:
+            type:
+              - "null"
+              - string
+            description: Name of the country
+            examples:
+              - "United States"
+          countryCode:
+            type:
+              - "null"
+              - string
+            description: Country code (ISO 3166)
+            examples:
+              - "USA"
+          stateName:
+            type:
+              - "null"
+              - string
+            description: Name of the state/province
+            examples:
+              - "California"
+          stateCode:
+            type:
+              - "null"
+              - string
+            description: State/province code (ISO 3166)
+            examples:
+              - "CA"
+          city:
+            type:
+              - "null"
+              - string
+            description: Name of the city
+            examples:
+              - "San Mateo"
+          street:
+            type:
+              - "null"
+              - string
+            description: Street address
+            examples:
+              - "101 Broadway"
+          postalCode:
+            type:
+              - "null"
+              - string
+            description: Postal/ZIP code
+            examples:
+              - "94010"
+          continent:
+            type:
+              - "null"
+              - string
+            description: Continent code (ISO 3166)
+            examples:
+              - "NA"
+          regionName:
+            type:
+              - "null"
+              - string
+            description: Region name (ISO 3166-2)
+          timeZone:
+            type:
+              - "null"
+              - string
+            description: Time zone identifier
+          coordinates:
+            type:
+              - "null"
+              - object
+            description: Geographic coordinates
+            properties:
+              latitude:
+                type:
+                  - "null"
+                  - number
+                format: double
+                description: Latitude coordinate
+                examples:
+                  - 37.567147
+              longitude:
+                type:
+                  - "null"
+                  - number
+                format: double
+                description: Longitude coordinate
+                examples:
+                  - -122.324211
+    title: EmailEvents Schema
+  engagement_view_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+        description: Unique identifier for the engagement view event
+      identifyId:
+        type:
+          - "null"
+          - string
+        description: User identifier (required field)
+      propertyKey:
+        type:
+          - "null"
+          - string
+        description: Property key associated with the event (required field)
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: Timestamp of the engagement view event
+      eventType:
+        type:
+          - "null"
+          - string
+        description: Type of the engagement view event
+      sessionId:
+        type:
+          - "null"
+          - string
+        description: Session identifier for the user interaction
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+        description: Type of user (required field)
+      accountId:
+        type:
+          - "null"
+          - string
+        description: Account identifier associated with the user
+      globalContext:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        description: Global context object for the event
+      engagementId:
+        type:
+          - "null"
+          - string
+        description: ID of the associated engagement
+      engagementTrackType:
+        type:
+          - "null"
+          - string
+        enum:
+          - ENGAGEMENT_VIEW
+          - ENGAGEMENT_CLICK
+        description: Type of engagement tracking event
+      contentId:
+        type:
+          - "null"
+          - string
+        description: ID of the content being viewed
+      contentType:
+        type:
+          - "null"
+          - string
+        enum:
+          - IN_APP_DIALOG
+          - IN_APP_GUIDE
+          - IN_APP_CAROUSEL
+          - IN_APP_SURVEY_NPS
+          - IN_APP_SURVEY_CES
+          - IN_APP_SURVEY_BOOLEAN
+          - IN_APP_SURVEY_RATING
+        description: Type of content being viewed
+      executionDate:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys
+      executionId:
+        type:
+          - "null"
+          - string
+        description: Will be the same on all events related to a single engagement view, e.g. separate answers for multi-question surveys
+      viewEventId:
+        type:
+          - "null"
+          - string
+        description: Identifier for the view event
+      carouselState:
+        type:
+          - "null"
+          - string
+        enum:
+          - VIEWED
+          - COMPLETED
+        description: State of the carousel interaction
+      slideId:
+        type:
+          - "null"
+          - string
+        description: ID of the carousel slide
+      sequenceNumber:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: Sequence number for ordered interactions
+      linkUrl:
+        type:
+          - "null"
+          - string
+        description: URL of any clicked link
+      guideState:
+        type:
+          - "null"
+          - string
+        enum:
+          - VIEWED
+          - COMPLETED
+        description: State of the guide interaction
+      stepId:
+        type:
+          - "null"
+          - string
+        description: ID of the guide step
+      surveyState:
+        type:
+          - "null"
+          - string
+        enum:
+          - VIEWED
+          - COMPLETED
+        description: State of the survey interaction
+      contactMeAllowed:
+        type:
+          - "null"
+          - boolean
+        description: Whether the user allowed contact permissions
+      score:
+        type:
+          - "null"
+          - integer
+        format: int32
+        description: Score given in survey responses
+      comment:
+        type:
+          - "null"
+          - string
+        description: Comment provided in survey responses
+      questionType:
+        type:
+          - "null"
+          - string
+        description: Type of survey question
+      selectionIds:
+        type:
+          - "null"
+          - array
+        description: Array of selected option IDs in survey responses
+        items:
+          type:
+            - "null"
+            - string
+      path:
+        type:
+          - "null"
+          - string
+        description: Path or URL where the engagement occurred
+    title: EngagementViewEvents Schema
+  feature_match_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+        description: Unique identifier for the feature match event
+      identifyId:
+        type:
+          - "null"
+          - string
+        description: User identifier (required field)
+      propertyKey:
+        type:
+          - "null"
+          - string
+        description: Property key associated with the event (required field)
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: Timestamp of the feature match event
+      eventType:
+        type:
+          - "null"
+          - string
+        description: Type of the feature match event
+      sessionId:
+        type:
+          - "null"
+          - string
+        description: Session identifier for the user interaction
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+        description: Type of user (required field)
+      accountId:
+        type:
+          - "null"
+          - string
+        description: Account identifier associated with the user
+      globalContext:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        description: Global context object for the event
+      featureId:
+        type:
+          - "null"
+          - string
+        description: ID of the feature that was matched
+    title: FeatureMatchEvents Schema
+  form_submit_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+        description: Unique identifier for the form submit event
+      identifyId:
+        type:
+          - "null"
+          - string
+        description: User identifier (required field)
+      propertyKey:
+        type:
+          - "null"
+          - string
+        description: Property key associated with the event (required field)
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+        description: Timestamp of the form submit event
+      eventType:
+        type:
+          - "null"
+          - string
+        description: Type of the form submit event
+      sessionId:
+        type:
+          - "null"
+          - string
+        description: Session identifier for the user interaction
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+        description: Type of user (required field)
+      accountId:
+        type:
+          - "null"
+          - string
+        description: Account identifier associated with the user
+      globalContext:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+        description: Global context object for the event
+      scheme:
+        type:
+          - "null"
+          - string
+        description: URL scheme (http/https)
+      host:
+        type:
+          - "null"
+          - string
+        description: Host domain where the form was submitted
+      path:
+        type:
+          - "null"
+          - string
+        description: URL path where the form was submitted
+      queryString:
+        type:
+          - "null"
+          - string
+        description: Query string parameters from the URL
+      hash:
+        type:
+          - "null"
+          - string
+        description: URL hash fragment
+      queryParams:
+        type:
+          - "null"
+          - object
+        additionalProperties:
+          type: array
+          items:
+            type:
+              - "null"
+              - string
+        description: Parsed query parameters as key-value pairs
+      remoteHost:
+        type:
+          - "null"
+          - string
+        description: Remote host information
+      referrer:
+        type:
+          - "null"
+          - string
+        description: Referrer URL that led to the form submission
+      screenHeight:
+        type:
+          - "null"
+          - integer
+        format: int32
+        description: Screen height of the user's display
+      screenWidth:
+        type:
+          - "null"
+          - integer
+        format: int32
+        description: Screen width of the user's display
+      languages:
+        type:
+          - "null"
+          - array
+        items:
+          type:
+            - "null"
+            - string
+        description: Array of user's preferred languages
+      pageTitle:
+        type:
+          - "null"
+          - string
+        description: Title of the page where the form was submitted
+      formData:
+        type:
+          - "null"
+          - object
+        additionalProperties:
+          type:
+            - "null"
+            - string
+        description: Form data submitted by the user as key-value pairs
+    title: FormSubmitEvents Schema
+  identify_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+      identifyId:
+        type:
+          - "null"
+          - string
+      propertyKey:
+        type:
+          - "null"
+          - string
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+      eventType:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+      accountId:
+        type:
+          - "null"
+          - string
+      globalContext:
+        type:
+          - "null"
+          - object
+        additionalProperties: true
+      email:
+        type:
+          - "null"
+          - string
+    title: Identify Events Schema
+  page_view_events:
+    type:
+      - "null"
+      - object
+    $schema: http://json-schema.org/draft-07/schema#
+    additionalProperties: true
+    properties:
+      eventId:
+        type:
+          - "null"
+          - string
+      identifyId:
+        type:
+          - "null"
+          - string
+      propertyKey:
+        type:
+          - "null"
+          - string
+      date:
+        type:
+          - "null"
+          - integer
+        format: int64
+      eventType:
+        type:
+          - "null"
+          - string
+      sessionId:
+        type:
+          - "null"
+          - string
+      userType:
+        type:
+          - "null"
+          - string
+        enum:
+          - LEAD
+          - USER
+          - VISITOR
+          - EMPTY_USER_TYPE
+      accountId:
+        type:
+          - "null"
+          - string
+      globalContext:
+        type:
+          - "null"
+          - object
+      scheme:
+        type:
+          - "null"
+          - string
+      host:
+        type:
+          - "null"
+          - string
+      path:
+        type:
+          - "null"
+          - string
+      queryString:
+        type:
+          - "null"
+          - string
+      hash:
+        type:
+          - "null"
+          - string
+      queryParams:
+        type:
+          - "null"
+          - object
+        additionalProperties:
+          type: array
+          items:
+            type:
+              - "null"
+              - string
+      remoteHost:
+        type:
+          - "null"
+          - string
+      referrer:
+        type:
+          - "null"
+          - string
+      screenHeight:
+        type:
+          - "null"
+          - integer
+        format: int32
+      screenWidth:
+        type:
+          - "null"
+          - integer
+        format: int32
+      languages:
+        type:
+          - "null"
+          - array
+        items:
+          type:
+            - "null"
+            - string
+      pageTitle:
+        type:
+          - "null"
+          - string
+    title: Page View Events Schema
