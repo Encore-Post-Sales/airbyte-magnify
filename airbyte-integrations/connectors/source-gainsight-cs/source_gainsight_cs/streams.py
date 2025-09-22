@@ -34,7 +34,6 @@ class GainsightCsObjectStream(GainsightCsStream):
         "CURRENCY": ["null", "number"],
         "GSID": ["null", "string"],
         "SFDCID": ["null", "string"],
-        "DATETIME": ["null", "string"],
         "EMAIL": ["null", "string"],
         "URL": ["null", "string"],
         "RICHTEXTAREA": ["null", "string"],
@@ -42,8 +41,7 @@ class GainsightCsObjectStream(GainsightCsStream):
         "JSON": ["null", "object"],
         "JSONBOOLEAN": ["null", "boolean"],
         "JSONNUMBER": ["null", "number"],
-        "JSONSTRING": ["null", "string"],
-        "DATE": ["null", "date"]
+        "JSONSTRING": ["null", "string"]
     }
 
     def __init__(self, name: str, authenticator: GainsightCsAuthenticator, **kwargs):
@@ -66,6 +64,14 @@ class GainsightCsObjectStream(GainsightCsStream):
         for field in metadata:
             field_name = field['fieldName']
             data_type = field['dataType']
+
+            if data_type == "DATE":
+                full_schema['properties'][field_name] = {"type": ["null", "string"], "format": "date"}
+                continue
+            if data_type == "DATETIME":
+                full_schema['properties'][field_name] = {"type": ["null", "string"], "format": "date-time", "airbyte_type": "timestamp_with_timezone"}
+                continue
+
             field_type = self.gainsight_airbyte_type_map.get(data_type, ["null", "string"])
             
             if data_type not in self.gainsight_airbyte_type_map:
