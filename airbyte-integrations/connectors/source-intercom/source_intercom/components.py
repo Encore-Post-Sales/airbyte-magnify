@@ -5,7 +5,7 @@
 from dataclasses import InitVar, dataclass, field
 from functools import wraps
 from time import sleep
-from typing import Any, Iterable, List, Mapping, Optional, Union
+from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Union
 
 import requests
 from airbyte_cdk.models import SyncMode
@@ -375,7 +375,7 @@ class ErrorHandlerWithRateLimiter(DefaultErrorHandler):
     @IntercomRateLimiter.balance_rate_limit()
     def interpret_response(self, response_or_exception: Optional[Union[requests.Response, Exception]]) -> ErrorResolution:
         # Check for response.headers to define the backoff time before the next api call
-        return super().interpret_response_status(response_or_exception)
+        return super().interpret_response(response_or_exception)
 
     def get_request_params(
         self,
