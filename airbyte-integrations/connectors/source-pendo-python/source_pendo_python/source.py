@@ -49,17 +49,17 @@ class SourcePendoPython(AbstractSource):
         url = f"{self._url_base(config)}page"
         auth = SourcePendoPython._get_authenticator(config)
         try:
-            session = requests.get(url, headers={auth.auth_header: auth.token})
+            session = requests.get(url, headers=auth.get_auth_header())
             session.raise_for_status()
             return True, None
         except requests.exceptions.RequestException as e:
             return False, e
 
     def get_reports(self, config):
-        url = f"{self._url_base(config)}report"
-        auth = SourcePendoPython._get_authenticator(config)
         try:
-            session = requests.get(url, headers={auth.auth_header: auth.token})
+            url = f"{self._url_base(config)}report"
+            auth = SourcePendoPython._get_authenticator(config)
+            session = requests.get(url, headers=auth.get_auth_header())
             body = session.json()
             return [obj["id"] for obj in body]
         except requests.exceptions.RequestException as e:
