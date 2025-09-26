@@ -1,0 +1,63 @@
+{
+    "streams": [
+        {
+            "stream": {
+                "name": "client_contacts",
+                "json_schema": {
+                    "$schema": "https://json-schema.org/draft-07/schema",
+                    "type": "object",
+                    "additionalProperties": true,
+                    "properties": {
+                        "contactGuid": {
+                            "type": "string",
+                            "description": "Unique identifier for the contact"
+                        },
+                        "firstName": {
+                            "type": "string",
+                            "description": "Contact's first name"
+                        },
+                        "lastName": {
+                            "type": "string",
+                            "description": "Contact's last name"
+                        },
+                        "email": {
+                            "type": "string",
+                            "description": "Contact's email address"
+                        },
+                        "phone": {
+                            "type": "string",
+                            "description": "Contact's phone number"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "Contact's job title"
+                        },
+                        "company": {
+                            "type": "string",
+                            "description": "Contact's company"
+                        },
+                        "clientGuid": {
+                            "type": "string",
+                            "description": "Associated client GUID"
+                        },
+                        "createdDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Date when the contact was created"
+                        },
+                        "modifiedDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "description": "Date when the contact was last modified"
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh"
+                ]
+            },
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite"
+        }
+    ]
+}

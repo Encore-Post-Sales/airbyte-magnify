@@ -1,0 +1,152 @@
+version: "4.3.2"
+
+type: DeclarativeSource
+
+check:
+  type: CheckStream
+  stream_names:
+    - client_contacts
+
+definitions:
+  # Custom authenticator for CounselLink HMAC signature authentication
+  custom_authenticator:
+    type: CustomAuthenticator
+    class_name: source_counsellink.components.CounselLinkAuthenticator
+    access_key: "{{ config['access_key'] }}"
+    secret_key: "{{ config['secret_key'] }}"
+    server: "{{ config['server'] }}"
+
+  # Base requester with custom authentication
+  base_requester:
+    type: HttpRequester
+    url_base: "https://{{ config['server'] }}"
+    http_method: GET
+    authenticator:
+      $ref: "#/definitions/custom_authenticator"
+
+  # Base retriever configuration
+  base_retriever:
+    type: SimpleRetriever
+    requester:
+      $ref: "#/definitions/base_requester"
+    record_selector:
+      type: RecordSelector
+      extractor:
+        type: DpathExtractor
+        field_path: []
+    paginator:
+      type: NoPagination
+
+  # Client Contacts stream
+  client_contacts_stream:
+    type: DeclarativeStream
+    name: client_contacts
+    primary_key:
+      - contactGuid
+    retriever:
+      type: SimpleRetriever
+      requester:
+        $ref: "#/definitions/base_requester"
+        path: "/client/client-contacts"
+      record_selector:
+        type: RecordSelector
+        extractor:
+          type: DpathExtractor
+          field_path: []
+    schema_loader:
+      type: InlineSchemaLoader
+      schema:
+        type: object
+        $schema: https://json-schema.org/draft-07/schema
+        additionalProperties: true
+        properties:
+          contactGuid:
+            type: string
+            description: Unique identifier for the contact
+          firstName:
+            type: string
+            description: Contact's first name
+          lastName:
+            type: string
+            description: Contact's last name
+          email:
+            type: string
+            description: Contact's email address
+          phone:
+            type: string
+            description: Contact's phone number
+          title:
+            type: string
+            description: Contact's job title
+          company:
+            type: string
+            description: Contact's company
+          clientGuid:
+            type: string
+            description: Associated client GUID
+          createdDate:
+            type: string
+            format: date-time
+            description: Date when the contact was created
+          modifiedDate:
+            type: string
+            format: date-time
+            description: Date when the contact was last modified
+
+streams:
+  - $ref: "#/definitions/client_contacts_stream"
+
+spec:
+  type: Spec
+  connection_specification:
+    type: object
+    $schema: http://json-schema.org/draft-07/schema#
+    required:
+      - server
+      - access_key
+      - secret_key
+
+    properties:
+      server:
+        type: string
+        title: Server
+        description: CounselLink API server hostname (e.g., api-cve11.counsellink.net)
+        examples:
+          - "api-cve11.counsellink.net"
+        order: 0
+      access_key:
+        type: string
+        title: Access Key
+        description: CounselLink API access key
+        airbyte_secret: true
+        order: 1
+      secret_key:
+        type: string
+        title: Secret Key
+        description: CounselLink API secret key for HMAC signature
+        airbyte_secret: true
+        order: 2
+      start_date:
+        type: string
+        title: Start Date
+        description: Start date for data sync in ISO 8601 format
+        format: date-time
+        pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$
+        default: "2020-01-01T00:00:00Z"
+        examples:
+          - "2020-01-01T00:00:00Z"
+        order: 4
+      end_date:
+        type: string
+        title: End Date
+        description: End date for data sync in ISO 8601 format (optional - defaults to current time)
+        format: date-time
+        pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$
+        examples:
+          - "2024-12-31T23:59:59Z"
+        order: 5
+    additionalProperties: true
+
+metadata:
+  autoImportSchema:
+    client_contacts: true
