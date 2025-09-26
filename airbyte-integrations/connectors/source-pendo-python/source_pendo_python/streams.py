@@ -13,8 +13,7 @@ class PendoPythonStream(HttpStream, ABC):
     url_base = None
 
     def __init__(self, authenticator, url_base: str = "https://app.pendo.io/api/v1/", **kwargs):
-        super().__init__(**kwargs)
-        self.authenticator = authenticator
+        super().__init__(authenticator=authenticator, **kwargs)
         self.url_base = url_base
 
     def path(self, **kwargs) -> str:
