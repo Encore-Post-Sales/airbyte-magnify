@@ -1,0 +1,84 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "contactId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "recordId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "participantName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "businessName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "contactTypes": {
+            "type": [
+                "null",
+                "array"
+            ],
+            "items": {
+                "type": [
+                    "null",
+                    "string"
+                ]
+            }
+        },
+        "participantStatus": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "phone": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "email": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "isContactGroup": {
+            "type": [
+                "null",
+                "boolean"
+            ]
+        },
+        "participantRole": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "lead": {
+            "type": [
+                "null",
+                "boolean"
+            ]
+        },
+        "allowLawFirmToView": {
+            "type": [
+                "null",
+                "boolean"
+            ]
+        }
+    }
+}
