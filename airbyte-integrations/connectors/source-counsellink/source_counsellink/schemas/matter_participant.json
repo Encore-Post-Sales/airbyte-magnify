@@ -5,7 +5,7 @@
         "contactId": {
             "type": [
                 "null",
-                "string"
+                "integer"
             ]
         },
         "recordId": {
