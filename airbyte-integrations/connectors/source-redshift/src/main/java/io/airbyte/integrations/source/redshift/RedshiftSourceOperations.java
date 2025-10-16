@@ -9,10 +9,12 @@ import static io.airbyte.cdk.db.jdbc.DateTimeConverter.putJavaSQLTime;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.airbyte.cdk.db.jdbc.DateTimeConverter;
 import io.airbyte.cdk.db.jdbc.JdbcSourceOperations;
+import io.airbyte.protocol.models.JsonSchemaType;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.JDBCType;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -75,6 +77,28 @@ public class RedshiftSourceOperations extends JdbcSourceOperations {
     // LocalDate must be converted to java.sql.Date. Please see
     // https://docs.aws.amazon.com/redshift/latest/mgmt/jdbc20-data-type-mapping.html
     preparedStatement.setDate(parameterIndex, Date.valueOf(date));
+  }
+
+  @Override
+  public JsonSchemaType getAirbyteType(final JDBCType jdbcType) {
+    return switch (jdbcType) {
+      case BIT, BOOLEAN -> JsonSchemaType.BOOLEAN;
+      case REAL, FLOAT, DOUBLE, NUMERIC, DECIMAL -> JsonSchemaType.NUMBER;
+      case TINYINT, SMALLINT, INTEGER, BIGINT -> JsonSchemaType.INTEGER;
+      case CHAR, NCHAR, NVARCHAR, VARCHAR, LONGVARCHAR -> JsonSchemaType.STRING;
+      case DATE -> JsonSchemaType.STRING_DATE;
+      case TIME -> JsonSchemaType.STRING_TIME_WITHOUT_TIMEZONE;
+      case TIMESTAMP -> JsonSchemaType.STRING_TIMESTAMP_WITHOUT_TIMEZONE;
+      case TIMESTAMP_WITH_TIMEZONE -> JsonSchemaType.STRING_TIMESTAMP_WITH_TIMEZONE;
+      case TIME_WITH_TIMEZONE -> JsonSchemaType.STRING_TIME_WITH_TIMEZONE;
+      case BLOB, BINARY, VARBINARY, LONGVARBINARY -> JsonSchemaType.STRING_BASE_64;
+      case ARRAY -> JsonSchemaType.ARRAY;
+      case STRUCT -> JsonSchemaType.STRING; // SUPER type often mapped as STRUCT
+      case OTHER -> JsonSchemaType.STRING; // Handle OTHER type (e.g., SUPER, GEOMETRY, custom types)
+      // since column types aren't necessarily meaningful to Airbyte, liberally convert all unrecognised
+      // types to String
+      default -> JsonSchemaType.STRING;
+    };
   }
 
 }
