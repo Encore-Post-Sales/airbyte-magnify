@@ -161,10 +161,10 @@ class MatterGuidStream(CounsellinkStream):
             return matter_guids
         except FileNotFoundError:
             logger.error(f"Matter GUID CSV file not found at {csv_file_path}")
-            return []
+            raise FileNotFoundError(f"Matter GUID CSV file not found at {csv_file_path}")
         except Exception as e:
             logger.error(f"Error reading matter GUID CSV file: {e}")
-            return []
+            raise Exception(f"Error reading matter GUID CSV file: {e}")
     
     def stream_slices(
         self, sync_mode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None
