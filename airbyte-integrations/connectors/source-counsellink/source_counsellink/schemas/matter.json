@@ -1,0 +1,456 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "guid": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "matterNumber": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "currencyCode": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "title": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "status": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "invoiceContactSSOId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "matterContactSSOId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "invoiceContactLoginId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "matterContactLoginId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "contactOfficeName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "description": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "matterTypeGuid": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "createdDate": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date"
+        },
+        "closedDate": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date"
+        },
+        "historicalFees": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "historicalExpenses": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "matterId": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "assigningOfficeName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "matterValue": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "stateCode": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "countyName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "textUCDFs": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "additionalProperties": {
+                "type": [
+                    "null",
+                    "string"
+                ]
+            }
+        },
+        "numericUCDFs": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "additionalProperties": {
+                "type": [
+                    "null",
+                    "number"
+                ]
+            }
+        },
+        "moneyUCDFs": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "additionalProperties": {
+                "type": [
+                    "null",
+                    "number"
+                ]
+            }
+        },
+        "multiLineTextUCDFs": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "additionalProperties": {
+                "type": [
+                    "null",
+                    "string"
+                ]
+            }
+        },
+        "dateUCDFs": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "additionalProperties": {
+                "type": [
+                    "null",
+                    "string"
+                ],
+                "format": "date-time"
+            }
+        },
+        "optionUCDFs": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "additionalProperties": {
+                "type": [
+                    "null",
+                    "string"
+                ]
+            }
+        },
+        "multiCheckboxUCDFs": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "additionalProperties": {
+                "type": [
+                    "null",
+                    "array"
+                ],
+                "items": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                }
+            }
+        },
+        "tableUCDFs": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "additionalProperties": {
+                "type": [
+                    "null",
+                    "object"
+                ]
+            }
+        },
+        "lfoAssignments": {
+            "type": [
+                "null",
+                "array"
+            ],
+            "items": {
+                "type": [
+                    "null",
+                    "object"
+                ],
+                "properties": {
+                    "vendorId": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "lawFirmOfficeId": {
+                        "type": [
+                            "null",
+                            "number"
+                        ]
+                    },
+                    "lawFirmOfficeGuid": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "lawFirmGuid": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "workflowId": {
+                        "type": [
+                            "null",
+                            "number"
+                        ]
+                    },
+                    "ruleSetId": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "feeStructureId": {
+                        "type": [
+                            "null",
+                            "number"
+                        ]
+                    },
+                    "matterAssignmentRef": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "volumeDiscountRef": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "vendorMatterNumber": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "poNumber": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "leadCounsel": {
+                        "type": [
+                            "null",
+                            "boolean"
+                        ]
+                    },
+                    "counselType": {
+                        "type": [
+                            "null",
+                            "string"
+                        ]
+                    },
+                    "historicalFees": {
+                        "type": [
+                            "null",
+                            "number"
+                        ]
+                    },
+                    "historicalExpenses": {
+                        "type": [
+                            "null",
+                            "number"
+                        ]
+                    }
+                }
+            }
+        },
+        "allocationGroup": {
+            "type": [
+                "null",
+                "object"
+            ],
+            "properties": {
+                "allocations": {
+                    "type": [
+                        "null",
+                        "array"
+                    ],
+                    "items": {
+                        "type": [
+                            "null",
+                            "object"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": [
+                                    "null",
+                                    "string"
+                                ]
+                            },
+                            "name": {
+                                "type": [
+                                    "null",
+                                    "string"
+                                ]
+                            },
+                            "feePercent": {
+                                "type": [
+                                    "null",
+                                    "number"
+                                ]
+                            },
+                            "expensePercent": {
+                                "type": [
+                                    "null",
+                                    "number"
+                                ]
+                            },
+                            "costShare": {
+                                "type": [
+                                    "null",
+                                    "boolean"
+                                ]
+                            },
+                            "feeBalanceRemaining": {
+                                "type": [
+                                    "null",
+                                    "boolean"
+                                ]
+                            },
+                            "expenseBalanceRemaining": {
+                                "type": [
+                                    "null",
+                                    "boolean"
+                                ]
+                            },
+                            "glCode": {
+                                "type": [
+                                    "null",
+                                    "string"
+                                ]
+                            },
+                            "allocationLimit": {
+                                "type": [
+                                    "null",
+                                    "number"
+                                ]
+                            },
+                            "taxPercent": {
+                                "type": [
+                                    "null",
+                                    "number"
+                                ]
+                            },
+                            "taxBalanceRemaining": {
+                                "type": [
+                                    "null",
+                                    "boolean"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "relatedChildGuids": {
+            "type": [
+                "null",
+                "array"
+            ],
+            "items": {
+                "type": [
+                    "null",
+                    "string"
+                ]
+            }
+        },
+        "links": {
+            "type": [
+                "null",
+                "array"
+            ],
+            "items": {
+                "type": [
+                    "null",
+                    "object"
+                ]
+            },
+            "properties": {
+                "additionalProperties": true
+            }
+        }
+    }
+}

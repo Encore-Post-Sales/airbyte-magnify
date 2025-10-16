@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "userRef": {
+      "type": "string",
+      "maxLength": 32,
+      "minLength": 32,
+      "description": "User Reference"
+    },
+    "ssoId": {
+      "type": ["string", "null"],
+      "maxLength": 255,
+      "description": "SSO ID"
+    },
+    "loginId": {
+      "type": "string",
+      "maxLength": 20,
+      "description": "Login ID"
+    },
+    "firstName": {
+      "type": ["string", "null"],
+      "maxLength": 255,
+      "description": "First Name"
+    },
+    "middleName": {
+      "type": ["string", "null"],
+      "maxLength": 255,
+      "description": "Middle Name"
+    },
+    "lastName": {
+      "type": ["string", "null"],
+      "maxLength": 255,
+      "description": "Last Name"
+    },
+    "email": {
+      "type": ["string", "null"],
+      "maxLength": 255,
+      "format": "email",
+      "description": "Email Address"
+    },
+    "lastLoginDate": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Last login date"
+    },
+    "numberOfLogins": {
+      "type": ["integer", "null"],
+      "description": "Number of times the user logged in"
+    }
+  }
+}
