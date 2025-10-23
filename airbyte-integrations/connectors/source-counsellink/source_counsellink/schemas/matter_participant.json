@@ -79,6 +79,12 @@
                 "null",
                 "boolean"
             ]
+        },
+        "matter_guid": {
+            "type": [
+                "null",
+                "string"
+            ]
         }
     }
 }

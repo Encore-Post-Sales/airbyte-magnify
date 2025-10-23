@@ -242,6 +242,30 @@ class MatterParticipantStream(MatterGuidStream):
         matter_guid = stream_slice["matter_guid"]
         
         return f"matter/{matter_guid}/participants"
+    
+    def parse_response(
+        self,
+        response: requests.Response,
+        stream_state: Mapping[str, Any] = None,
+        stream_slice: Mapping[str, Any] = None,
+        next_page_token: Mapping[str, Any] = None,
+    ) -> Iterable[Mapping]:
+        """
+        Parse response and append matter_guid to each record.
+        """
+        matter_guid = stream_slice["matter_guid"]
+        records = response.json()
+        
+        # If records is a list, append matter_guid to each record
+        if isinstance(records, list):
+            for record in records:
+                if isinstance(record, dict):
+                    record["matter_guid"] = matter_guid
+                    yield record
+        # If records is a single dict, append matter_guid and yield it
+        elif isinstance(records, dict):
+            records["matter_guid"] = matter_guid
+            yield records
 
 class JournalEntryStream(MatterGuidStream):
     """
@@ -262,6 +286,30 @@ class JournalEntryStream(MatterGuidStream):
         """
         matter_guid = stream_slice["matter_guid"]
         return f"matter/{matter_guid}/journalEntries"
+    
+    def parse_response(
+        self,
+        response: requests.Response,
+        stream_state: Mapping[str, Any] = None,
+        stream_slice: Mapping[str, Any] = None,
+        next_page_token: Mapping[str, Any] = None,
+    ) -> Iterable[Mapping]:
+        """
+        Parse response and append matter_guid to each record.
+        """
+        matter_guid = stream_slice["matter_guid"]
+        records = response.json()
+        
+        # If records is a list, append matter_guid to each record
+        if isinstance(records, list):
+            for record in records:
+                if isinstance(record, dict):
+                    record["matter_guid"] = matter_guid
+                    yield record
+        # If records is a single dict, append matter_guid and yield it
+        elif isinstance(records, dict):
+            records["matter_guid"] = matter_guid
+            yield records
 
 
 # Source
