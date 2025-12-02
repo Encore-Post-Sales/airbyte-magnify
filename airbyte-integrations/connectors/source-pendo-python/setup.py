@@ -7,7 +7,8 @@ from setuptools import find_packages, setup
 
 MAIN_REQUIREMENTS = [
     "airbyte-cdk~=0.90.0",
-    "ujson"
+    "ujson",
+    "pendulum"
 ]
 
 TEST_REQUIREMENTS = [

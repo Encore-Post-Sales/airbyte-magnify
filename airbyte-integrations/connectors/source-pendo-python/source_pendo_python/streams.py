@@ -2,7 +2,7 @@ from abc import ABC
 import ujson as json
 from typing import Any, Iterable, Mapping, MutableMapping, Optional
 import time
-
+import pendulum
 import requests
 from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.streams.core import CheckpointMixin
@@ -14,6 +14,8 @@ class PendoPythonStream(HttpStream, ABC):
 
     def __init__(self, authenticator, url_base: str = "https://app.pendo.io/api/v1/", **kwargs):
         super().__init__(authenticator=authenticator, **kwargs)
+        # Store original authenticator since HttpStream may replace it
+        self._pendo_authenticator = authenticator
         self.url_base = url_base
 
     def path(self, **kwargs) -> str:
@@ -42,10 +44,13 @@ class PendoPythonStream(HttpStream, ABC):
             output_types = ["null", "number"]
         elif field_type == "list":
             output_types = ["null", "array", "string"]
+        elif field_type == "boolean":
+            output_types = ["null", "boolean"]
         elif field_type == "":
             output_types = ["null", "array", "string", "integer", "boolean"]
         else:
             output_types = ["null", field_type]
+        
         return {"type": output_types}
 
     # Build the Airbyte stream schema from Pendo metadata
@@ -273,7 +278,7 @@ class ReportResult(PendoPythonStream):
             }
 
             url = f"{self.url_base}{self.path()}"
-            auth_headers = self.authenticator.get_auth_header()
+            auth_headers = self._pendo_authenticator.get_auth_header()
             try:
                 session = requests.get(url, headers=auth_headers)
                 if session.status_code != 200:
@@ -324,9 +329,10 @@ class Visitor(PendoAggregationStream):
 
         base_schema = super().get_json_schema()
         url = f"{self.url_base}metadata/schema/visitor"
-        auth_headers = self.authenticator.get_auth_header()
+        auth_headers = self._pendo_authenticator.get_auth_header()
         try:
             session = requests.get(url, headers=auth_headers)
+            session.raise_for_status()
             body = session.json()
 
             full_schema = base_schema
@@ -347,13 +353,49 @@ class Visitor(PendoAggregationStream):
 
             full_schema = self.build_schema(full_schema, body)
             self.json_schema = full_schema
-        except requests.exceptions.RequestException:
+        except (requests.exceptions.RequestException, ValueError) as e:
+            self.logger.warning(f"Error fetching visitor metadata: {e}")
             self.json_schema = base_schema
         return self.json_schema
 
     def request_body_json(self, next_page_token: Mapping[str, Any] = None, **kwargs) -> Optional[Mapping[str, Any]]:
         source = {"visitors": {"identified": True}}
         return self.build_request_body("visitor-list", source, next_page_token)
+
+    def normalize_createdate(self, record: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+        """
+        normalize the record dates to milliseconds if metadata.agent.createdate is present
+        createdate could be a timestamp in milliseconds after the epoch (UTC) or 
+        an ISO 8601 string (e.g., '2019-02-08T21:30:53.150Z')
+        """        
+        if "metadata" in record and "agent" in record["metadata"] and "createdate" in record["metadata"]["agent"]:
+            createdate = record["metadata"]["agent"]["createdate"]
+            if isinstance(createdate, str):
+                # Handle ISO 8601 strings (e.g., '2019-02-08T21:30:53.150Z')
+                try:
+                    parsed_date = pendulum.parse(createdate, strict=False).in_timezone('UTC')
+                    record["metadata"]["agent"]["createdate"] = int(parsed_date.timestamp() * 1000) # Convert to milliseconds
+                    self.logger.info(f"Converted ISO 8601 createdate to milliseconds: {record['metadata']['agent']['createdate']}")
+                except Exception as e:
+                    self.logger.error(f"Failed to parse createdate '{createdate}': {e}")
+                    raise ValueError(f"Invalid date format for createdate: {createdate}")
+            elif isinstance(createdate, int):
+                # Already in milliseconds
+                record["metadata"]["agent"]["createdate"] = createdate
+            else:
+                # Unexpected type
+                self.logger.warning(f"Unexpected createdate type: {type(createdate)}, value: {createdate}")
+                record["metadata"]["agent"]["createdate"] = createdate
+        return record
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+        """
+        parse the response and for metadata.agent.createdate, convert the value to a milliseconds integer
+        """
+        self.logger.info("Visitor.parse_response is being called")
+        response.encoding = "UTF-8"
+        for record in response.json().get("results", []):
+            yield self.normalize_createdate(record)
 
 
 class Account(PendoAggregationStream):
@@ -366,9 +408,11 @@ class Account(PendoAggregationStream):
 
         base_schema = super().get_json_schema()
         url = f"{self.url_base}metadata/schema/account"
-        auth_headers = self.authenticator.get_auth_header()
+        # Use the stored PendoAuthenticator instead of self.authenticator
+        auth_headers = self._pendo_authenticator.get_auth_header()
         try:
             session = requests.get(url, headers=auth_headers)
+            session.raise_for_status()            
             body = session.json()
 
             full_schema = base_schema
@@ -384,8 +428,10 @@ class Account(PendoAggregationStream):
 
             full_schema = self.build_schema(full_schema, body)
             self.json_schema = full_schema
-        except requests.exceptions.RequestException:
+        except (requests.exceptions.RequestException, ValueError) as e:
+            self.logger.warning(f"Error fetching account metadata: {e}")
             self.json_schema = base_schema
+
         return self.json_schema
 
     def request_body_json(self, next_page_token: Mapping[str, Any] = None, **kwargs) -> Optional[Mapping[str, Any]]:
