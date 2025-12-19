@@ -135,11 +135,14 @@
                 "null",
                 "object"
             ],
-            "additionalProperties": {
-                "type": [
-                    "null",
-                    "string"
-                ]
+            "properties": {
+                "Pendo_Account_ID": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "additionalProperties": true
             }
         },
         "numericUCDFs": {
@@ -147,11 +150,8 @@
                 "null",
                 "object"
             ],
-            "additionalProperties": {
-                "type": [
-                    "null",
-                    "number"
-                ]
+            "properties": {
+                "additionalProperties": true
             }
         },
         "moneyUCDFs": {
@@ -159,11 +159,8 @@
                 "null",
                 "object"
             ],
-            "additionalProperties": {
-                "type": [
-                    "null",
-                    "number"
-                ]
+            "properties": {
+                "additionalProperties": true
             }
         },
         "multiLineTextUCDFs": {
@@ -171,11 +168,32 @@
                 "null",
                 "object"
             ],
-            "additionalProperties": {
-                "type": [
-                    "null",
-                    "string"
-                ]
+            "properties": {
+                "CL_Plus_Migration_Notes": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "Company_Address": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "Historical_Client_Contact": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "Historical_Client_Matter_Contact": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "additionalProperties": true
             }
         },
         "dateUCDFs": {
@@ -183,12 +201,15 @@
                 "null",
                 "object"
             ],
-            "additionalProperties": {
-                "type": [
-                    "null",
-                    "string"
-                ],
-                "format": "date-time"
+            "properties": {
+                "Risk_Updated_At": {
+                    "type": [
+                        "null",
+                        "string"
+                    ],
+                    "format": "date-time"
+                },
+                "additionalProperties": true
             }
         },
         "optionUCDFs": {
@@ -196,11 +217,50 @@
                 "null",
                 "object"
             ],
-            "additionalProperties": {
-                "type": [
-                    "null",
-                    "string"
-                ]
+            "properties": {
+                "Account_Executive": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "Attrition_Risk": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "CL_Plus_Migration_Ready": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "Group": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "Production_Environment": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "Service_Commitment_Level": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "customer_tier": {
+                    "type": [
+                        "null",
+                        "string"
+                    ]
+                },
+                "additionalProperties": true
             }
         },
         "multiCheckboxUCDFs": {
@@ -208,17 +268,8 @@
                 "null",
                 "object"
             ],
-            "additionalProperties": {
-                "type": [
-                    "null",
-                    "array"
-                ],
-                "items": {
-                    "type": [
-                        "null",
-                        "string"
-                    ]
-                }
+            "properties": {
+                "additionalProperties": true
             }
         },
         "tableUCDFs": {
@@ -226,23 +277,16 @@
                 "null",
                 "object"
             ],
-            "additionalProperties": {
-                "type": [
-                    "null",
-                    "object"
-                ]
+            "properties": {
+                "additionalProperties": true
             }
         },
         "lfoAssignments": {
             "type": [
                 "null",
-                "array"
+                "object"
             ],
             "items": {
-                "type": [
-                    "null",
-                    "object"
-                ],
                 "properties": {
                     "vendorId": {
                         "type": [
