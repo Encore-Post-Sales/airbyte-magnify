@@ -103,7 +103,22 @@ class GainsightCsObjectStream(GainsightCsStream):
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
         records = response.json().get("data", {}).get("records", [])
-        yield from records
+        schema = self.get_json_schema()
+        properties = schema.get("properties", {})
+        
+        # Identify date and datetime fields from schema
+        date_fields = [
+            field_name 
+            for field_name, field_schema in properties.items() 
+            if field_schema.get("format") in ["date", "date-time"]
+        ]
+        
+        # Transform empty strings to null for date/datetime fields
+        for record in records:
+            for field_name in date_fields:
+                if field_name in record and record[field_name] == "":
+                    record[field_name] = None
+            yield record
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
         data = response.json().get("data", {}).get("records", [])
