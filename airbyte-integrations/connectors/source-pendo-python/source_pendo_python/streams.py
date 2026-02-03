@@ -366,30 +366,36 @@ class Visitor(PendoAggregationStream):
         source = {"visitors": {"identified": True}}
         return self.build_request_body("visitor-list", source, next_page_token)
 
+    def normalize_date(self, date: Any) -> int:
+        if isinstance(date, str):
+        # Handle ISO 8601 strings (e.g., '2019-02-08T21:30:53.150Z')
+            try:
+                parsed_date = pendulum.parse(date, strict=False).in_timezone("UTC")
+                self.logger.info(f"Converted ISO 8601 createdate to milliseconds: {date}")
+                return int(parsed_date.timestamp() * 1000) # Convert to milliseconds
+            except Exception as e:
+                self.logger.error(f"Failed to parse createdate '{date}': {e}")
+                raise ValueError(f"Invalid date format for createdate: {date}")
+        elif isinstance(date, int):
+            # Already in milliseconds
+            return date
+        elif date is None:
+            return None
+        else:
+            # Unexpected type
+            self.logger.warning(f"Unexpected createdate type: {type(date)}, value: {date}")
+            return date
+
     def normalize_createdate(self, record: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         """
         normalize the record dates to milliseconds if metadata.agent.createdate is present
         createdate could be a timestamp in milliseconds after the epoch (UTC) or 
         an ISO 8601 string (e.g., '2019-02-08T21:30:53.150Z')
-        """        
+        """
         if "metadata" in record and "agent" in record["metadata"] and "createdate" in record["metadata"]["agent"]:
-            createdate = record["metadata"]["agent"]["createdate"]
-            if isinstance(createdate, str):
-                # Handle ISO 8601 strings (e.g., '2019-02-08T21:30:53.150Z')
-                try:
-                    parsed_date = pendulum.parse(createdate, strict=False).in_timezone('UTC')
-                    record["metadata"]["agent"]["createdate"] = int(parsed_date.timestamp() * 1000) # Convert to milliseconds
-                    self.logger.info(f"Converted ISO 8601 createdate to milliseconds: {record['metadata']['agent']['createdate']}")
-                except Exception as e:
-                    self.logger.error(f"Failed to parse createdate '{createdate}': {e}")
-                    raise ValueError(f"Invalid date format for createdate: {createdate}")
-            elif isinstance(createdate, int):
-                # Already in milliseconds
-                record["metadata"]["agent"]["createdate"] = createdate
-            else:
-                # Unexpected type
-                self.logger.warning(f"Unexpected createdate type: {type(createdate)}, value: {createdate}")
-                record["metadata"]["agent"]["createdate"] = createdate
+            record["metadata"]["agent"]["createdate"] = self.normalize_date(record["metadata"]["agent"]["createdate"])
+        if "metadata" in record and "agent" in record["metadata"] and "created_date" in record["metadata"]["agent"]:
+            record["metadata"]["agent"]["created_date"] = self.normalize_date(record["metadata"]["agent"]["created_date"])
         return record
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
