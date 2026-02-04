@@ -66,9 +66,11 @@ class PendoPythonStream(HttpStream, ABC):
                         fields[field] = {"type": ["null", "integer", "string"]}
                     elif field == "accountnumbersf":
                         fields[field] = {"type": ["null", "string", "number"]}
-                    elif field == "sfpendogolivedate": # sfpendogolivedate can be empty string or datetime string - tenant: modelN
+                    elif field == "sfpendogolivedate": # sfpendogolivedate can be empty string or datetime string - tenant: ten_01k9qy066cfvgv3m14v0zprfd7
                         fields[field] = {"type": ["null", "string", "number"]}
-                    elif field == "sfnpslatest": # sfnpslatest can be empty string with escape character or number - tenant: modelN
+                    elif field == "sfnpslatest": # sfnpslatest can be empty string with escape character or number - tenant: ten_01k9qy066cfvgv3m14v0zprfd7
+                        fields[field] = {"type": ["null", "string", "number"]}
+                    elif field == "sfpendolivedate": # sfpendogolivedate can be empty string or datetime string - tenant: ten_01k9qy066cfvgv3m14v0zprfd7
                         fields[field] = {"type": ["null", "string", "number"]}
                     else:
                         fields[field] = self.get_valid_field_info(field_type)
