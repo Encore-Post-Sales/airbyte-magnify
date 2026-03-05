@@ -102,7 +102,17 @@ class GainsightCsObjectStream(GainsightCsStream):
         return request_body
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
-        records = response.json().get("data", {}).get("records", [])
+        logger = logging.getLogger(__name__)
+        try:
+            body = response.json()
+            if body.get("result") == False and body.get("errorCode") == "P_5072":
+                logger.warning(f"Skipping records for object '{self.object_name}' due to errorCode P_5072: {body.get('errorDesc', '')}")
+                return
+            records = body.get("data", {}).get("records", [])
+        except Exception as e:
+            logger.error(f"Failed to parse response for object '{self.object_name}': {e}")
+            return
+
         schema = self.get_json_schema()
         properties = schema.get("properties", {})
         
