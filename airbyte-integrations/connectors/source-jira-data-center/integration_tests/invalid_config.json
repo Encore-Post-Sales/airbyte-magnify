@@ -1,6 +1,6 @@
 {
-  "api_token": "invalid_token",
-  "email": "test@test.com",
+  "personal_access_token": "invalid_token",
+  "domain": "invalid-domain",
   "projects": ["invalidproject"],
   "start_date": "2021-09-25T00:00:00Z"
 }

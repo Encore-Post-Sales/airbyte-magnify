@@ -1,16 +1,16 @@
 {
-  "documentationUrl": "https://docs.airbyte.com/integrations/sources/jira",
+  "documentationUrl": "https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/#gettingstarted",
   "connectionSpecification": {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Jira Spec",
+    "title": "Jira Data Center Spec",
     "type": "object",
-    "required": ["api_token", "domain", "email"],
+    "required": ["personal_access_token", "domain"],
     "additionalProperties": true,
     "properties": {
-      "api_token": {
+      "personal_access_token": {
         "type": "string",
-        "title": "API Token",
-        "description": "Jira API Token. See the <a href=\"https://docs.airbyte.com/integrations/sources/jira\">docs</a> for more information on how to generate this key. API Token is used for Authorization to your account by BasicAuth.",
+        "title": "Personal Access Token",
+        "description": "Jira Data Center Personal Access Token. See the <a href=\"https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/#gettingstarted\">Jira Data Center REST API documentation</a> for more information on how to generate this token. This token is used for Authorization via Bearer token authentication.",
         "airbyte_secret": true,
         "order": 0
       },
@@ -18,18 +18,12 @@
         "type": "string",
         "title": "Domain",
         "examples": [
-          "<your-domain>.atlassian.net",
-          "<your-domain>.jira.com",
-          "jira.<your-domain>.com"
+          "jira.example.com",
+          "jira.company.com",
+          "jira.internal:8080"
         ],
-        "description": "The Domain for your Jira account, e.g. airbyteio.atlassian.net, airbyteio.jira.com, jira.your-domain.com",
+        "description": "The domain for your Jira Data Center instance (on-prem). Do not include the protocol (http:// or https://). Example: jira.example.com or jira.internal:8080",
         "order": 1
-      },
-      "email": {
-        "type": "string",
-        "title": "Email",
-        "description": "The user email for your Jira account which you used to generate the API token. This field is used for Authorization to your account by BasicAuth.",
-        "order": 2
       },
       "projects": {
         "type": "array",

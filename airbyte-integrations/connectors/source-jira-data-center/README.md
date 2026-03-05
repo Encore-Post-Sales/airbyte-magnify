@@ -1,7 +1,7 @@
-# Jira source connector
+# Jira Data Center source connector
 
-This is the repository for the Jira source connector, written in Python.
-For information about how to use this connector within Airbyte, see [the documentation](https://docs.airbyte.com/integrations/sources/jira).
+This is the repository for the Jira Data Center source connector, written in Python.
+For information about the Jira Data Center API, see [the Jira Data Center REST API documentation](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/#gettingstarted).
 
 ## Local development
 
@@ -20,18 +20,18 @@ poetry install --with dev
 
 ### Create credentials
 
-**If you are a community contributor**, follow the instructions in the [documentation](https://docs.airbyte.com/integrations/sources/jira)
-to generate the necessary credentials. Then create a file `secrets/config.json` conforming to the `source_jira/spec.yaml` file.
+**If you are a community contributor**, see the [Jira Data Center REST API documentation](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/#gettingstarted)
+to generate the necessary credentials. Then create a file `secrets/config.json` conforming to the `source_jira_data_center/spec.json` file.
 Note that any directory named `secrets` is gitignored across the entire Airbyte repo, so there is no danger of accidentally checking in sensitive information.
 See `sample_files/sample_config.json` for a sample config file.
 
 ### Locally running the connector
 
 ```
-poetry run source-jira spec
-poetry run source-jira check --config secrets/config.json
-poetry run source-jira discover --config secrets/config.json
-poetry run source-jira read --config secrets/config.json --catalog sample_files/configured_catalog.json
+poetry run source-jira-data-center spec
+poetry run source-jira-data-center check --config secrets/config.json
+poetry run source-jira-data-center discover --config secrets/config.json
+poetry run source-jira-data-center read --config secrets/config.json --catalog sample_files/configured_catalog.json
 ```
 
 ### Running unit tests
@@ -48,20 +48,20 @@ poetry run pytest unit_tests
 2. Run the following command to build the docker image:
 
 ```bash
-airbyte-ci connectors --name=source-jira build
+airbyte-ci connectors --name=source-jira-data-center build
 ```
 
-An image will be available on your host with the tag `airbyte/source-jira:dev`.
+An image will be available on your host with the tag `airbyte/source-jira-data-center:dev`.
 
 ### Running as a docker container
 
 Then run any of the connector commands as follows:
 
 ```
-docker run --rm airbyte/source-jira:dev spec
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-jira:dev check --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-jira:dev discover --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-jira:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
+docker run --rm airbyte/source-jira-data-center:dev spec
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-jira-data-center:dev check --config /secrets/config.json
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-jira-data-center:dev discover --config /secrets/config.json
+docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-jira-data-center:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
 ```
 
 ### Running our CI test suite
@@ -69,7 +69,7 @@ docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integrat
 You can run our full test suite locally using [`airbyte-ci`](https://github.com/airbytehq/airbyte/blob/master/airbyte-ci/connectors/pipelines/README.md):
 
 ```bash
-airbyte-ci connectors --name=source-jira test
+airbyte-ci connectors --name=source-jira-data-center test
 ```
 
 ### Customizing acceptance Tests
@@ -92,12 +92,12 @@ Please commit the changes to `pyproject.toml` and `poetry.lock` files.
 
 You've checked out the repo, implemented a million dollar feature, and you're ready to share your changes with the world. Now what?
 
-1. Make sure your changes are passing our test suite: `airbyte-ci connectors --name=source-jira test`
+1. Make sure your changes are passing our test suite: `airbyte-ci connectors --name=source-jira-data-center test`
 2. Bump the connector version (please follow [semantic versioning for connectors](https://docs.airbyte.com/contributing-to-airbyte/resources/pull-requests-handbook/#semantic-versioning-for-connectors)):
    - bump the `dockerImageTag` value in in `metadata.yaml`
    - bump the `version` value in `pyproject.toml`
 3. Make sure the `metadata.yaml` content is up to date.
-4. Make sure the connector documentation and its changelog is up to date (`docs/integrations/sources/jira.md`).
+4. Make sure the connector documentation and its changelog is up to date (`docs/integrations/sources/jira-data-center.md`).
 5. Create a Pull Request: use [our PR naming conventions](https://docs.airbyte.com/contributing-to-airbyte/resources/pull-requests-handbook/#pull-request-title-convention).
 6. Pat yourself on the back for being an awesome contributor.
 7. Someone from Airbyte will take a look at your PR and iterate with you to merge it into master.

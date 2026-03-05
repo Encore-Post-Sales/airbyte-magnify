@@ -9,7 +9,7 @@ from pathlib import Path
 import responses
 from pytest import fixture
 from responses import matchers
-from source_jira.source import SourceJira
+from source_jira_data_center.source import SourceJiraDataCenter
 
 ENV_REQUEST_CACHE_PATH = "REQUEST_CACHE_PATH"
 os.environ["REQUEST_CACHE_PATH"] = ENV_REQUEST_CACHE_PATH
@@ -33,9 +33,8 @@ def clear_cache_before_each_test():
 @fixture
 def config():
     return {
-        "api_token": "token",
+        "personal_access_token": "token",
         "domain": "domain",
-        "email": "email@email.com",
         "start_date": "2021-01-01T00:00:00Z",
         "projects": ["Project1"],
     }
@@ -547,7 +546,7 @@ def mock_sprints_response(config, sprints_response):
 
 
 def find_stream(stream_name, config):
-    for stream in SourceJira().streams(config=config):
+    for stream in SourceJiraDataCenter().streams(config=config):
         if stream.name == stream_name:
             return stream
     raise ValueError(f"Stream {stream_name} not found")

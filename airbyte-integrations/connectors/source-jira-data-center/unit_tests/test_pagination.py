@@ -8,8 +8,8 @@ from http import HTTPStatus
 
 import responses
 from conftest import find_stream
-from source_jira.streams import Issues, Projects
-from source_jira.utils import read_full_refresh
+from source_jira_data_center.streams import Issues, Projects
+from source_jira_data_center.utils import read_full_refresh
 
 
 @responses.activate
@@ -23,7 +23,7 @@ def test_pagination_projects():
 
     responses.add_callback(
         responses.GET,
-        f"https://{domain}/rest/api/3/project/search",
+        f"https://{domain}/rest/api/2/project/search",
         callback=lambda request: responses_json.pop(0),
         content_type="application/json",
     )
@@ -77,7 +77,7 @@ def test_pagination_issues():
 
     responses.add_callback(
         responses.GET,
-        f"https://{domain}/rest/api/3/search",
+        f"https://{domain}/rest/api/2/search",
         callback=lambda request: responses_json.pop(0),
         content_type="application/json",
     )
@@ -107,7 +107,7 @@ def test_pagination_users(config):
 
     responses.add_callback(
         responses.GET,
-        f"https://{domain}/rest/api/3/users/search",
+        f"https://{domain}/rest/api/2/users/search",
         callback=lambda request: responses_json.pop(0),
         content_type="application/json",
     )

@@ -6,9 +6,9 @@
 import sys
 
 from airbyte_cdk.entrypoint import launch
-from source_jira import SourceJira
+from source_jira_data_center import SourceJiraDataCenter
 
 
 def run():
-    source = SourceJira()
+    source = SourceJiraDataCenter()
     launch(source, sys.argv[1:])

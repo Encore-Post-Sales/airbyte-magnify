@@ -9,20 +9,20 @@ data:
     baseImage: docker.io/airbyte/python-connector-base:2.0.0@sha256:c44839ba84406116e8ba68722a0f30e8f6e7056c726f447681bb9e9ece8bd916
   connectorSubtype: api
   connectorType: source
-  definitionId: 68e63de2-bb83-4c7e-93fa-a8a9051e3993
-  dockerImageTag: 3.1.1
-  dockerRepository: airbyte/source-jira
-  documentationUrl: https://docs.airbyte.com/integrations/sources/jira
-  erdUrl: https://dbdocs.io/airbyteio/source-jira?view=relationships
-  githubIssueLabel: source-jira
+  definitionId: 68e63de2-bb83-4c7e-93fa-a8a9051e3994
+  dockerImageTag: 1.0.0
+  dockerRepository: airbyte/source-jira-data-center
+  documentationUrl: https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/#gettingstarted
+  erdUrl: https://dbdocs.io/airbyteio/source-jira-data-center?view=relationships
+  githubIssueLabel: source-jira-data-center
   icon: jira.svg
   license: MIT
   maxSecondsBetweenMessages: 5400
-  name: Jira
+  name: Jira Data Center
   remoteRegistries:
     pypi:
       enabled: true
-      packageName: airbyte-source-jira
+      packageName: airbyte-source-jira-data-center
   registryOverrides:
     cloud:
       enabled: true

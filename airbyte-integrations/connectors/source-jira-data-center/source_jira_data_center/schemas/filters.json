@@ -2,96 +2,282 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "description": {
-      "description": "The description of the dashboard.",
+    "expand": {
+      "description": "Expands the additional information about the filter",
       "type": "string"
+    },
+    "self": {
+      "type": "string",
+      "description": "The URL of the filter.",
+      "readOnly": true
     },
     "id": {
-      "description": "The ID of the dashboard.",
-      "type": "string"
-    },
-    "isFavourite": {
-      "description": "Indicates whether the dashboard is marked as a favorite by the user.",
-      "type": "boolean"
+      "type": "string",
+      "description": "The unique identifier for the filter.",
+      "readOnly": true
     },
     "name": {
-      "description": "The name of the dashboard.",
-      "type": "string"
+      "type": "string",
+      "description": "The name of the filter. Must be unique."
+    },
+    "description": {
+      "type": "string",
+      "description": "A description of the filter."
     },
     "owner": {
-      "description": "Details of the owner of the dashboard.",
+      "description": "The user who owns the filter. This is defaulted to the creator of the filter, however Jira administrators can change the owner of a shared filter in the admin settings.",
+      "readOnly": true,
       "type": "object",
       "properties": {
-        "key": {
-          "description": "Deprecated. Use `accountId` for privacy reasons.",
-          "type": "string"
-        },
         "self": {
-          "description": "The URL of the dashboard owner details.",
-          "type": "string"
+          "type": "string",
+          "description": "The URL of the user.",
+          "readOnly": true
         },
-        "name": {
-          "description": "Deprecated. Use `accountId` for privacy reasons.",
-          "type": "string"
-        },
-        "displayName": {
-          "description": "The display name of the dashboard owner. Privacy settings may affect the display value.",
-          "type": "string"
-        },
-        "active": {
-          "description": "Indicates whether the owner is an active user.",
-          "type": "boolean"
+        "key": {
+          "type": "string",
+          "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
         },
         "accountId": {
-          "description": "The account ID of the dashboard owner.",
           "maxLength": 128,
-          "type": "string"
+          "type": "string",
+          "description": "The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*. Required in requests."
+        },
+        "accountType": {
+          "type": "string",
+          "description": "The user account type. Can take the following values:\n\n *  `atlassian` regular Atlassian user account\n *  `app` system account used for Connect applications and OAuth to represent external systems\n *  `customer` Jira Service Desk account representing an external service desk",
+          "readOnly": true,
+          "enum": ["atlassian", "app", "customer", "unknown"]
+        },
+        "name": {
+          "type": "string",
+          "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+        },
+        "emailAddress": {
+          "type": "string",
+          "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+          "readOnly": true
         },
         "avatarUrls": {
-          "description": "The avatars of the dashboard owner.",
+          "description": "The avatars of the user.",
+          "readOnly": true,
           "type": "object",
           "properties": {
             "16x16": {
               "type": "string",
-              "description": "The URL of the user's 16x16 pixel avatar."
+              "description": "The URL of the item's 16x16 pixel avatar."
             },
             "24x24": {
               "type": "string",
-              "description": "The URL of the user's 24x24 pixel avatar."
+              "description": "The URL of the item's 24x24 pixel avatar."
             },
             "32x32": {
               "type": "string",
-              "description": "The URL of the user's 32x32 pixel avatar."
+              "description": "The URL of the item's 32x32 pixel avatar."
             },
             "48x48": {
               "type": "string",
-              "description": "The URL of the user's 48x48 pixel avatar."
+              "description": "The URL of the item's 48x48 pixel avatar."
             }
+          }
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value.",
+          "readOnly": true
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Whether the user is active.",
+          "readOnly": true
+        },
+        "timeZone": {
+          "type": "string",
+          "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null.",
+          "readOnly": true
+        },
+        "locale": {
+          "type": "string",
+          "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+          "readOnly": true
+        },
+        "groups": {
+          "description": "The groups that the user belongs to.",
+          "readOnly": true,
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "integer",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of group."
+                  },
+                  "self": {
+                    "type": "string",
+                    "description": "The URL for these group details.",
+                    "readOnly": true
+                  }
+                }
+              }
+            },
+            "pagingCallback": {
+              "type": "object"
+            },
+            "callback": {
+              "type": "object"
+            },
+            "max-results": {
+              "type": "integer",
+              "xml": {
+                "name": "max-results",
+                "attribute": true
+              }
+            }
+          }
+        },
+        "applicationRoles": {
+          "description": "The application roles the user is assigned to.",
+          "readOnly": true,
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "integer",
+              "xml": {
+                "attribute": true
+              }
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "The key of the application role."
+                  },
+                  "groups": {
+                    "uniqueItems": true,
+                    "type": "array",
+                    "description": "The groups associated with the application role.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The display name of the application role."
+                  },
+                  "defaultGroups": {
+                    "uniqueItems": true,
+                    "type": "array",
+                    "description": "The groups that are granted default access for this application role.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "selectedByDefault": {
+                    "type": "boolean",
+                    "description": "Determines whether this application role should be selected by default on user creation."
+                  },
+                  "defined": {
+                    "type": "boolean",
+                    "description": "Deprecated."
+                  },
+                  "numberOfSeats": {
+                    "type": "integer",
+                    "description": "The maximum count of users on your license."
+                  },
+                  "remainingSeats": {
+                    "type": "integer",
+                    "description": "The count of users remaining on your license."
+                  },
+                  "userCount": {
+                    "type": "integer",
+                    "description": "The number of users counting against your license."
+                  },
+                  "userCountDescription": {
+                    "type": "string",
+                    "description": "The [type of users](https://confluence.atlassian.com/x/lRW3Ng) being counted against your license."
+                  },
+                  "hasUnlimitedSeats": {
+                    "type": "boolean"
+                  },
+                  "platform": {
+                    "type": "boolean",
+                    "description": "Indicates if the application role belongs to Jira platform (`jira-core`)."
+                  }
+                }
+              }
+            },
+            "pagingCallback": {
+              "type": "object"
+            },
+            "callback": {
+              "type": "object"
+            },
+            "max-results": {
+              "type": "integer",
+              "xml": {
+                "name": "max-results",
+                "attribute": true
+              }
+            }
+          }
+        },
+        "expand": {
+          "type": "string",
+          "description": "Expand options that include additional user details in the response.",
+          "readOnly": true,
+          "xml": {
+            "attribute": true
           }
         }
       }
     },
-    "popularity": {
-      "description": "The number of users who have marked this dashboard as a favorite.",
-      "type": "integer"
+    "jql": {
+      "type": "string",
+      "description": "The JQL query for the filter. For example, *project = SSP AND issuetype = Bug*.",
+      "readOnly": true
     },
-    "rank": {
-      "description": "The rank of the dashboard.",
-      "type": "integer"
+    "viewUrl": {
+      "type": "string",
+      "description": "A URL to view the filter results in Jira, using the ID of the filter. For example, *https://your-domain.atlassian.net/issues/?filter=10100*.",
+      "readOnly": true
     },
-    "self": {
-      "description": "The URL of the dashboard details.",
-      "type": "string"
+    "searchUrl": {
+      "type": "string",
+      "description": "A URL to view the filter results in Jira, using the [Search for issues using JQL](#api-rest-api-2-filter-search-get) operation with the filter's JQL string to return the filter results. For example, *https://your-domain.atlassian.net/rest/api/2/search?jql=project+%3D+SSP+AND+issuetype+%3D+Bug*.",
+      "readOnly": true
+    },
+    "favourite": {
+      "type": "boolean",
+      "description": "Whether the filter is selected as a favorite by any users, not including the filter owner.",
+      "readOnly": true
+    },
+    "favouritedCount": {
+      "type": "integer",
+      "description": "The count of how many users have selected this filter as a favorite, including the filter owner.",
+      "readOnly": true
     },
     "sharePermissions": {
-      "description": "Details of any share permissions for the dashboard.",
       "type": "array",
+      "description": "The groups and projects that the filter is shared with. This can be specified when updating a filter, but not when creating a filter.",
       "items": {
         "type": "object",
         "properties": {
           "id": {
+            "type": "integer",
             "description": "The unique identifier of the share permission.",
-            "type": "integer"
+            "readOnly": true
           },
           "type": {
             "type": "string",
@@ -107,19 +293,21 @@
             ]
           },
           "project": {
-            "description": "The project that the filter is shared with.",
+            "description": "The project that the filter is shared with. This is similar to the project object returned by [Get project](#api-rest-api-2-project-projectIdOrKey-get) but it contains a subset of the properties, which are: `self`, `id`, `key`, `assigneeType`, `name`, `roles`, `avatarUrls`, `projectType`, `simplified`.  \nFor a request, specify the `id` for the project.",
             "type": "object",
             "properties": {
               "expand": {
                 "type": "string",
                 "description": "Expand options that include additional project details in the response.",
+                "readOnly": true,
                 "xml": {
                   "attribute": true
                 }
               },
               "self": {
                 "type": "string",
-                "description": "The URL of the project details."
+                "description": "The URL of the project details.",
+                "readOnly": true
               },
               "id": {
                 "type": "string",
@@ -127,19 +315,23 @@
               },
               "key": {
                 "type": "string",
-                "description": "The key of the project."
+                "description": "The key of the project.",
+                "readOnly": true
               },
               "description": {
                 "type": "string",
-                "description": "A brief description of the project."
+                "description": "A brief description of the project.",
+                "readOnly": true
               },
               "lead": {
                 "description": "The username of the project lead.",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "self": {
                     "type": "string",
-                    "description": "The URL of the user."
+                    "description": "The URL of the user.",
+                    "readOnly": true
                   },
                   "key": {
                     "type": "string",
@@ -153,6 +345,7 @@
                   "accountType": {
                     "type": "string",
                     "description": "The user account type. Can take the following values:\n\n *  `atlassian` regular Atlassian user account\n *  `app` system account used for Connect applications and OAuth to represent external systems\n *  `customer` Jira Service Desk account representing an external service desk",
+                    "readOnly": true,
                     "enum": ["atlassian", "app", "customer", "unknown"]
                   },
                   "name": {
@@ -161,10 +354,12 @@
                   },
                   "emailAddress": {
                     "type": "string",
-                    "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "avatarUrls": {
                     "description": "The avatars of the user.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "16x16": {
@@ -187,22 +382,27 @@
                   },
                   "displayName": {
                     "type": "string",
-                    "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value."
+                    "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value.",
+                    "readOnly": true
                   },
                   "active": {
                     "type": "boolean",
-                    "description": "Whether the user is active."
+                    "description": "Whether the user is active.",
+                    "readOnly": true
                   },
                   "timeZone": {
                     "type": "string",
-                    "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "locale": {
                     "type": "string",
-                    "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "groups": {
                     "description": "The groups that the user belongs to.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "size": {
@@ -222,7 +422,8 @@
                             },
                             "self": {
                               "type": "string",
-                              "description": "The URL for these group details."
+                              "description": "The URL for these group details.",
+                              "readOnly": true
                             }
                           }
                         }
@@ -244,6 +445,7 @@
                   },
                   "applicationRoles": {
                     "description": "The application roles the user is assigned to.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "size": {
@@ -333,6 +535,7 @@
                   "expand": {
                     "type": "string",
                     "description": "Expand options that include additional user details in the response.",
+                    "readOnly": true,
                     "xml": {
                       "attribute": true
                     }
@@ -342,16 +545,19 @@
               "components": {
                 "type": "array",
                 "description": "List of the components contained in the project.",
+                "readOnly": true,
                 "items": {
                   "type": "object",
                   "properties": {
                     "self": {
                       "type": "string",
-                      "description": "The URL of the component."
+                      "description": "The URL of the component.",
+                      "readOnly": true
                     },
                     "id": {
                       "type": "string",
-                      "description": "The unique identifier for the component."
+                      "description": "The unique identifier for the component.",
+                      "readOnly": true
                     },
                     "name": {
                       "type": "string",
@@ -363,11 +569,13 @@
                     },
                     "lead": {
                       "description": "The user details for the component's lead user.",
+                      "readOnly": true,
                       "type": "object",
                       "properties": {
                         "self": {
                           "type": "string",
-                          "description": "The URL of the user."
+                          "description": "The URL of the user.",
+                          "readOnly": true
                         },
                         "key": {
                           "type": "string",
@@ -381,6 +589,7 @@
                         "accountType": {
                           "type": "string",
                           "description": "The user account type. Can take the following values:\n\n *  `atlassian` regular Atlassian user account\n *  `app` system account used for Connect applications and OAuth to represent external systems\n *  `customer` Jira Service Desk account representing an external service desk",
+                          "readOnly": true,
                           "enum": ["atlassian", "app", "customer", "unknown"]
                         },
                         "name": {
@@ -389,10 +598,12 @@
                         },
                         "emailAddress": {
                           "type": "string",
-                          "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "avatarUrls": {
                           "description": "The avatars of the user.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "16x16": {
@@ -415,22 +626,27 @@
                         },
                         "displayName": {
                           "type": "string",
-                          "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value."
+                          "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value.",
+                          "readOnly": true
                         },
                         "active": {
                           "type": "boolean",
-                          "description": "Whether the user is active."
+                          "description": "Whether the user is active.",
+                          "readOnly": true
                         },
                         "timeZone": {
                           "type": "string",
-                          "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "locale": {
                           "type": "string",
-                          "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "groups": {
                           "description": "The groups that the user belongs to.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "size": {
@@ -450,7 +666,8 @@
                                   },
                                   "self": {
                                     "type": "string",
-                                    "description": "The URL for these group details."
+                                    "description": "The URL for these group details.",
+                                    "readOnly": true
                                   }
                                 }
                               }
@@ -472,6 +689,7 @@
                         },
                         "applicationRoles": {
                           "description": "The application roles the user is assigned to.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "size": {
@@ -561,6 +779,7 @@
                         "expand": {
                           "type": "string",
                           "description": "Expand options that include additional user details in the response.",
+                          "readOnly": true,
                           "xml": {
                             "attribute": true
                           }
@@ -589,11 +808,13 @@
                     },
                     "assignee": {
                       "description": "The details of the user associated with `assigneeType`, if any. See `realAssignee` for details of the user assigned to issues created with this component.",
+                      "readOnly": true,
                       "type": "object",
                       "properties": {
                         "self": {
                           "type": "string",
-                          "description": "The URL of the user."
+                          "description": "The URL of the user.",
+                          "readOnly": true
                         },
                         "key": {
                           "type": "string",
@@ -607,6 +828,7 @@
                         "accountType": {
                           "type": "string",
                           "description": "The user account type. Can take the following values:\n\n *  `atlassian` regular Atlassian user account\n *  `app` system account used for Connect applications and OAuth to represent external systems\n *  `customer` Jira Service Desk account representing an external service desk",
+                          "readOnly": true,
                           "enum": ["atlassian", "app", "customer", "unknown"]
                         },
                         "name": {
@@ -615,10 +837,12 @@
                         },
                         "emailAddress": {
                           "type": "string",
-                          "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "avatarUrls": {
                           "description": "The avatars of the user.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "16x16": {
@@ -641,22 +865,27 @@
                         },
                         "displayName": {
                           "type": "string",
-                          "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value."
+                          "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value.",
+                          "readOnly": true
                         },
                         "active": {
                           "type": "boolean",
-                          "description": "Whether the user is active."
+                          "description": "Whether the user is active.",
+                          "readOnly": true
                         },
                         "timeZone": {
                           "type": "string",
-                          "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "locale": {
                           "type": "string",
-                          "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "groups": {
                           "description": "The groups that the user belongs to.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "size": {
@@ -676,7 +905,8 @@
                                   },
                                   "self": {
                                     "type": "string",
-                                    "description": "The URL for these group details."
+                                    "description": "The URL for these group details.",
+                                    "readOnly": true
                                   }
                                 }
                               }
@@ -698,6 +928,7 @@
                         },
                         "applicationRoles": {
                           "description": "The application roles the user is assigned to.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "size": {
@@ -787,6 +1018,7 @@
                         "expand": {
                           "type": "string",
                           "description": "Expand options that include additional user details in the response.",
+                          "readOnly": true,
                           "xml": {
                             "attribute": true
                           }
@@ -796,6 +1028,7 @@
                     "realAssigneeType": {
                       "type": "string",
                       "description": "The type of the assignee that is assigned to issues created with this component, when an assignee cannot be set from the `assigneeType`. For example, `assigneeType` is set to `COMPONENT_LEAD` but no component lead is set. This property is set to one of the following values:\n\n *  `PROJECT_LEAD` when `assigneeType` is `PROJECT_LEAD` and the project lead has permission to be assigned issues in the project that the component is in.\n *  `COMPONENT_LEAD` when `assignee`Type is `COMPONENT_LEAD` and the component lead has permission to be assigned issues in the project that the component is in.\n *  `UNASSIGNED` when `assigneeType` is `UNASSIGNED` and Jira is configured to allow unassigned issues.\n *  `PROJECT_DEFAULT` when none of the preceding cases are true.",
+                      "readOnly": true,
                       "enum": [
                         "PROJECT_DEFAULT",
                         "COMPONENT_LEAD",
@@ -805,11 +1038,13 @@
                     },
                     "realAssignee": {
                       "description": "The user assigned to issues created with this component, when `assigneeType` does not identify a valid assignee.",
+                      "readOnly": true,
                       "type": "object",
                       "properties": {
                         "self": {
                           "type": "string",
-                          "description": "The URL of the user."
+                          "description": "The URL of the user.",
+                          "readOnly": true
                         },
                         "key": {
                           "type": "string",
@@ -823,6 +1058,7 @@
                         "accountType": {
                           "type": "string",
                           "description": "The user account type. Can take the following values:\n\n *  `atlassian` regular Atlassian user account\n *  `app` system account used for Connect applications and OAuth to represent external systems\n *  `customer` Jira Service Desk account representing an external service desk",
+                          "readOnly": true,
                           "enum": ["atlassian", "app", "customer", "unknown"]
                         },
                         "name": {
@@ -831,10 +1067,12 @@
                         },
                         "emailAddress": {
                           "type": "string",
-                          "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "avatarUrls": {
                           "description": "The avatars of the user.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "16x16": {
@@ -857,22 +1095,27 @@
                         },
                         "displayName": {
                           "type": "string",
-                          "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value."
+                          "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value.",
+                          "readOnly": true
                         },
                         "active": {
                           "type": "boolean",
-                          "description": "Whether the user is active."
+                          "description": "Whether the user is active.",
+                          "readOnly": true
                         },
                         "timeZone": {
                           "type": "string",
-                          "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "locale": {
                           "type": "string",
-                          "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                          "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                          "readOnly": true
                         },
                         "groups": {
                           "description": "The groups that the user belongs to.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "size": {
@@ -892,7 +1135,8 @@
                                   },
                                   "self": {
                                     "type": "string",
-                                    "description": "The URL for these group details."
+                                    "description": "The URL for these group details.",
+                                    "readOnly": true
                                   }
                                 }
                               }
@@ -914,6 +1158,7 @@
                         },
                         "applicationRoles": {
                           "description": "The application roles the user is assigned to.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "size": {
@@ -1003,6 +1248,7 @@
                         "expand": {
                           "type": "string",
                           "description": "Expand options that include additional user details in the response.",
+                          "readOnly": true,
                           "xml": {
                             "attribute": true
                           }
@@ -1011,7 +1257,8 @@
                     },
                     "isAssigneeTypeValid": {
                       "type": "boolean",
-                      "description": "Whether a user is associated with `assigneeType`. For example, if the `assigneeType` is set to `COMPONENT_LEAD` but the component lead is not set, then `false` is returned."
+                      "description": "Whether a user is associated with `assigneeType`. For example, if the `assigneeType` is set to `COMPONENT_LEAD` but the component lead is not set, then `false` is returned.",
+                      "readOnly": true
                     },
                     "project": {
                       "type": "string",
@@ -1019,7 +1266,8 @@
                     },
                     "projectId": {
                       "type": "integer",
-                      "description": "The ID of the project the component is assigned to."
+                      "description": "The ID of the project the component is assigned to.",
+                      "readOnly": true
                     }
                   }
                 }
@@ -1027,61 +1275,75 @@
               "issueTypes": {
                 "type": "array",
                 "description": "List of the issue types available in the project.",
+                "readOnly": true,
                 "items": {
                   "type": "object",
                   "properties": {
                     "self": {
                       "type": "string",
-                      "description": "The URL of these issue type details."
+                      "description": "The URL of these issue type details.",
+                      "readOnly": true
                     },
                     "id": {
                       "type": "string",
-                      "description": "The ID of the issue type."
+                      "description": "The ID of the issue type.",
+                      "readOnly": true
                     },
                     "description": {
                       "type": "string",
-                      "description": "The description of the issue type."
+                      "description": "The description of the issue type.",
+                      "readOnly": true
                     },
                     "iconUrl": {
                       "type": "string",
-                      "description": "The URL of the issue type's avatar."
+                      "description": "The URL of the issue type's avatar.",
+                      "readOnly": true
                     },
                     "name": {
                       "type": "string",
-                      "description": "The name of the issue type."
+                      "description": "The name of the issue type.",
+                      "readOnly": true
                     },
                     "subtask": {
                       "type": "boolean",
-                      "description": "Whether this issue type is used to create subtasks."
+                      "description": "Whether this issue type is used to create subtasks.",
+                      "readOnly": true
                     },
                     "avatarId": {
                       "type": "integer",
-                      "description": "The ID of the issue type's avatar."
+                      "description": "The ID of the issue type's avatar.",
+                      "readOnly": true
                     },
                     "entityId": {
                       "type": "string",
-                      "description": "Unique ID for next-gen projects."
+                      "description": "Unique ID for next-gen projects.",
+                      "readOnly": true
                     },
                     "hierarchyLevel": {
                       "type": "integer",
-                      "description": "Hierarchy level of the issue type."
+                      "description": "Hierarchy level of the issue type.",
+                      "readOnly": true
                     },
                     "scope": {
                       "description": "Details of the next-gen projects the issue type is available in.",
+                      "readOnly": true,
                       "type": "object",
                       "properties": {
                         "type": {
                           "type": "string",
                           "description": "The type of scope.",
+                          "readOnly": true,
                           "enum": ["PROJECT", "TEMPLATE"]
                         },
                         "project": {
                           "description": "The project the item has scope in.",
+                          "readOnly": true,
                           "type": "object",
                           "properties": {
                             "self": {
                               "type": "string",
-                              "description": "The URL of the project details."
+                              "description": "The URL of the project details.",
+                              "readOnly": true
                             },
                             "id": {
                               "type": "string",
@@ -1089,23 +1351,28 @@
                             },
                             "key": {
                               "type": "string",
-                              "description": "The key of the project."
+                              "description": "The key of the project.",
+                              "readOnly": true
                             },
                             "name": {
                               "type": "string",
-                              "description": "The name of the project."
+                              "description": "The name of the project.",
+                              "readOnly": true
                             },
                             "projectTypeKey": {
                               "type": "string",
                               "description": "The [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes) of the project.",
+                              "readOnly": true,
                               "enum": ["software", "service_desk", "business"]
                             },
                             "simplified": {
                               "type": "boolean",
-                              "description": "Whether or not the project is simplified."
+                              "description": "Whether or not the project is simplified.",
+                              "readOnly": true
                             },
                             "avatarUrls": {
                               "description": "The URLs of the project's avatars.",
+                              "readOnly": true,
                               "type": "object",
                               "properties": {
                                 "16x16": {
@@ -1128,23 +1395,28 @@
                             },
                             "projectCategory": {
                               "description": "The category the project belongs to.",
+                              "readOnly": true,
                               "type": "object",
                               "properties": {
                                 "self": {
                                   "type": "string",
-                                  "description": "The URL of the project category."
+                                  "description": "The URL of the project category.",
+                                  "readOnly": true
                                 },
                                 "id": {
                                   "type": "string",
-                                  "description": "The ID of the project category."
+                                  "description": "The ID of the project category.",
+                                  "readOnly": true
                                 },
                                 "description": {
                                   "type": "string",
-                                  "description": "The name of the project category."
+                                  "description": "The name of the project category.",
+                                  "readOnly": true
                                 },
                                 "name": {
                                   "type": "string",
-                                  "description": "The description of the project category."
+                                  "description": "The description of the project category.",
+                                  "readOnly": true
                                 }
                               }
                             }
@@ -1157,7 +1429,8 @@
               },
               "url": {
                 "type": "string",
-                "description": "A link to information about this project, such as project documentation."
+                "description": "A link to information about this project, such as project documentation.",
+                "readOnly": true
               },
               "email": {
                 "type": "string",
@@ -1166,11 +1439,13 @@
               "assigneeType": {
                 "type": "string",
                 "description": "The default assignee when creating issues for this project.",
+                "readOnly": true,
                 "enum": ["PROJECT_LEAD", "UNASSIGNED"]
               },
               "versions": {
                 "type": "array",
-                "description": "The versions defined in the project. For more information, see [Create version](#api-rest-api-3-version-post).",
+                "description": "The versions defined in the project. For more information, see [Create version](#api-rest-api-2-version-post).",
+                "readOnly": true,
                 "items": {
                   "type": "object",
                   "properties": {
@@ -1183,11 +1458,13 @@
                     },
                     "self": {
                       "type": "string",
-                      "description": "The URL of the version."
+                      "description": "The URL of the version.",
+                      "readOnly": true
                     },
                     "id": {
                       "type": "string",
-                      "description": "The ID of the version."
+                      "description": "The ID of the version.",
+                      "readOnly": true
                     },
                     "description": {
                       "type": "string",
@@ -1217,15 +1494,18 @@
                     },
                     "overdue": {
                       "type": "boolean",
-                      "description": "Indicates that the version is overdue."
+                      "description": "Indicates that the version is overdue.",
+                      "readOnly": true
                     },
                     "userStartDate": {
                       "type": "string",
-                      "description": "The date on which work on this version is expected to start, expressed in the instance's *Day/Month/Year Format* date format."
+                      "description": "The date on which work on this version is expected to start, expressed in the instance's *Day/Month/Year Format* date format.",
+                      "readOnly": true
                     },
                     "userReleaseDate": {
                       "type": "string",
-                      "description": "The date on which work on this version is expected to finish, expressed in the instance's *Day/Month/Year Format* date format."
+                      "description": "The date on which work on this version is expected to finish, expressed in the instance's *Day/Month/Year Format* date format.",
+                      "readOnly": true
                     },
                     "project": {
                       "type": "string",
@@ -1242,6 +1522,7 @@
                     "operations": {
                       "type": "array",
                       "description": "If the expand option `operations` is used, returns the list of operations available for this version.",
+                      "readOnly": true,
                       "items": {
                         "type": "object",
                         "properties": {
@@ -1271,23 +1552,28 @@
                     },
                     "issuesStatusForFixVersion": {
                       "description": "If the expand option `issuesstatus` is used, returns the count of issues in this version for each of the status categories *to do*, *in progress*, *done*, and *unmapped*. The *unmapped* property contains a count of issues with a status other than *to do*, *in progress*, and *done*.",
+                      "readOnly": true,
                       "type": "object",
                       "properties": {
                         "unmapped": {
                           "type": "integer",
-                          "description": "Count of issues with a status other than *to do*, *in progress*, and *done*."
+                          "description": "Count of issues with a status other than *to do*, *in progress*, and *done*.",
+                          "readOnly": true
                         },
                         "toDo": {
                           "type": "integer",
-                          "description": "Count of issues with status *to do*."
+                          "description": "Count of issues with status *to do*.",
+                          "readOnly": true
                         },
                         "inProgress": {
                           "type": "integer",
-                          "description": "Count of issues with status *in progress*."
+                          "description": "Count of issues with status *in progress*.",
+                          "readOnly": true
                         },
                         "done": {
                           "type": "integer",
-                          "description": "Count of issues with status *done*."
+                          "description": "Count of issues with status *done*.",
+                          "readOnly": true
                         }
                       }
                     }
@@ -1296,15 +1582,18 @@
               },
               "name": {
                 "type": "string",
-                "description": "The name of the project."
+                "description": "The name of the project.",
+                "readOnly": true
               },
               "roles": {
                 "type": "object",
                 "additionalProperties": true,
-                "description": "The name and self URL for each role defined in the project. For more information, see [Create project role](#api-rest-api-3-role-post)."
+                "description": "The name and self URL for each role defined in the project. For more information, see [Create project role](#api-rest-api-2-role-post).",
+                "readOnly": true
               },
               "avatarUrls": {
                 "description": "The URLs of the project's avatars.",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "16x16": {
@@ -1327,15 +1616,18 @@
               },
               "projectCategory": {
                 "description": "The category the project belongs to.",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "self": {
                     "type": "string",
-                    "description": "The URL of the project category."
+                    "description": "The URL of the project category.",
+                    "readOnly": true
                   },
                   "id": {
                     "type": "string",
-                    "description": "The ID of the project category."
+                    "description": "The ID of the project category.",
+                    "readOnly": true
                   },
                   "name": {
                     "type": "string",
@@ -1350,15 +1642,18 @@
               "projectTypeKey": {
                 "type": "string",
                 "description": "The [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes) of the project.",
+                "readOnly": true,
                 "enum": ["software", "service_desk", "business"]
               },
               "simplified": {
                 "type": "boolean",
-                "description": "Whether the project is simplified."
+                "description": "Whether the project is simplified.",
+                "readOnly": true
               },
               "style": {
                 "type": "string",
                 "description": "The type of the project.",
+                "readOnly": true,
                 "enum": ["classic", "next-gen"]
               },
               "favourite": {
@@ -1367,10 +1662,12 @@
               },
               "isPrivate": {
                 "type": "boolean",
-                "description": "Whether the project is private."
+                "description": "Whether the project is private.",
+                "readOnly": true
               },
               "issueTypeHierarchy": {
                 "description": "The issue type hierarchy for the project",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "level": {
@@ -1416,58 +1713,71 @@
               },
               "permissions": {
                 "description": "User permissions on the project",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "canEdit": {
                     "type": "boolean",
-                    "description": "Whether the logged user can edit the project."
+                    "description": "Whether the logged user can edit the project.",
+                    "readOnly": true
                   }
                 }
               },
               "properties": {
                 "type": "object",
-                "description": "Map of project properties"
+                "additionalProperties": true,
+                "description": "Map of project properties",
+                "readOnly": true
               },
               "uuid": {
                 "type": "string",
-                "description": "Unique ID for next-gen projects."
+                "description": "Unique ID for next-gen projects.",
+                "readOnly": true
               },
               "insight": {
                 "description": "Insights about the project.",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "totalIssueCount": {
                     "type": "integer",
-                    "description": "Total issue count."
+                    "description": "Total issue count.",
+                    "readOnly": true
                   },
                   "lastIssueUpdateTime": {
                     "type": "string",
                     "description": "The last issue update time.",
-                    "format": "date-time"
+                    "format": "date-time",
+                    "readOnly": true
                   }
                 }
               },
               "deleted": {
                 "type": "boolean",
-                "description": "Whether the project is marked as deleted."
+                "description": "Whether the project is marked as deleted.",
+                "readOnly": true
               },
               "retentionTillDate": {
                 "type": "string",
                 "description": "The date when the project is deleted permanently.",
-                "format": "date-time"
+                "format": "date-time",
+                "readOnly": true
               },
               "deletedDate": {
                 "type": "string",
                 "description": "The date when the project was marked as deleted.",
-                "format": "date-time"
+                "format": "date-time",
+                "readOnly": true
               },
               "deletedBy": {
                 "description": "The user who marked the project as deleted.",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "self": {
                     "type": "string",
-                    "description": "The URL of the user."
+                    "description": "The URL of the user.",
+                    "readOnly": true
                   },
                   "key": {
                     "type": "string",
@@ -1481,6 +1791,7 @@
                   "accountType": {
                     "type": "string",
                     "description": "The user account type. Can take the following values:\n\n *  `atlassian` regular Atlassian user account\n *  `app` system account used for Connect applications and OAuth to represent external systems\n *  `customer` Jira Service Desk account representing an external service desk",
+                    "readOnly": true,
                     "enum": ["atlassian", "app", "customer", "unknown"]
                   },
                   "name": {
@@ -1489,10 +1800,12 @@
                   },
                   "emailAddress": {
                     "type": "string",
-                    "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "avatarUrls": {
                     "description": "The avatars of the user.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "16x16": {
@@ -1515,22 +1828,27 @@
                   },
                   "displayName": {
                     "type": "string",
-                    "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value."
+                    "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value.",
+                    "readOnly": true
                   },
                   "active": {
                     "type": "boolean",
-                    "description": "Whether the user is active."
+                    "description": "Whether the user is active.",
+                    "readOnly": true
                   },
                   "timeZone": {
                     "type": "string",
-                    "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "locale": {
                     "type": "string",
-                    "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "groups": {
                     "description": "The groups that the user belongs to.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "size": {
@@ -1550,7 +1868,8 @@
                             },
                             "self": {
                               "type": "string",
-                              "description": "The URL for these group details."
+                              "description": "The URL for these group details.",
+                              "readOnly": true
                             }
                           }
                         }
@@ -1572,6 +1891,7 @@
                   },
                   "applicationRoles": {
                     "description": "The application roles the user is assigned to.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "size": {
@@ -1661,6 +1981,7 @@
                   "expand": {
                     "type": "string",
                     "description": "Expand options that include additional user details in the response.",
+                    "readOnly": true,
                     "xml": {
                       "attribute": true
                     }
@@ -1669,20 +1990,24 @@
               },
               "archived": {
                 "type": "boolean",
-                "description": "Whether the project is archived."
+                "description": "Whether the project is archived.",
+                "readOnly": true
               },
               "archivedDate": {
                 "type": "string",
                 "description": "The date when the project was archived.",
-                "format": "date-time"
+                "format": "date-time",
+                "readOnly": true
               },
               "archivedBy": {
                 "description": "The user who archived the project.",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "self": {
                     "type": "string",
-                    "description": "The URL of the user."
+                    "description": "The URL of the user.",
+                    "readOnly": true
                   },
                   "key": {
                     "type": "string",
@@ -1696,6 +2021,7 @@
                   "accountType": {
                     "type": "string",
                     "description": "The user account type. Can take the following values:\n\n *  `atlassian` regular Atlassian user account\n *  `app` system account used for Connect applications and OAuth to represent external systems\n *  `customer` Jira Service Desk account representing an external service desk",
+                    "readOnly": true,
                     "enum": ["atlassian", "app", "customer", "unknown"]
                   },
                   "name": {
@@ -1704,10 +2030,12 @@
                   },
                   "emailAddress": {
                     "type": "string",
-                    "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "avatarUrls": {
                     "description": "The avatars of the user.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "16x16": {
@@ -1730,22 +2058,27 @@
                   },
                   "displayName": {
                     "type": "string",
-                    "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value."
+                    "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value.",
+                    "readOnly": true
                   },
                   "active": {
                     "type": "boolean",
-                    "description": "Whether the user is active."
+                    "description": "Whether the user is active.",
+                    "readOnly": true
                   },
                   "timeZone": {
                     "type": "string",
-                    "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "locale": {
                     "type": "string",
-                    "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null."
+                    "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                    "readOnly": true
                   },
                   "groups": {
                     "description": "The groups that the user belongs to.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "size": {
@@ -1765,7 +2098,8 @@
                             },
                             "self": {
                               "type": "string",
-                              "description": "The URL for these group details."
+                              "description": "The URL for these group details.",
+                              "readOnly": true
                             }
                           }
                         }
@@ -1787,6 +2121,7 @@
                   },
                   "applicationRoles": {
                     "description": "The application roles the user is assigned to.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "size": {
@@ -1876,6 +2211,7 @@
                   "expand": {
                     "type": "string",
                     "description": "Expand options that include additional user details in the response.",
+                    "readOnly": true,
                     "xml": {
                       "attribute": true
                     }
@@ -1890,7 +2226,8 @@
             "properties": {
               "self": {
                 "type": "string",
-                "description": "The URL the project role details."
+                "description": "The URL the project role details.",
+                "readOnly": true
               },
               "name": {
                 "type": "string",
@@ -1898,29 +2235,35 @@
               },
               "id": {
                 "type": "integer",
-                "description": "The ID of the project role."
+                "description": "The ID of the project role.",
+                "readOnly": true
               },
               "description": {
                 "type": "string",
-                "description": "The description of the project role."
+                "description": "The description of the project role.",
+                "readOnly": true
               },
               "actors": {
                 "type": "array",
                 "description": "The list of users who act in this role.",
+                "readOnly": true,
                 "items": {
                   "type": "object",
                   "properties": {
                     "id": {
                       "type": "integer",
-                      "description": "The ID of the role actor."
+                      "description": "The ID of the role actor.",
+                      "readOnly": true
                     },
                     "displayName": {
                       "type": "string",
-                      "description": "The display name of the role actor. For users, depending on the user\u2019s privacy setting, this may return an alternative value for the user's name."
+                      "description": "The display name of the role actor. For users, depending on the user\u2019s privacy setting, this may return an alternative value for the user's name.",
+                      "readOnly": true
                     },
                     "type": {
                       "type": "string",
                       "description": "The type of role actor.",
+                      "readOnly": true,
                       "enum": [
                         "atlassian-group-role-actor",
                         "atlassian-user-role-actor"
@@ -1928,23 +2271,28 @@
                     },
                     "name": {
                       "type": "string",
-                      "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                      "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.",
+                      "readOnly": true
                     },
                     "avatarUrl": {
                       "type": "string",
-                      "description": "The avatar of the role actor."
+                      "description": "The avatar of the role actor.",
+                      "readOnly": true
                     },
                     "actorUser": {
+                      "readOnly": true,
                       "type": "object",
                       "properties": {
                         "accountId": {
                           "maxLength": 128,
                           "type": "string",
-                          "description": "The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*. Returns *unknown* if the record is deleted and corrupted, for example, as the result of a server import."
+                          "description": "The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*. Returns *unknown* if the record is deleted and corrupted, for example, as the result of a server import.",
+                          "readOnly": true
                         }
                       }
                     },
                     "actorGroup": {
+                      "readOnly": true,
                       "type": "object",
                       "properties": {
                         "displayName": {
@@ -1962,20 +2310,24 @@
               },
               "scope": {
                 "description": "The scope of the role. Indicated for roles associated with [next-gen projects](https://confluence.atlassian.com/x/loMyO).",
+                "readOnly": true,
                 "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
                     "description": "The type of scope.",
+                    "readOnly": true,
                     "enum": ["PROJECT", "TEMPLATE"]
                   },
                   "project": {
                     "description": "The project the item has scope in.",
+                    "readOnly": true,
                     "type": "object",
                     "properties": {
                       "self": {
                         "type": "string",
-                        "description": "The URL of the project details."
+                        "description": "The URL of the project details.",
+                        "readOnly": true
                       },
                       "id": {
                         "type": "string",
@@ -1983,23 +2335,28 @@
                       },
                       "key": {
                         "type": "string",
-                        "description": "The key of the project."
+                        "description": "The key of the project.",
+                        "readOnly": true
                       },
                       "name": {
                         "type": "string",
-                        "description": "The name of the project."
+                        "description": "The name of the project.",
+                        "readOnly": true
                       },
                       "projectTypeKey": {
                         "type": "string",
                         "description": "The [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes) of the project.",
+                        "readOnly": true,
                         "enum": ["software", "service_desk", "business"]
                       },
                       "simplified": {
                         "type": "boolean",
-                        "description": "Whether or not the project is simplified."
+                        "description": "Whether or not the project is simplified.",
+                        "readOnly": true
                       },
                       "avatarUrls": {
                         "description": "The URLs of the project's avatars.",
+                        "readOnly": true,
                         "type": "object",
                         "properties": {
                           "16x16": {
@@ -2022,23 +2379,28 @@
                       },
                       "projectCategory": {
                         "description": "The category the project belongs to.",
+                        "readOnly": true,
                         "type": "object",
                         "properties": {
                           "self": {
                             "type": "string",
-                            "description": "The URL of the project category."
+                            "description": "The URL of the project category.",
+                            "readOnly": true
                           },
                           "id": {
                             "type": "string",
-                            "description": "The ID of the project category."
+                            "description": "The ID of the project category.",
+                            "readOnly": true
                           },
                           "description": {
                             "type": "string",
-                            "description": "The name of the project category."
+                            "description": "The name of the project category.",
+                            "readOnly": true
                           },
                           "name": {
                             "type": "string",
-                            "description": "The description of the project category."
+                            "description": "The description of the project category.",
+                            "readOnly": true
                           }
                         }
                       }
@@ -2056,20 +2418,285 @@
               },
               "admin": {
                 "type": "boolean",
-                "description": "Whether this role is the admin role for the project."
+                "description": "Whether this role is the admin role for the project.",
+                "readOnly": true
               },
               "roleConfigurable": {
                 "type": "boolean",
-                "description": "Whether the roles are configurable for this project."
+                "description": "Whether the roles are configurable for this project.",
+                "readOnly": true
               },
               "default": {
                 "type": "boolean",
-                "description": "Whether this role is the default role for the project"
+                "description": "Whether this role is the default role for the project",
+                "readOnly": true
               }
             }
           },
           "group": {
-            "description": "The group that the filter is shared with.",
+            "description": "The group that the filter is shared with. For a request, specify the `name` property for the group.",
+            "type": "object",
+            "properties": {
+              "groupId": {
+                "type": ["null", "string"]
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of group."
+              },
+              "self": {
+                "type": "string",
+                "description": "The URL for these group details.",
+                "readOnly": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "isWritable": {
+      "description": "Indicates if the filter is writable or read-only",
+      "type": "boolean"
+    },
+    "approximateLastUsed": {
+      "description": "The approximate last time the filter was used",
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
+    "subscriptions": {
+      "type": "array",
+      "description": "The users that are subscribed to the filter.",
+      "readOnly": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The ID of the filter subscription.",
+            "readOnly": true
+          },
+          "user": {
+            "description": "The user subscribing to filter.",
+            "readOnly": true,
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "description": "The URL of the user.",
+                "readOnly": true
+              },
+              "key": {
+                "type": "string",
+                "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+              },
+              "accountId": {
+                "maxLength": 128,
+                "type": "string",
+                "description": "The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*. Required in requests."
+              },
+              "accountType": {
+                "type": "string",
+                "description": "The user account type. Can take the following values:\n\n *  `atlassian` regular Atlassian user account\n *  `app` system account used for Connect applications and OAuth to represent external systems\n *  `customer` Jira Service Desk account representing an external service desk",
+                "readOnly": true,
+                "enum": ["atlassian", "app", "customer", "unknown"]
+              },
+              "name": {
+                "type": "string",
+                "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+              },
+              "emailAddress": {
+                "type": "string",
+                "description": "The email address of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                "readOnly": true
+              },
+              "avatarUrls": {
+                "description": "The avatars of the user.",
+                "readOnly": true,
+                "type": "object",
+                "properties": {
+                  "16x16": {
+                    "type": "string",
+                    "description": "The URL of the item's 16x16 pixel avatar."
+                  },
+                  "24x24": {
+                    "type": "string",
+                    "description": "The URL of the item's 24x24 pixel avatar."
+                  },
+                  "32x32": {
+                    "type": "string",
+                    "description": "The URL of the item's 32x32 pixel avatar."
+                  },
+                  "48x48": {
+                    "type": "string",
+                    "description": "The URL of the item's 48x48 pixel avatar."
+                  }
+                }
+              },
+              "displayName": {
+                "type": "string",
+                "description": "The display name of the user. Depending on the user\u2019s privacy setting, this may return an alternative value.",
+                "readOnly": true
+              },
+              "active": {
+                "type": "boolean",
+                "description": "Whether the user is active.",
+                "readOnly": true
+              },
+              "timeZone": {
+                "type": "string",
+                "description": "The time zone specified in the user's profile. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                "readOnly": true
+              },
+              "locale": {
+                "type": "string",
+                "description": "The locale of the user. Depending on the user\u2019s privacy setting, this may be returned as null.",
+                "readOnly": true
+              },
+              "groups": {
+                "description": "The groups that the user belongs to.",
+                "readOnly": true,
+                "type": "object",
+                "properties": {
+                  "size": {
+                    "type": "integer",
+                    "xml": {
+                      "attribute": true
+                    }
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "The name of group."
+                        },
+                        "self": {
+                          "type": "string",
+                          "description": "The URL for these group details.",
+                          "readOnly": true
+                        }
+                      }
+                    }
+                  },
+                  "pagingCallback": {
+                    "type": "object"
+                  },
+                  "callback": {
+                    "type": "object"
+                  },
+                  "max-results": {
+                    "type": "integer",
+                    "xml": {
+                      "name": "max-results",
+                      "attribute": true
+                    }
+                  }
+                }
+              },
+              "applicationRoles": {
+                "description": "The application roles the user is assigned to.",
+                "readOnly": true,
+                "type": "object",
+                "properties": {
+                  "size": {
+                    "type": "integer",
+                    "xml": {
+                      "attribute": true
+                    }
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "The key of the application role."
+                        },
+                        "groups": {
+                          "uniqueItems": true,
+                          "type": "array",
+                          "description": "The groups associated with the application role.",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The display name of the application role."
+                        },
+                        "defaultGroups": {
+                          "uniqueItems": true,
+                          "type": "array",
+                          "description": "The groups that are granted default access for this application role.",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "selectedByDefault": {
+                          "type": "boolean",
+                          "description": "Determines whether this application role should be selected by default on user creation."
+                        },
+                        "defined": {
+                          "type": "boolean",
+                          "description": "Deprecated."
+                        },
+                        "numberOfSeats": {
+                          "type": "integer",
+                          "description": "The maximum count of users on your license."
+                        },
+                        "remainingSeats": {
+                          "type": "integer",
+                          "description": "The count of users remaining on your license."
+                        },
+                        "userCount": {
+                          "type": "integer",
+                          "description": "The number of users counting against your license."
+                        },
+                        "userCountDescription": {
+                          "type": "string",
+                          "description": "The [type of users](https://confluence.atlassian.com/x/lRW3Ng) being counted against your license."
+                        },
+                        "hasUnlimitedSeats": {
+                          "type": "boolean"
+                        },
+                        "platform": {
+                          "type": "boolean",
+                          "description": "Indicates if the application role belongs to Jira platform (`jira-core`)."
+                        }
+                      }
+                    }
+                  },
+                  "pagingCallback": {
+                    "type": "object"
+                  },
+                  "callback": {
+                    "type": "object"
+                  },
+                  "max-results": {
+                    "type": "integer",
+                    "xml": {
+                      "name": "max-results",
+                      "attribute": true
+                    }
+                  }
+                }
+              },
+              "expand": {
+                "type": "string",
+                "description": "Expand options that include additional user details in the response.",
+                "readOnly": true,
+                "xml": {
+                  "attribute": true
+                }
+              }
+            }
+          },
+          "group": {
+            "description": "The group subscribing to filter.",
+            "readOnly": true,
             "type": "object",
             "properties": {
               "name": {
@@ -2078,67 +2705,15 @@
               },
               "self": {
                 "type": "string",
-                "description": "The URL for these group details."
+                "description": "The URL for these group details.",
+                "readOnly": true
               }
             }
           }
         }
       }
-    },
-    "view": {
-      "description": "The URL of the dashboard.",
-      "type": "string"
-    },
-    "editpermission": {
-      "description": "List of items representing the specific edit permissions assigned for the dashboard.",
-      "type": ["null", "array"],
-      "items": {
-        "type": ["null", "object"],
-        "properties": {
-          "group": {
-            "description": "The group associated with the edit permission.",
-            "type": ["null", "object"]
-          },
-          "id": {
-            "description": "The ID of the edit permission.",
-            "type": ["null", "integer"]
-          },
-          "project": {
-            "description": "The project associated with the edit permission.",
-            "type": ["null", "object"]
-          },
-          "role": {
-            "description": "The role associated with the edit permission.",
-            "type": ["null", "object"]
-          },
-          "type": {
-            "description": "The type of edit permission.",
-            "type": ["null", "string"]
-          },
-          "user": {
-            "description": "The user associated with the edit permission.",
-            "type": ["null", "object"]
-          }
-        }
-      }
-    },
-    "isWritable": {
-      "description": "Indicates whether the dashboard is writable.",
-      "type": ["null", "boolean"]
-    },
-    "systemDashboard": {
-      "description": "Information about the system dashboard.",
-      "type": ["null", "boolean"]
-    },
-    "editPermissions": {
-      "description": "Details about the users/groups who have edit permissions for the dashboard.",
-      "type": ["null", "array"],
-      "items": {
-        "description": "List of edit permissions for the dashboard.",
-        "type": ["null", "object"]
-      }
     }
   },
   "additionalProperties": true,
-  "description": "Details of a dashboard."
+  "description": "Details of a filter."
 }

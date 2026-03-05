@@ -9,7 +9,7 @@ from typing import Any, Mapping, Optional
 
 import requests
 from airbyte_cdk.models import SyncMode
-from source_jira.streams import (
+from source_jira_data_center.streams import (
     Dashboards,
     Filters,
     FilterSharing,

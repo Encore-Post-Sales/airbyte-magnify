@@ -60,7 +60,7 @@
       "enum": ["PROJECT_LEAD", "UNASSIGNED"]
     },
     "versions": {
-      "description": "The versions defined in the project. For more information, see [Create version](#api-rest-api-3-version-post).",
+      "description": "The versions defined in the project. For more information, see [Create version](#api-rest-api-2-version-post).",
       "type": "array",
       "readOnly": true
     },
@@ -70,7 +70,7 @@
       "readOnly": true
     },
     "roles": {
-      "description": "The name and self URL for each role defined in the project. For more information, see [Create project role](#api-rest-api-3-role-post).",
+      "description": "The name and self URL for each role defined in the project. For more information, see [Create project role](#api-rest-api-2-role-post).",
       "type": "object",
       "additionalProperties": true,
       "readOnly": true

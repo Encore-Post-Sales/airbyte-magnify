@@ -9,7 +9,7 @@ from airbyte_cdk.models import FailureType
 from airbyte_cdk.sources.declarative.exceptions import ReadException
 from airbyte_cdk.sources.declarative.yaml_declarative_source import YamlDeclarativeSource
 from airbyte_cdk.sources.streams.core import Stream
-from airbyte_cdk.sources.streams.http.requests_native_auth import BasicHttpAuthenticator
+from airbyte_cdk.sources.streams.http.requests_native_auth import TokenAuthenticator
 from airbyte_cdk.utils.traced_exception import AirbyteTracedException
 from pydantic import ValidationError
 from requests.exceptions import InvalidURL
@@ -18,7 +18,7 @@ from .streams import IssueComments, IssueFields, Issues, IssueWorklogs, PullRequ
 from .utils import read_full_refresh
 
 
-class SourceJira(YamlDeclarativeSource):
+class SourceJiraDataCenter(YamlDeclarativeSource):
     def __init__(self):
         super().__init__(**{"path_to_yaml": "manifest.yaml"})
 
@@ -42,15 +42,15 @@ class SourceJira(YamlDeclarativeSource):
                 except:
                     logger.warning(f"No access to stream: {stream_name}")
                 else:
-                    logger.info(f"API Token have access to stream: {stream_name}, so check is successful.")
+                    logger.info(f"Personal Access Token has access to stream: {stream_name}, so check is successful.")
                     return True, None
-            return False, "This API Token does not have permission to read any of the resources."
+            return False, "This Personal Access Token does not have permission to read any of the resources."
         except ValidationError as e:
             return False, e
         except (AirbyteTracedException, ReadException, InvalidURL) as e:
             if isinstance(e, InvalidURL) or "404" in str(e) or (isinstance(e, AirbyteTracedException) and "Not found" in e.message):
                 raise AirbyteTracedException(
-                    message="Config validation error: please check that your domain is valid and does not include protocol (e.g: https://).",
+                    message="Config validation error: please check that your domain is valid and does not include protocol (e.g: jira.example.com).",
                     internal_message=str(e),
                     failure_type=FailureType.config_error,
                 ) from None
@@ -70,7 +70,7 @@ class SourceJira(YamlDeclarativeSource):
 
     @staticmethod
     def get_authenticator(config: Mapping[str, Any]):
-        return BasicHttpAuthenticator(config["email"], config["api_token"])
+        return TokenAuthenticator(token=config["personal_access_token"])
 
     def get_non_portable_streams(self, config: Mapping[str, Any]) -> List[Stream]:
         config = self._validate_and_transform_config(config.copy())

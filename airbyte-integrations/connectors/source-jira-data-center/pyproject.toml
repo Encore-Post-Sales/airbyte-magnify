@@ -3,24 +3,24 @@ requires = [ "poetry-core>=1.0.0",]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-version = "3.1.1"
-name = "source-jira"
-description = "Source implementation for Jira."
+version = "1.0.0"
+name = "source-jira-data-center"
+description = "Source implementation for Jira Data Center."
 authors = [ "Airbyte <contact@airbyte.io>",]
 license = "MIT"
 readme = "README.md"
-documentation = "https://docs.airbyte.com/integrations/sources/jira"
+documentation = "https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/#gettingstarted"
 homepage = "https://airbyte.com"
 repository = "https://github.com/airbytehq/airbyte"
 [[tool.poetry.packages]]
-include = "source_jira"
+include = "source_jira_data_center"
 
 [tool.poetry.dependencies]
 python = "^3.10,<3.12"
 airbyte-cdk = "^4"
 
 [tool.poetry.scripts]
-source-jira = "source_jira.run:run"
+source-jira-data-center = "source_jira_data_center.run:run"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "==6.2.5"

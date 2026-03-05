@@ -13,9 +13,9 @@ from airbyte_cdk.utils.traced_exception import AirbyteTracedException
 from airbyte_protocol.models import SyncMode
 from conftest import find_stream
 from responses import matchers
-from source_jira.source import SourceJira
-from source_jira.streams import IssueFields, Issues, PullRequests
-from source_jira.utils import read_full_refresh, read_incremental
+from source_jira_data_center.source import SourceJiraDataCenter
+from source_jira_data_center.streams import IssueFields, Issues, PullRequests
+from source_jira_data_center.utils import read_full_refresh, read_incremental
 
 
 @responses.activate
@@ -23,7 +23,7 @@ def test_application_roles_stream_401_error(config, caplog):
     config["domain"] = "test_application_domain"
     responses.add(responses.GET, f"https://{config['domain']}/rest/api/3/applicationrole", status=401)
 
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     stream = find_stream("application_roles", config)
 
     with pytest.raises(
@@ -37,7 +37,7 @@ def test_application_roles_stream_401_error(config, caplog):
 def test_application_roles_stream(config, application_roles_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/applicationrole",
+        f"https://{config['domain']}/rest/api/2/applicationrole",
         json=application_roles_response,
     )
 
@@ -96,10 +96,10 @@ def test_board_stream_forbidden(config, boards_response, caplog):
 def test_dashboards_stream(config, dashboards_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/dashboard",
+        f"https://{config['domain']}/rest/api/2/dashboard",
         json=dashboards_response,
     )
-    
+
     stream = find_stream("dashboards", config)
     records = list(read_full_refresh(stream))
 
@@ -120,7 +120,7 @@ def test_filters_stream(config, mock_filter_response):
 def test_groups_stream(config, groups_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/group/bulk?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/group/bulk?maxResults=50",
         json=groups_response,
     )
 
@@ -135,14 +135,14 @@ def test_groups_stream(config, groups_response):
 def test_issues_fields_stream(config, mock_fields_response):
     stream = find_stream("issue_fields", config)
     records = list(read_full_refresh(stream))
-    
+
     assert len(records) == 6
     assert len(responses.calls) == 1
 
 
 @responses.activate
 def test_python_issues_fields_ids_by_name(config, mock_fields_response):
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     args = {"authenticator": authenticator, "domain": config["domain"], "projects": config["projects"]}
     stream = IssueFields(**args)
 
@@ -161,7 +161,7 @@ def test_python_issues_fields_ids_by_name(config, mock_fields_response):
 def test_issues_field_configurations_stream(config, issues_field_configurations_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/fieldconfiguration?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/fieldconfiguration?maxResults=50",
         json=issues_field_configurations_response,
     )
 
@@ -176,7 +176,7 @@ def test_issues_field_configurations_stream(config, issues_field_configurations_
 def test_issues_link_types_stream(config, issues_link_types_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issueLinkType",
+        f"https://{config['domain']}/rest/api/2/issueLinkType",
         json=issues_link_types_response,
     )
 
@@ -191,7 +191,7 @@ def test_issues_link_types_stream(config, issues_link_types_response):
 def test_issues_navigator_settings_stream(config, issues_navigator_settings_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/settings/columns",
+        f"https://{config['domain']}/rest/api/2/settings/columns",
         json=issues_navigator_settings_response,
     )
 
@@ -206,7 +206,7 @@ def test_issues_navigator_settings_stream(config, issues_navigator_settings_resp
 def test_issue_notification_schemas_stream(config, issue_notification_schemas_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/notificationscheme?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/notificationscheme?maxResults=50",
         json=issue_notification_schemas_response,
     )
 
@@ -221,7 +221,7 @@ def test_issue_notification_schemas_stream(config, issue_notification_schemas_re
 def test_issue_properties_stream(config, issue_properties_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/priority/search?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/priority/search?maxResults=50",
         json=issue_properties_response,
     )
 
@@ -236,7 +236,7 @@ def test_issue_properties_stream(config, issue_properties_response):
 def test_issue_resolutions_stream(config, issue_resolutions_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/resolution/search?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/resolution/search?maxResults=50",
         json=issue_resolutions_response,
     )
 
@@ -251,7 +251,7 @@ def test_issue_resolutions_stream(config, issue_resolutions_response):
 def test_issue_security_schemes_stream(config, issue_security_schemes_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issuesecurityschemes",
+        f"https://{config['domain']}/rest/api/2/issuesecurityschemes",
         json=issue_security_schemes_response,
     )
 
@@ -266,7 +266,7 @@ def test_issue_security_schemes_stream(config, issue_security_schemes_response):
 def test_issue_type_schemes_stream(config, issue_type_schemes_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issuetypescheme?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/issuetypescheme?maxResults=50",
         json=issue_type_schemes_response,
     )
 
@@ -281,7 +281,7 @@ def test_issue_type_schemes_stream(config, issue_type_schemes_response):
 def test_jira_settings_stream(config, jira_settings_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/application-properties",
+        f"https://{config['domain']}/rest/api/2/application-properties",
         json=jira_settings_response,
     )
 
@@ -322,7 +322,7 @@ def test_board_issues_stream(config, mock_board_response, board_issues_response)
 def test_filter_sharing_stream(config, mock_filter_response, filter_sharing_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/filter/1/permission",
+        f"https://{config['domain']}/rest/api/2/filter/1/permission",
         json=filter_sharing_response,
     )
 
@@ -346,7 +346,7 @@ def test_projects_stream(config, mock_projects_responses):
 def test_projects_avatars_stream(config, mock_non_deleted_projects_responses, projects_avatars_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/1/avatars",
+        f"https://{config['domain']}/rest/api/2/project/1/avatars",
         json=projects_avatars_response,
     )
 
@@ -361,7 +361,7 @@ def test_projects_avatars_stream(config, mock_non_deleted_projects_responses, pr
 def test_projects_categories_stream(config, projects_categories_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/projectCategory",
+        f"https://{config['domain']}/rest/api/2/projectCategory",
         json=projects_categories_response,
     )
 
@@ -385,12 +385,12 @@ def test_screens_stream(config, mock_screen_response):
 def test_screen_tabs_stream(config, mock_screen_response, screen_tabs_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/screens/1/tabs",
+        f"https://{config['domain']}/rest/api/2/screens/1/tabs",
         json=screen_tabs_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/screens/2/tabs",
+        f"https://{config['domain']}/rest/api/2/screens/2/tabs",
         json={},
     )
 
@@ -403,7 +403,7 @@ def test_screen_tabs_stream(config, mock_screen_response, screen_tabs_response):
 
 @responses.activate
 def test_sprints_stream(config, mock_board_response, mock_sprints_response):
-    output = read(SourceJira(), config, CatalogBuilder().with_stream("sprints", SyncMode.full_refresh).build())
+    output = read(SourceJiraDataCenter(), config, CatalogBuilder().with_stream("sprints", SyncMode.full_refresh).build())
 
     assert len(output.records) == 3
     assert len(responses.calls) == 4
@@ -446,7 +446,7 @@ def test_sprint_issues_stream(config, mock_board_response, mock_fields_response,
         json=sprints_issues_response,
     )
 
-    output = read(SourceJira(), config, CatalogBuilder().with_stream("sprint_issues", SyncMode.full_refresh).build())
+    output = read(SourceJiraDataCenter(), config, CatalogBuilder().with_stream("sprint_issues", SyncMode.full_refresh).build())
 
     assert len(output.records) == 3
     assert len(responses.calls) == 8
@@ -456,7 +456,7 @@ def test_sprint_issues_stream(config, mock_board_response, mock_fields_response,
 def test_time_tracking_stream(config, time_tracking_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/configuration/timetracking/list",
+        f"https://{config['domain']}/rest/api/2/configuration/timetracking/list",
         json=time_tracking_response,
     )
 
@@ -480,12 +480,12 @@ def test_users_stream(config, mock_users_response):
 def test_users_groups_detailed_stream(config, mock_users_response, users_groups_detailed_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/user?accountId=1&expand=groups%2CapplicationRoles",
+        f"https://{config['domain']}/rest/api/2/user?accountId=1&expand=groups%2CapplicationRoles",
         json=users_groups_detailed_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/user?accountId=2&expand=groups%2CapplicationRoles",
+        f"https://{config['domain']}/rest/api/2/user?accountId=2&expand=groups%2CapplicationRoles",
         json=users_groups_detailed_response,
     )
 
@@ -500,7 +500,7 @@ def test_users_groups_detailed_stream(config, mock_users_response, users_groups_
 def test_workflows_stream(config, workflows_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/workflow/search?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/workflow/search?maxResults=50",
         json=workflows_response,
     )
 
@@ -515,7 +515,7 @@ def test_workflows_stream(config, workflows_response):
 def test_workflow_schemas_stream(config, workflow_schemas_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/workflowscheme?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/workflowscheme?maxResults=50",
         json=workflow_schemas_response,
     )
 
@@ -530,7 +530,7 @@ def test_workflow_schemas_stream(config, workflow_schemas_response):
 def test_workflow_statuses_stream(config, workflow_statuses_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/status",
+        f"https://{config['domain']}/rest/api/2/status",
         json=workflow_statuses_response,
     )
 
@@ -545,7 +545,7 @@ def test_workflow_statuses_stream(config, workflow_statuses_response):
 def test_workflow_status_categories_stream(config, workflow_status_categories_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/statuscategory",
+        f"https://{config['domain']}/rest/api/2/statuscategory",
         json=workflow_status_categories_response,
     )
 
@@ -560,17 +560,17 @@ def test_workflow_status_categories_stream(config, workflow_status_categories_re
 def test_avatars_stream(config, avatars_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/avatar/issuetype/system",
+        f"https://{config['domain']}/rest/api/2/avatar/issuetype/system",
         json=avatars_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/avatar/project/system",
+        f"https://{config['domain']}/rest/api/2/avatar/project/system",
         json={},
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/avatar/user/system",
+        f"https://{config['domain']}/rest/api/2/avatar/user/system",
         json={},
     )
 
@@ -586,7 +586,7 @@ def test_avatars_stream_should_retry(config, caplog):
     for slice in ["issuetype", "project", "user"]:
         responses.add(
             responses.GET,
-            f"https://{config['domain']}/rest/api/3/avatar/{slice}/system",
+            f"https://{config['domain']}/rest/api/2/avatar/{slice}/system",
             json={"errorMessages": ["The error message"], "errors": {}},
             status=400
         )
@@ -614,7 +614,7 @@ def test_declarative_issues_stream(config, mock_projects_responses_additional_pr
 
 @responses.activate
 def test_python_issues_stream(config, mock_projects_responses_additional_project, mock_issues_responses_with_date_filter, caplog):
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     args = {"authenticator": authenticator, "domain": config["domain"], "projects": config["projects"] + ["Project3"]}
     stream = Issues(**args)
     records = list(read_incremental(stream, {"updated": "2021-01-01T00:00:00Z"}))
@@ -656,12 +656,12 @@ def test_python_issues_stream(config, mock_projects_responses_additional_project
 def test_python_issues_stream_skip_on_http_codes_error_handling(config, status_code, response_errorMessages, expected_log_message, caplog):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
+        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
         json={"values": [{"key": "incorrect_project", "id": "incorrect_project"}]},
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/search",
+        f"https://{config['domain']}/rest/api/2/search",
         match=[
             matchers.query_param_matcher(
                 {
@@ -676,7 +676,7 @@ def test_python_issues_stream_skip_on_http_codes_error_handling(config, status_c
         status=status_code,
     )
 
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     args = {"authenticator": authenticator, "domain": config["domain"], "projects": "incorrect_project"}
     stream = Issues(**args)
 
@@ -687,7 +687,7 @@ def test_python_issues_stream_skip_on_http_codes_error_handling(config, status_c
 
 
 def test_python_issues_stream_updated_state(config):
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     args = {"authenticator": authenticator, "domain": config["domain"], "projects": config["projects"]}
     stream = Issues(**args)
 
@@ -709,7 +709,7 @@ def test_python_issues_stream_updated_state(config):
     )
 )
 def test_python_pull_requests_stream_has_pull_request(config, dev_field, has_pull_request):
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     args = {"authenticator": authenticator, "domain": config["domain"], "projects": config["projects"]}
     issues_stream = Issues(**args)
     issue_fields_stream = IssueFields(**args)
@@ -725,7 +725,7 @@ def test_python_pull_requests_stream_has_pull_request(config, dev_field, has_pul
 
 @responses.activate
 def test_python_pull_requests_stream_has_pull_request(config, mock_fields_response, mock_projects_responses_additional_project, mock_issues_responses_with_date_filter):
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     args = {"authenticator": authenticator, "domain": config["domain"], "projects": config["projects"]}
     issues_stream = Issues(**args)
     issue_fields_stream = IssueFields(**args)
@@ -757,7 +757,7 @@ def test_python_pull_requests_stream_has_pull_request(config, mock_fields_respon
     ],
 )
 def test_issues_stream_jql_compare_date(config, start_date, lookback_window, stream_state, expected_query, caplog):
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     args = {
         "authenticator": authenticator,
         "domain": config["domain"],
@@ -772,7 +772,7 @@ def test_issues_stream_jql_compare_date(config, start_date, lookback_window, str
 def test_python_issue_comments_stream(config, mock_projects_responses, mock_issues_responses_with_date_filter, issue_comments_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issue/TESTKEY13-1/comment?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/issue/TESTKEY13-1/comment?maxResults=50",
         json=issue_comments_response,
     )
 
@@ -796,7 +796,7 @@ def test_issue_custom_field_contexts_stream(config, mock_fields_response, mock_i
 def test_project_permissions_stream(config, mock_non_deleted_projects_responses, project_permissions_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/Project1/securitylevel",
+        f"https://{config['domain']}/rest/api/2/project/Project1/securitylevel",
         json=project_permissions_response,
     )
 
@@ -825,7 +825,7 @@ def test_project_permissions_stream(config, mock_non_deleted_projects_responses,
 
 @responses.activate
 def test_project_email_stream(config, mock_non_deleted_projects_responses, mock_project_emails):
-    output = read(SourceJira(), config, CatalogBuilder().with_stream("project_email", SyncMode.full_refresh).build())
+    output = read(SourceJiraDataCenter(), config, CatalogBuilder().with_stream("project_email", SyncMode.full_refresh).build())
 
     assert len(output.records) == 2
     assert len(responses.calls) == 2
@@ -835,11 +835,11 @@ def test_project_email_stream(config, mock_non_deleted_projects_responses, mock_
 def test_project_components_stream(config, mock_non_deleted_projects_responses, project_components_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/Project1/component?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/project/Project1/component?maxResults=50",
         json=project_components_response,
     )
 
-    output = read(SourceJira(), config, CatalogBuilder().with_stream("project_components", SyncMode.full_refresh).build())
+    output = read(SourceJiraDataCenter(), config, CatalogBuilder().with_stream("project_components", SyncMode.full_refresh).build())
 
     assert len(output.records) == 2
     assert len(responses.calls) == 2
@@ -849,11 +849,11 @@ def test_project_components_stream(config, mock_non_deleted_projects_responses, 
 def test_permissions_stream(config, permissions_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/permissions",
+        f"https://{config['domain']}/rest/api/2/permissions",
         json=permissions_response,
     )
 
-    output = read(SourceJira(), config, CatalogBuilder().with_stream("permissions", SyncMode.full_refresh).build())
+    output = read(SourceJiraDataCenter(), config, CatalogBuilder().with_stream("permissions", SyncMode.full_refresh).build())
 
     assert len(output.records) == 1
     assert len(responses.calls) == 1
@@ -863,16 +863,16 @@ def test_permissions_stream(config, permissions_response):
 def test_labels_stream(config, labels_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/label?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/label?maxResults=50",
         json=labels_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/label?maxResults=50&startAt=2",
+        f"https://{config['domain']}/rest/api/2/label?maxResults=50&startAt=2",
         json={},
     )
 
-    output = read(SourceJira(), config, CatalogBuilder().with_stream("labels", SyncMode.full_refresh).build())
+    output = read(SourceJiraDataCenter(), config, CatalogBuilder().with_stream("labels", SyncMode.full_refresh).build())
 
     assert len(output.records) == 2
     assert len(responses.calls) == 2
@@ -882,7 +882,7 @@ def test_labels_stream(config, labels_response):
 def test_issue_worklogs_stream(config, mock_projects_responses, mock_issues_responses_with_date_filter, issue_worklogs_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issue/TESTKEY13-1/worklog?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/issue/TESTKEY13-1/worklog?maxResults=50",
         json=issue_worklogs_response,
     )
 
@@ -897,7 +897,7 @@ def test_issue_worklogs_stream(config, mock_projects_responses, mock_issues_resp
 def test_issue_watchers_stream(config, mock_projects_responses, mock_issues_responses_with_date_filter, issue_votes_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issue/TESTKEY13-1/watchers",
+        f"https://{config['domain']}/rest/api/2/issue/TESTKEY13-1/watchers",
         json=issue_votes_response,
     )
 
@@ -912,7 +912,7 @@ def test_issue_watchers_stream(config, mock_projects_responses, mock_issues_resp
 def test_issue_votes_stream_slice(config, mock_projects_responses, mock_issues_responses_with_date_filter, issue_votes_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issue/TESTKEY13-1/votes",
+        f"https://{config['domain']}/rest/api/2/issue/TESTKEY13-1/votes",
         json=issue_votes_response,
     )
 
@@ -927,7 +927,7 @@ def test_issue_votes_stream_slice(config, mock_projects_responses, mock_issues_r
 def test_issue_remote_links_stream_(config, mock_projects_responses, mock_issues_responses_with_date_filter, issue_remote_links_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issue/TESTKEY13-1/remotelink",
+        f"https://{config['domain']}/rest/api/2/issue/TESTKEY13-1/remotelink",
         json=issue_remote_links_response,
     )
 
@@ -942,11 +942,11 @@ def test_issue_remote_links_stream_(config, mock_projects_responses, mock_issues
 def test_project_versions_stream(config, mock_non_deleted_projects_responses, projects_versions_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/Project1/version?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/project/Project1/version?maxResults=50",
         json=projects_versions_response,
     )
 
-    authenticator = SourceJira().get_authenticator(config=config)
+    authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     args = {"authenticator": authenticator, "domain": config["domain"], "projects": config.get("projects", [])}
     stream = find_stream("project_versions", config)
     records = list(read_full_refresh(stream))
@@ -1012,7 +1012,7 @@ def test_skip_slice(
     log_message,
 ):
     config["projects"] = config.get("projects", []) + ["Project3", "Project4"]
-    output = read(SourceJira(), config, CatalogBuilder().with_stream(stream, SyncMode.full_refresh).build())
+    output = read(SourceJiraDataCenter(), config, CatalogBuilder().with_stream(stream, SyncMode.full_refresh).build())
     assert len(output.records) == expected_records_number
 
     assert len(responses.calls) == expected_calls_number

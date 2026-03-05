@@ -22,11 +22,11 @@ from airbyte_cdk.sources.streams.http.error_handlers.http_status_error_handler i
 from airbyte_cdk.sources.streams.http.error_handlers.response_models import ErrorResolution, ResponseAction
 from airbyte_cdk.sources.utils.transform import TransformConfig, TypeTransformer
 from requests.exceptions import HTTPError
-from source_jira.type_transfromer import DateTimeTransformer
+from source_jira_data_center.type_transfromer import DateTimeTransformer
 
 from .utils import read_full_refresh, read_incremental, safe_max
 
-API_VERSION = 3
+API_VERSION = 2
 
 
 class JiraErrorHandler(HttpStatusErrorHandler):
@@ -67,7 +67,7 @@ class JiraAvailabilityStrategy(HttpAvailabilityStrategy):
     def reasons_for_unavailable_status_codes(self, stream: Stream, logger: Logger, source: Source, error: HTTPError) -> Dict[int, str]:
         reasons_for_codes: Dict[int, str] = {
             requests.codes.FORBIDDEN: "Please check the 'READ' permission(Scopes for Connect apps) and/or the user has Jira Software rights and access.",
-            requests.codes.UNAUTHORIZED: "Invalid creds were provided, please check your api token, domain and/or email.",
+            requests.codes.UNAUTHORIZED: "Invalid credentials were provided, please check your personal_access_token and/or domain.",
             requests.codes.NOT_FOUND: "Please check the 'READ' permission(Scopes for Connect apps) and/or the user has Jira Software rights and access.",
         }
         return reasons_for_codes
