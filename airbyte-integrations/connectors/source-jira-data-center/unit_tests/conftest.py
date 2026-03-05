@@ -288,7 +288,7 @@ def projects_versions_response():
 def mock_projects_responses(config, projects_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
+        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
         json=projects_response,
     )
 
@@ -297,7 +297,7 @@ def mock_projects_responses(config, projects_response):
 def mock_non_deleted_projects_responses(config, projects_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived",
+        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived",
         json=projects_response,
     )
 
@@ -307,7 +307,7 @@ def mock_projects_responses_additional_project(config, projects_response):
     projects_response["values"] += [{"id": "3", "key": "Project3"}, {"id": "4", "key": "Project4"}]
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
+        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
         json=projects_response,
     )
 
@@ -316,7 +316,7 @@ def mock_projects_responses_additional_project(config, projects_response):
 def mock_issues_responses_with_date_filter(config, issues_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/search",
+        f"https://{config['domain']}/rest/api/2/search",
         match=[
             matchers.query_param_matcher(
                 {
@@ -331,7 +331,7 @@ def mock_issues_responses_with_date_filter(config, issues_response):
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/search",
+        f"https://{config['domain']}/rest/api/2/search",
         match=[
             matchers.query_param_matcher(
                 {
@@ -346,7 +346,7 @@ def mock_issues_responses_with_date_filter(config, issues_response):
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/search",
+        f"https://{config['domain']}/rest/api/2/search",
         match=[
             matchers.query_param_matcher(
                 {
@@ -362,7 +362,7 @@ def mock_issues_responses_with_date_filter(config, issues_response):
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/search",
+        f"https://{config['domain']}/rest/api/2/search",
         match=[
             matchers.query_param_matcher(
                 {
@@ -395,23 +395,23 @@ def mock_issues_responses_with_date_filter(config, issues_response):
 def mock_project_emails(config, project_email_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/1/email",
+        f"https://{config['domain']}/rest/api/2/project/1/email",
         json=project_email_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/2/email",
+        f"https://{config['domain']}/rest/api/2/project/2/email",
         json=project_email_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/3/email",
+        f"https://{config['domain']}/rest/api/2/project/3/email",
         json={"errorMessages": ["No access to emails for project 3"]},
         status=403,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/project/4/email",
+        f"https://{config['domain']}/rest/api/2/project/4/email",
         json=project_email_response,
     )
 
@@ -420,12 +420,12 @@ def mock_project_emails(config, project_email_response):
 def mock_issue_watchers_responses(config, issue_watchers_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issue/TESTKEY13-1/watchers",
+        f"https://{config['domain']}/rest/api/2/issue/TESTKEY13-1/watchers",
         json=issue_watchers_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/issue/TESTKEY13-2/watchers",
+        f"https://{config['domain']}/rest/api/2/issue/TESTKEY13-2/watchers",
         json={"errorMessages": ["Not found watchers for issue TESTKEY13-2"]},
         status=404,
     )
@@ -435,17 +435,17 @@ def mock_issue_watchers_responses(config, issue_watchers_response):
 def mock_issue_custom_field_contexts_response(config, issue_custom_field_contexts_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/field/issuetype/context?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/field/issuetype/context?maxResults=50",
         json=issue_custom_field_contexts_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/field/issuetype2/context?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/field/issuetype2/context?maxResults=50",
         json={},
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/field/issuetype3/context?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/field/issuetype3/context?maxResults=50",
         json={},
     )
 
@@ -454,28 +454,28 @@ def mock_issue_custom_field_contexts_response(config, issue_custom_field_context
 def mock_issue_custom_field_contexts_response_error(config, issue_custom_field_contexts_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/field/issuetype/context?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/field/issuetype/context?maxResults=50",
         json=issue_custom_field_contexts_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/field/issuetype2/context?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/field/issuetype2/context?maxResults=50",
         json={"errorMessages": ["Not found issue custom field context for issue fields issuetype2"]},
         status=404,
     )
-    responses.add(responses.GET, f"https://{config['domain']}/rest/api/3/field/issuetype3/context?maxResults=50", json={})
+    responses.add(responses.GET, f"https://{config['domain']}/rest/api/2/field/issuetype3/context?maxResults=50", json={})
 
 
 @fixture
 def mock_issue_custom_field_options_response(config, issue_custom_field_options_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/field/issuetype/context/10130/option?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/field/issuetype/context/10130/option?maxResults=50",
         json=issue_custom_field_options_response,
     )
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/field/issuetype/context/10129/option?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/field/issuetype/context/10129/option?maxResults=50",
         json={"errorMessages": ["Not found issue custom field options for issue fields issuetype3"]},
         status=404,
     )
@@ -485,7 +485,7 @@ def mock_issue_custom_field_options_response(config, issue_custom_field_options_
 def mock_fields_response(config, issue_fields_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/field",
+        f"https://{config['domain']}/rest/api/2/field",
         json=issue_fields_response,
     )
 
@@ -494,7 +494,7 @@ def mock_fields_response(config, issue_fields_response):
 def mock_users_response(config, users_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/users/search?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/users/search?maxResults=50",
         json=users_response,
     )
 
@@ -512,7 +512,7 @@ def mock_board_response(config, boards_response):
 def mock_screen_response(config, screens_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/screens?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/screens?maxResults=50",
         json=screens_response,
     )
 
@@ -521,7 +521,7 @@ def mock_screen_response(config, screens_response):
 def mock_filter_response(config, filters_response):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/3/filter/search?maxResults=50&expand=description%2Cowner%2Cjql%2CviewUrl%2CsearchUrl%2Cfavourite%2CfavouritedCount%2CsharePermissions%2CisWritable%2Csubscriptions",
+        f"https://{config['domain']}/rest/api/2/filter/search?maxResults=50&expand=description%2Cowner%2Cjql%2CviewUrl%2CsearchUrl%2Cfavourite%2CfavouritedCount%2CsharePermissions%2CisWritable%2Csubscriptions",
         json=filters_response,
     )
 

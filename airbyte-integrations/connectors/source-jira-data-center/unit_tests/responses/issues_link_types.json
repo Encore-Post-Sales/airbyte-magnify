@@ -5,21 +5,21 @@
       "name": "Blocks",
       "inward": "is blocked by",
       "outward": "blocks",
-      "self": "https://airbyteio.atlassian.net/rest/api/3/issueLinkType/10000"
+      "self": "https://airbyteio.atlassian.net/rest/api/2/issueLinkType/10000"
     },
     {
       "id": "10001",
       "name": "Cloners",
       "inward": "is cloned by",
       "outward": "clones",
-      "self": "https://airbyteio.atlassian.net/rest/api/3/issueLinkType/10001"
+      "self": "https://airbyteio.atlassian.net/rest/api/2/issueLinkType/10001"
     },
     {
       "id": "10002",
       "name": "Duplicate",
       "inward": "is duplicated by",
       "outward": "duplicates",
-      "self": "https://airbyteio.atlassian.net/rest/api/3/issueLinkType/10002"
+      "self": "https://airbyteio.atlassian.net/rest/api/2/issueLinkType/10002"
     }
   ]
 }

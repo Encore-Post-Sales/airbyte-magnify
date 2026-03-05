@@ -4,7 +4,7 @@
   "hasVoted": true,
   "voters": [
     {
-      "self": "https://your-domain.atlassian.net/rest/api/3/user?accountId=5b10a2844c20165700ede21g",
+      "self": "https://your-domain.atlassian.net/rest/api/2/user?accountId=5b10a2844c20165700ede21g",
       "key": "",
       "accountId": "5b10a2844c20165700ede21g",
       "accountType": "atlassian",

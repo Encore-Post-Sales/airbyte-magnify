@@ -1,13 +1,13 @@
 [
   {
-    "self": "https://airbyteio.atlassian.net/rest/api/3/statuscategory/1",
+    "self": "https://airbyteio.atlassian.net/rest/api/2/statuscategory/1",
     "id": 1,
     "key": "undefined",
     "colorName": "medium-gray",
     "name": "No Category"
   },
   {
-    "self": "https://airbyteio.atlassian.net/rest/api/3/statuscategory/2",
+    "self": "https://airbyteio.atlassian.net/rest/api/2/statuscategory/2",
     "id": 2,
     "key": "new",
     "colorName": "blue-gray",

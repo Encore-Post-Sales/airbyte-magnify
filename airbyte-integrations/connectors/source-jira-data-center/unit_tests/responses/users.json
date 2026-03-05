@@ -1,6 +1,6 @@
 [
   {
-    "self": "https://airbyteio.atlassian.net/rest/api/3/user?accountId=5fc9e78d2730d800760becc4",
+    "self": "https://airbyteio.atlassian.net/rest/api/2/user?accountId=5fc9e78d2730d800760becc4",
     "accountId": "1",
     "accountType": "atlassian",
     "emailAddress": "integration-test@airbyte.io",
@@ -12,7 +12,7 @@
     }
   },
   {
-    "self": "https://airbyteio.atlassian.net/rest/api/3/user?accountId=5fc9e78d2730d800760becc4",
+    "self": "https://airbyteio.atlassian.net/rest/api/2/user?accountId=5fc9e78d2730d800760becc4",
     "accountId": "2",
     "accountType": "atlassian",
     "emailAddress": "integration-test@airbyte.io",

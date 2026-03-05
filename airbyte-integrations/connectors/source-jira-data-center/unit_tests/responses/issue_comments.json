@@ -1,10 +1,10 @@
 {
   "comments": [
     {
-      "self": "https://airbyteio.atlassian.net/rest/api/3/issue/10625/comment/10755",
+      "self": "https://airbyteio.atlassian.net/rest/api/2/issue/10625/comment/10755",
       "id": "10755",
       "author": {
-        "self": "https://airbyteio.atlassian.net/rest/api/3/user?accountId=5fc9e78d2730d800760becc4",
+        "self": "https://airbyteio.atlassian.net/rest/api/2/user?accountId=5fc9e78d2730d800760becc4",
         "accountId": "5fc9e78d2730d800760becc4",
         "emailAddress": "integration-test@airbyte.io",
         "avatarUrls": {
@@ -34,7 +34,7 @@
         ]
       },
       "updateAuthor": {
-        "self": "https://airbyteio.atlassian.net/rest/api/3/user?accountId=5fc9e78d2730d800760becc4",
+        "self": "https://airbyteio.atlassian.net/rest/api/2/user?accountId=5fc9e78d2730d800760becc4",
         "accountId": "5fc9e78d2730d800760becc4",
         "emailAddress": "integration-test@airbyte.io",
         "avatarUrls": {
@@ -53,10 +53,10 @@
       "jsdPublic": true
     },
     {
-      "self": "https://airbyteio.atlassian.net/rest/api/3/issue/10075/comment/10521",
+      "self": "https://airbyteio.atlassian.net/rest/api/2/issue/10075/comment/10521",
       "id": "10521",
       "author": {
-        "self": "https://airbyteio.atlassian.net/rest/api/3/user?accountId=5fc9e78d2730d800760becc4",
+        "self": "https://airbyteio.atlassian.net/rest/api/2/user?accountId=5fc9e78d2730d800760becc4",
         "accountId": "5fc9e78d2730d800760becc4",
         "emailAddress": "integration-test@airbyte.io",
         "avatarUrls": {
@@ -86,7 +86,7 @@
         ]
       },
       "updateAuthor": {
-        "self": "https://airbyteio.atlassian.net/rest/api/3/user?accountId=5fc9e78d2730d800760becc4",
+        "self": "https://airbyteio.atlassian.net/rest/api/2/user?accountId=5fc9e78d2730d800760becc4",
         "accountId": "5fc9e78d2730d800760becc4",
         "emailAddress": "integration-test@airbyte.io",
         "avatarUrls": {

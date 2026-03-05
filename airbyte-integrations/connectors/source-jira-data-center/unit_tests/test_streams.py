@@ -21,7 +21,7 @@ from source_jira_data_center.utils import read_full_refresh, read_incremental
 @responses.activate
 def test_application_roles_stream_401_error(config, caplog):
     config["domain"] = "test_application_domain"
-    responses.add(responses.GET, f"https://{config['domain']}/rest/api/3/applicationrole", status=401)
+    responses.add(responses.GET, f"https://{config['domain']}/rest/api/2/applicationrole", status=401)
 
     authenticator = SourceJiraDataCenter().get_authenticator(config=config)
     stream = find_stream("application_roles", config)
@@ -50,7 +50,7 @@ def test_application_roles_stream(config, application_roles_response):
 
 @responses.activate
 def test_application_roles_stream_http_error(config, application_roles_response):
-    responses.add(responses.GET, f"https://{config['domain']}/rest/api/3/applicationrole", json={"error": "not found"}, status=404)
+    responses.add(responses.GET, f"https://{config['domain']}/rest/api/2/applicationrole", json={"error": "not found"}, status=404)
 
     stream = find_stream("application_roles", config)
     with pytest.raises(
@@ -808,14 +808,14 @@ def test_project_permissions_stream(config, mock_non_deleted_projects_responses,
             "id": "100000",
             "name": "Reporter Only",
             "projectId": "Project1",
-            "self": "https://your-domain.atlassian.net/rest/api/3/securitylevel/100000",
+            "self": "https://your-domain.atlassian.net/rest/api/2/securitylevel/100000",
         },
         {
             "description": "Only internal staff can see this issue.",
             "id": "100001",
             "name": "Staff Only",
             "projectId": "Project1",
-            "self": "https://your-domain.atlassian.net/rest/api/3/securitylevel/100001",
+            "self": "https://your-domain.atlassian.net/rest/api/2/securitylevel/100001",
         },
     ]
     assert len(records) == 2

@@ -35,7 +35,7 @@ def test_check_connection_config_no_access_to_one_stream(config, caplog, project
         f"https://{config['domain']}/rest/api/2/avatar/issuetype/system",
         json=avatars_response,
     )
-    responses.add(responses.GET, f"https://{config['domain']}/rest/api/3/label?maxResults=50", status=401)
+    responses.add(responses.GET, f"https://{config['domain']}/rest/api/2/label?maxResults=50", status=401)
     source = SourceJiraDataCenter()
     logger_mock = MagicMock()
     assert source.check_connection(logger=logger_mock, config=config) == (True, None)
@@ -48,7 +48,7 @@ def test_check_connection_404_error(config):
         f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
         status=404,
     )
-    responses.add(responses.GET, f"https://{config['domain']}/rest/api/3/label?maxResults=50", status=404)
+    responses.add(responses.GET, f"https://{config['domain']}/rest/api/2/label?maxResults=50", status=404)
     source = SourceJiraDataCenter()
     logger_mock = MagicMock()
     with pytest.raises(AirbyteTracedException) as e:

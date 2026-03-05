@@ -4,15 +4,15 @@
   "total": 1,
   "worklogs": [
     {
-      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10010/worklog/10000",
+      "self": "https://your-domain.atlassian.net/rest/api/2/issue/10010/worklog/10000",
       "author": {
-        "self": "https://your-domain.atlassian.net/rest/api/3/user?accountId=5b10a2844c20165700ede21g",
+        "self": "https://your-domain.atlassian.net/rest/api/2/user?accountId=5b10a2844c20165700ede21g",
         "accountId": "5b10a2844c20165700ede21g",
         "displayName": "Mia Krystof",
         "active": false
       },
       "updateAuthor": {
-        "self": "https://your-domain.atlassian.net/rest/api/3/user?accountId=5b10a2844c20165700ede21g",
+        "self": "https://your-domain.atlassian.net/rest/api/2/user?accountId=5b10a2844c20165700ede21g",
         "accountId": "5b10a2844c20165700ede21g",
         "displayName": "Mia Krystof",
         "active": false
