@@ -15,7 +15,10 @@ from .authenticator import GainsightCsAuthenticator
 class SourceGainsightCs(AbstractSource):
 
     def check_connection(self, logger, config) -> Tuple[bool, any]:
-        authenticator = GainsightCsAuthenticator(config)
+        try:
+            authenticator = GainsightCsAuthenticator(config)
+        except (KeyError, TypeError) as e:
+            return False, f"Invalid configuration: {e}"
         logger.info(f"Checking connection to {authenticator.domain_url}")
         try:
             url = f"{authenticator.domain_url}/v1/meta/services/objects/Person/describe?idd=true"

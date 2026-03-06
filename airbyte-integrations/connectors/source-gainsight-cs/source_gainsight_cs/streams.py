@@ -1,7 +1,9 @@
 from time import sleep, time
 import requests
 from abc import ABC
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
+from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Union
+from airbyte_cdk.models import AirbyteStream, SyncMode
+from airbyte_cdk.sources.streams.core import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
 import logging
 
@@ -24,7 +26,6 @@ class GainsightCsStream(HttpStream, ABC):
 class GainsightCsObjectStream(GainsightCsStream):
     limit = 500
     json_schema = None
-    offset = 0
     raise_on_http_errors = False
 
     gainsight_airbyte_type_map = {
@@ -49,6 +50,83 @@ class GainsightCsObjectStream(GainsightCsStream):
         super().__init__(authenticator, **kwargs)
         self.object_name = name
         self._primary_key = None
+        self.offset = 0
+        self._cursor_field_override: Optional[str] = None
+
+    @property
+    def cursor_field(self) -> Union[str, List[str]]:
+        """Default cursor is ModifiedDate only if present in this stream's schema; else no cursor (full refresh only)."""
+        schema_properties = self.get_json_schema().get("properties", {})
+        if "ModifiedDate" in schema_properties:
+            return "ModifiedDate"
+        return []
+
+    @property
+    def source_defined_cursor(self) -> bool:
+        """Cursor is source-defined only when ModifiedDate exists in the schema; otherwise users pick their own cursor."""
+        schema_properties = self.get_json_schema().get("properties", {})
+        return "ModifiedDate" in schema_properties
+
+    def as_airbyte_stream(self) -> AirbyteStream:
+        """Always expose both full_refresh and incremental sync modes.
+
+        When ModifiedDate is present: source-defined cursor defaulting to ModifiedDate.
+        When ModifiedDate is absent: no default cursor so the UI defaults to Full Refresh | Append,
+        but incremental is still offered so the user can select any cursor field.
+        """
+        schema = self.get_json_schema()
+        schema_properties = schema.get("properties", {})
+        has_modified_date = "ModifiedDate" in schema_properties
+
+        stream = AirbyteStream(
+            name=self.name,
+            json_schema=dict(schema),
+            supported_sync_modes=[SyncMode.full_refresh, SyncMode.incremental],
+        )
+
+        if self.namespace:
+            stream.namespace = self.namespace
+
+        if has_modified_date:
+            stream.source_defined_cursor = True
+            stream.default_cursor_field = ["ModifiedDate"]
+        else:
+            stream.source_defined_cursor = False
+
+        keys = Stream._wrapped_primary_key(self.primary_key)
+        if keys and len(keys) > 0:
+            stream.source_defined_primary_key = keys
+
+        return stream
+
+    def _effective_cursor_field(self) -> Optional[str]:
+        """Use configured cursor field from read_records when set, else stream default. None if stream has no cursor."""
+        if self._cursor_field_override is not None:
+            return self._cursor_field_override
+        cf = self.cursor_field
+        if isinstance(cf, str):
+            return cf
+        if isinstance(cf, list) and len(cf) > 0:
+            return cf[0]
+        return None
+
+    def read_records(
+        self,
+        sync_mode: SyncMode,
+        cursor_field: Optional[List[str]] = None,
+        stream_slice: Optional[Mapping[str, Any]] = None,
+        stream_state: Optional[Mapping[str, Any]] = None,
+        **kwargs
+    ) -> Iterable[Mapping[str, Any]]:
+        # Use configured cursor field (e.g. ["Date"]) when provided so streams can use different cursors
+        if cursor_field and len(cursor_field) > 0:
+            self._cursor_field_override = cursor_field[0]
+        else:
+            self._cursor_field_override = None
+        try:
+            yield from super().read_records(sync_mode, cursor_field, stream_slice, stream_state, **kwargs)
+        finally:
+            self._cursor_field_override = None
 
     @property
     def name(self):
@@ -93,14 +171,30 @@ class GainsightCsObjectStream(GainsightCsStream):
         return "POST"
 
     def request_body_json(self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None, next_page_token: Mapping[str, Any] = None) -> Optional[Union[Dict[str, Any], str]]:
+        logger = logging.getLogger(__name__)
         select_columns = self.get_select_columns()
         offset = self.offset if next_page_token is None else next_page_token
-        request_body = {
-          "select": select_columns,
-          "limit": self.limit,
-          "offset": offset
+        body = {
+            "select": select_columns,
+            "limit": self.limit,
+            "offset": offset
         }
-        return request_body
+        cursor_field_name = self._effective_cursor_field()
+        cursor_value = (stream_state or {}).get(cursor_field_name) if cursor_field_name else None
+        if cursor_value and cursor_field_name:
+            schema_properties = self.get_json_schema().get("properties", {})
+            if cursor_field_name in schema_properties:
+                body["where"] = {
+                    "conditions": [{"name": cursor_field_name, "alias": "A", "value": [cursor_value], "operator": "GTE"}],
+                    "expression": "A"
+                }
+            else:
+                logger.warning(
+                    "Cursor field '%s' not present on object '%s'; skipping incremental filter to avoid API error. Sync will read all records.",
+                    cursor_field_name,
+                    self.object_name,
+                )
+        return body
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
         logger = logging.getLogger(__name__)
@@ -147,6 +241,14 @@ class GainsightCsObjectStream(GainsightCsStream):
         except Exception as e:
             logger.error(f"Failed to get next page token for object '{self.object_name}': {e}")
             return
+
+    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+        cursor = self._effective_cursor_field()
+        if cursor is None:
+            return dict(current_stream_state) if current_stream_state else {}
+        latest_cursor = latest_record.get(cursor) or ""
+        current_cursor = current_stream_state.get(cursor, "")
+        return {cursor: max(current_cursor, latest_cursor)}
 
     def get_json_schema(self) -> Mapping[str, Any]:
         if self.json_schema is not None:

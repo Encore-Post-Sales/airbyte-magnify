@@ -1,5 +1,14 @@
-{
-  "todo-stream-name": {
-    "todo-field-name": "todo-abnormal-value"
+[
+  {
+    "type": "STREAM",
+    "stream": {
+      "stream_descriptor": {
+        "name": "company",
+        "namespace": null
+      },
+      "stream_state": {
+        "Date": "2999-12-31T00:00:00Z"
+      }
+    }
   }
-}
+]

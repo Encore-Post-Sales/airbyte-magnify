@@ -47,6 +47,16 @@ python main.py discover --config secrets/config.json
 python main.py read --config secrets/config.json --catalog integration_tests/configured_catalog.json
 ```
 
+**Testing incremental sync locally:**  
+Without `--state`, the connector does a full read (no cursor filter), so you get all records. To test incremental and only fetch records after a cursor:
+
+1. Pass a state file with `--state`. The file must be a JSON **array** of per-stream state messages (see `integration_tests/sample_state.json`).
+2. Example (only records with `Date >= 2026-03-05` for the configured stream):
+```bash
+python main.py read --config secrets/config.json --catalog integration_tests/configured_catalog.json --state integration_tests/sample_state.json
+```
+3. To simulate “no new data,” use a far-future cursor in your state file (e.g. `integration_tests/abnormal_state.json`). You should see no records and updated state messages.
+
 ### Locally running the connector docker image
 
 #### Use `airbyte-ci` to build your connector
