@@ -25,6 +25,7 @@ class GainsightCsObjectStream(GainsightCsStream):
     limit = 500
     json_schema = None
     offset = 0
+    raise_on_http_errors = False
 
     gainsight_airbyte_type_map = {
         "STRING": ["null", "string"],
@@ -105,8 +106,8 @@ class GainsightCsObjectStream(GainsightCsStream):
         logger = logging.getLogger(__name__)
         try:
             body = response.json()
-            if body.get("result") == False and body.get("errorCode") == "P_5072":
-                logger.warning(f"Skipping records for object '{self.object_name}' due to errorCode P_5072: {body.get('errorDesc', '')}")
+            if body.get("result") == False:
+                logger.warning(f"Skipping records for object '{self.object_name}' due to error: {body.get('errorDesc', '')}")
                 return
             records = body.get("data", {}).get("records", [])
         except Exception as e:
@@ -131,11 +132,21 @@ class GainsightCsObjectStream(GainsightCsStream):
             yield record
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
-        data = response.json().get("data", {}).get("records", [])
-        if len(data) < self.limit:
-            return None
-        self.offset = self.offset + self.limit
-        return self.offset
+        # data = response.json().get("data", {}).get("records", [])
+        logger = logging.getLogger(__name__)
+        try:
+            body = response.json()
+            if body.get("result") == False:
+                logger.warning(f"Skipping next page token for object '{self.object_name}' due to error: {body.get('errorDesc', '')}")
+                return
+            data = body.get("data", {}).get("records", [])
+            if len(data) < self.limit:
+                return
+            self.offset = self.offset + self.limit
+            return self.offset
+        except Exception as e:
+            logger.error(f"Failed to get next page token for object '{self.object_name}': {e}")
+            return
 
     def get_json_schema(self) -> Mapping[str, Any]:
         if self.json_schema is not None:
