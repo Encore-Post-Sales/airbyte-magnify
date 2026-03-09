@@ -226,21 +226,28 @@ class GainsightCsObjectStream(GainsightCsStream):
             yield record
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
-        # data = response.json().get("data", {}).get("records", [])
         logger = logging.getLogger(__name__)
         try:
             body = response.json()
             if body.get("result") == False:
-                logger.warning(f"Skipping next page token for object '{self.object_name}' due to error: {body.get('errorDesc', '')}")
-                return
+                logger.warning(
+                    f"Error response for object '{self.object_name}' at offset {self.offset}, "
+                    f"continuing to next page: {body.get('errorDesc', '')}"
+                )
+                self.offset = self.offset + self.limit
+                return self.offset
             data = body.get("data", {}).get("records", [])
             if len(data) < self.limit:
-                return
+                return None
             self.offset = self.offset + self.limit
             return self.offset
         except Exception as e:
-            logger.error(f"Failed to get next page token for object '{self.object_name}': {e}")
-            return
+            logger.error(
+                f"Failed to parse next page token for object '{self.object_name}' at offset {self.offset}, "
+                f"continuing to next page: {e}"
+            )
+            self.offset = self.offset + self.limit
+            return self.offset
 
     def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
         cursor = self._effective_cursor_field()
