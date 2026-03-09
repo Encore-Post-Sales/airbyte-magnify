@@ -14,17 +14,12 @@ from source_jira_data_center.utils import read_full_refresh
 
 @responses.activate
 def test_pagination_projects():
+    """Data Center GET /rest/api/2/project returns a list (no /search, no pagination)."""
     domain = "domain.com"
-    responses_json = [
-        (HTTPStatus.OK, {}, json.dumps({"startAt": 0, "maxResults": 2, "total": 6, "isLast": False, "values": [{"id": "1"}, {"id": "2"}]})),
-        (HTTPStatus.OK, {}, json.dumps({"startAt": 2, "maxResults": 2, "total": 6, "isLast": False, "values": [{"id": "3"}, {"id": "4"}]})),
-        (HTTPStatus.OK, {}, json.dumps({"startAt": 4, "maxResults": 2, "total": 6, "isLast": True, "values": [{"id": "5"}, {"id": "6"}]})),
-    ]
-
-    responses.add_callback(
+    responses.add(
         responses.GET,
-        f"https://{domain}/rest/api/2/project/search",
-        callback=lambda request: responses_json.pop(0),
+        f"https://{domain}/rest/api/2/project",
+        json=[{"id": "1"}, {"id": "2"}, {"id": "3"}, {"id": "4"}, {"id": "5"}, {"id": "6"}],
         content_type="application/json",
     )
 

@@ -20,10 +20,12 @@ def test_streams(config):
 
 @responses.activate
 def test_check_connection_config_no_access_to_one_stream(config, caplog, projects_response, avatars_response):
+    # Data Center project API returns a raw array
+    project_list = projects_response.get("values", projects_response) if isinstance(projects_response, dict) else projects_response
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
-        json=projects_response,
+        f"https://{config['domain']}/rest/api/2/project?expand=description%2Clead&includeArchived=true",
+        json=project_list,
     )
     responses.add(
         responses.GET,
@@ -45,7 +47,7 @@ def test_check_connection_config_no_access_to_one_stream(config, caplog, project
 def test_check_connection_404_error(config):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
+        f"https://{config['domain']}/rest/api/2/project?expand=description%2Clead&includeArchived=true",
         status=404,
     )
     responses.add(responses.GET, f"https://{config['domain']}/rest/api/2/label?maxResults=50", status=404)

@@ -8,6 +8,25 @@ from requests_cache import Response
 
 
 @dataclass
+class ArrayOrValuesExtractor(DpathExtractor):
+    """
+    Extractor for Jira Data Center v2 API compatibility.
+    Handles both response shapes:
+    - Data Center GET /rest/api/2/priority and /resolution return a direct array.
+    - Cloud/search endpoints return {"values": [...]}.
+    Returns the list of records from either shape.
+    """
+
+    def extract_records(self, response: Response) -> List[Mapping[str, Any]]:
+        body = response.json() if hasattr(response, "json") and callable(response.json) else response
+        if isinstance(body, list):
+            return body
+        if isinstance(body, dict) and "values" in body:
+            return body["values"]
+        return []
+
+
+@dataclass
 class LabelsRecordExtractor(DpathExtractor):
     """
     A custom record extractor is needed to handle cases when records are represented as list of strings insted of dictionaries.

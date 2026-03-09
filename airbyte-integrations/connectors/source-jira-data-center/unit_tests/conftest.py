@@ -4,6 +4,7 @@
 
 import json
 import os
+import tempfile
 from pathlib import Path
 
 import responses
@@ -12,22 +13,59 @@ from responses import matchers
 from source_jira_data_center.source import SourceJiraDataCenter
 
 ENV_REQUEST_CACHE_PATH = "REQUEST_CACHE_PATH"
-os.environ["REQUEST_CACHE_PATH"] = ENV_REQUEST_CACHE_PATH
+# Match v3 adapter: use a real cache dir and clear before each test so parent stream gets fresh stub response.
+_request_cache_dir = tempfile.mkdtemp(prefix="jira_dc_request_cache_")
+os.environ[ENV_REQUEST_CACHE_PATH] = _request_cache_dir
 
 
 def delete_cache_files(cache_directory):
+    if not cache_directory:
+        return
     directory_path = Path(cache_directory)
     if directory_path.exists() and directory_path.is_dir():
         for file_path in directory_path.glob("*.sqlite"):
             file_path.unlink()
+        for subpath in directory_path.rglob("*.sqlite"):
+            try:
+                subpath.unlink()
+            except OSError:
+                pass
 
 
 @fixture(autouse=True)
 def clear_cache_before_each_test():
-    # The problem: Once the first request is cached, we will keep getting the cached result no matter what setup we prepared for a particular test.
-    # Solution: We must delete the cache before each test because for the same URL, we want to define multiple responses and status codes.
+    # Same as v3: clear cache before each test so stubs are hit and we can vary responses per test.
     delete_cache_files(os.getenv(ENV_REQUEST_CACHE_PATH))
     yield
+
+
+@fixture(autouse=True)
+def limit_http_retries(monkeypatch):
+    """Use only 3 attempts and 5s max backoff so tests fail fast when mocks don't match."""
+    from airbyte_cdk.sources.streams.http import http_client
+
+    monkeypatch.setattr(
+        http_client.HttpClient,
+        "_max_retries",
+        property(lambda self: 2),
+    )
+    monkeypatch.setattr(
+        http_client.HttpClient,
+        "_max_time",
+        property(lambda self: 5),
+    )
+
+
+@fixture(autouse=True)
+def disable_http_cache(monkeypatch):
+    """Disable HTTP response cache in tests so stub response body is available to record selector."""
+    from airbyte_cdk.sources.streams.http import http_client
+    from airbyte_cdk.sources.streams.call_rate import LimiterSession
+
+    def _request_session_no_cache(self):
+        return LimiterSession(api_budget=self._api_budget)
+
+    monkeypatch.setattr(http_client.HttpClient, "_request_session", _request_session_no_cache)
 
 
 @fixture
@@ -284,32 +322,47 @@ def projects_versions_response():
     return json.loads(load_file("projects_versions.json"))
 
 
+# Data Center: GET /rest/api/2/project returns a list (no /search suffix)
+_PROJECT_URL = "https://{domain}/rest/api/2/project?expand=description%2Clead&includeArchived=true"
+_PROJECT_URL_NO_ARCHIVED = "https://{domain}/rest/api/2/project?expand=description%2Clead"
+
+
+def _projects_payload(projects_response):
+    return projects_response.get("values", projects_response) if isinstance(projects_response, dict) else projects_response
+
+
 @fixture
 def mock_projects_responses(config, projects_response):
-    responses.add(
-        responses.GET,
-        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
-        json=projects_response,
-    )
+    # Data Center API returns a raw array of project objects. Stub both URL variants so YAML (includeArchived) and Python (no includeArchived) streams match.
+    payload = _projects_payload(projects_response)
+    responses.add(responses.GET, _PROJECT_URL.format(domain=config["domain"]), json=payload)
+    responses.add(responses.GET, _PROJECT_URL_NO_ARCHIVED.format(domain=config["domain"]), json=payload)
 
 
 @fixture
 def mock_non_deleted_projects_responses(config, projects_response):
-    responses.add(
-        responses.GET,
-        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived",
-        json=projects_response,
-    )
+    payload = _projects_payload(projects_response)
+    responses.add(responses.GET, _PROJECT_URL_NO_ARCHIVED.format(domain=config["domain"]), json=payload)
+
+
+@fixture
+def mock_single_project_responses(config, projects_response):
+    """Single project so substream tests get one slice (2 records, 2 calls).
+    Stub both project list URL variants: parent may resolve to projects_stream (includeArchived)
+    or _non_deleted_projects (no includeArchived) depending on manifest resolution."""
+    payload = _projects_payload(projects_response)
+    single = [payload[0]] if isinstance(payload, list) and payload else payload
+    responses.add(responses.GET, _PROJECT_URL_NO_ARCHIVED.format(domain=config["domain"]), json=single)
+    responses.add(responses.GET, _PROJECT_URL.format(domain=config["domain"]), json=single)
 
 
 @fixture
 def mock_projects_responses_additional_project(config, projects_response):
-    projects_response["values"] += [{"id": "3", "key": "Project3"}, {"id": "4", "key": "Project4"}]
-    responses.add(
-        responses.GET,
-        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
-        json=projects_response,
-    )
+    # Raw array: base projects + 2 more. Stub both URL variants for YAML and Python streams.
+    base = list(projects_response["values"]) if isinstance(projects_response, dict) else list(projects_response)
+    payload = base + [{"id": "3", "key": "Project3"}, {"id": "4", "key": "Project4"}]
+    responses.add(responses.GET, _PROJECT_URL.format(domain=config["domain"]), json=payload)
+    responses.add(responses.GET, _PROJECT_URL_NO_ARCHIVED.format(domain=config["domain"]), json=payload)
 
 
 @fixture
@@ -393,15 +446,17 @@ def mock_issues_responses_with_date_filter(config, issues_response):
 
 @fixture
 def mock_project_emails(config, project_email_response):
+    # project_email stream uses extract_field: "values", so wrap array in {"values": ...}
+    wrapped = {"values": project_email_response}
     responses.add(
         responses.GET,
         f"https://{config['domain']}/rest/api/2/project/1/email",
-        json=project_email_response,
+        json=wrapped,
     )
     responses.add(
         responses.GET,
         f"https://{config['domain']}/rest/api/2/project/2/email",
-        json=project_email_response,
+        json=wrapped,
     )
     responses.add(
         responses.GET,
@@ -412,7 +467,7 @@ def mock_project_emails(config, project_email_response):
     responses.add(
         responses.GET,
         f"https://{config['domain']}/rest/api/2/project/4/email",
-        json=project_email_response,
+        json=wrapped,
     )
 
 

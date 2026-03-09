@@ -218,10 +218,11 @@ def test_issue_notification_schemas_stream(config, issue_notification_schemas_re
 
 
 @responses.activate
-def test_issue_properties_stream(config, issue_properties_response):
+def test_issue_priorities_stream(config, issue_properties_response):
+    # Jira Data Center v2: GET /rest/api/2/priority (array or {"values": [...]})
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/2/priority/search?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/priority",
         json=issue_properties_response,
     )
 
@@ -234,9 +235,10 @@ def test_issue_properties_stream(config, issue_properties_response):
 
 @responses.activate
 def test_issue_resolutions_stream(config, issue_resolutions_response):
+    # Jira Data Center v2: GET /rest/api/2/resolution (array or {"values": [...]})
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/2/resolution/search?maxResults=50",
+        f"https://{config['domain']}/rest/api/2/resolution",
         json=issue_resolutions_response,
     )
 
@@ -338,12 +340,13 @@ def test_projects_stream(config, mock_projects_responses):
     stream = find_stream("projects", config)
     records = list(read_full_refresh(stream))
 
-    assert len(records) == 1
+    # No record_selector override: default selector uses extract_field "values"
+    assert len(records) == 2
     assert len(responses.calls) == 1
 
 
 @responses.activate
-def test_projects_avatars_stream(config, mock_non_deleted_projects_responses, projects_avatars_response):
+def test_projects_avatars_stream(config, mock_single_project_responses, projects_avatars_response):
     responses.add(
         responses.GET,
         f"https://{config['domain']}/rest/api/2/project/1/avatars",
@@ -602,13 +605,14 @@ def test_avatars_stream_should_retry(config, caplog):
 def test_declarative_issues_stream(config, mock_projects_responses_additional_project, mock_issues_responses_with_date_filter, caplog):
     stream = find_stream("issues", {**config, "projects": config["projects"] + ["Project3"]})
     records = list(read_full_refresh(stream))
-    assert len(records) == 1
+    # Parent projects returns 4 projects; we get 1 record from project 1 and 1 from project 4 (project 2 empty, project 3 400)
+    assert len(records) == 2
 
     # check if only None values was filtered out from 'fields' field
     assert "empty_field" not in records[0]["fields"]
     assert "non_empty_field" in records[0]["fields"]
 
-    assert len(responses.calls) == 3
+    assert len(responses.calls) == 5
     assert "The user doesn't have permission to the project. Please grant the user to the project." in caplog.messages
 
 
@@ -656,8 +660,8 @@ def test_python_issues_stream(config, mock_projects_responses_additional_project
 def test_python_issues_stream_skip_on_http_codes_error_handling(config, status_code, response_errorMessages, expected_log_message, caplog):
     responses.add(
         responses.GET,
-        f"https://{config['domain']}/rest/api/2/project/search?maxResults=50&expand=description%2Clead&status=live&status=archived&status=deleted",
-        json={"values": [{"key": "incorrect_project", "id": "incorrect_project"}]},
+        f"https://{config['domain']}/rest/api/2/project?expand=description%2Clead",
+        json=[{"key": "incorrect_project", "id": "incorrect_project"}],
     )
     responses.add(
         responses.GET,
@@ -793,7 +797,7 @@ def test_issue_custom_field_contexts_stream(config, mock_fields_response, mock_i
 
 
 @responses.activate
-def test_project_permissions_stream(config, mock_non_deleted_projects_responses, project_permissions_response):
+def test_project_permissions_stream(config, mock_single_project_responses, project_permissions_response):
     responses.add(
         responses.GET,
         f"https://{config['domain']}/rest/api/2/project/Project1/securitylevel",
@@ -824,7 +828,7 @@ def test_project_permissions_stream(config, mock_non_deleted_projects_responses,
 
 
 @responses.activate
-def test_project_email_stream(config, mock_non_deleted_projects_responses, mock_project_emails):
+def test_project_email_stream(config, mock_single_project_responses, mock_project_emails):
     output = read(SourceJiraDataCenter(), config, CatalogBuilder().with_stream("project_email", SyncMode.full_refresh).build())
 
     assert len(output.records) == 2
@@ -832,7 +836,7 @@ def test_project_email_stream(config, mock_non_deleted_projects_responses, mock_
 
 
 @responses.activate
-def test_project_components_stream(config, mock_non_deleted_projects_responses, project_components_response):
+def test_project_components_stream(config, mock_single_project_responses, project_components_response):
     responses.add(
         responses.GET,
         f"https://{config['domain']}/rest/api/2/project/Project1/component?maxResults=50",
@@ -905,7 +909,7 @@ def test_issue_watchers_stream(config, mock_projects_responses, mock_issues_resp
     records = list(read_full_refresh(stream))
 
     assert len(records) == 1
-    assert len(responses.calls) == 3
+    assert len(responses.calls) == 4
 
 
 @responses.activate
@@ -920,7 +924,7 @@ def test_issue_votes_stream_slice(config, mock_projects_responses, mock_issues_r
     records = list(read_full_refresh(stream))
 
     assert len(records) == 1
-    assert len(responses.calls) == 3
+    assert len(responses.calls) == 4
 
 
 @responses.activate
@@ -935,11 +939,11 @@ def test_issue_remote_links_stream_(config, mock_projects_responses, mock_issues
     records = list(read_full_refresh(stream))
 
     assert len(records) == 2
-    assert len(responses.calls) == 3
+    assert len(responses.calls) == 4
 
 
 @responses.activate
-def test_project_versions_stream(config, mock_non_deleted_projects_responses, projects_versions_response):
+def test_project_versions_stream(config, mock_single_project_responses, projects_versions_response):
     responses.add(
         responses.GET,
         f"https://{config['domain']}/rest/api/2/project/Project1/version?maxResults=50",
@@ -961,7 +965,7 @@ def test_project_versions_stream(config, mock_non_deleted_projects_responses, pr
         (
             "issues",
             2,
-            4,
+            5,
             "The user doesn't have permission to the project. Please grant the user to the project."
         ),
         (
@@ -981,14 +985,14 @@ def test_project_versions_stream(config, mock_non_deleted_projects_responses, pr
         (
             "issue_watchers",
             1,
-            6,
+            7,
             "Not found. The requested resource was not found on the server."
             # "Stream `issue_watchers`. An error occurred, details: ['Not found watchers for issue TESTKEY13-2']. Skipping for now. ",
         ),
         (
             "project_email",
-            4,
-            4,
+            6,  # 3 successful projects × 2 records per project (extract_field "values")
+            5,  # 1 parent project list + 4 project/email requests
             "Forbidden. You don't have permission to access this resource."
             # "Stream `project_email`. An error occurred, details: ['No access to emails for project 3']. Skipping for now. ",
         ),

@@ -165,6 +165,8 @@ class JiraStream(HttpStream, ABC):
         try:
             yield from super().read_records(**kwargs)
         except HTTPError as e:
+            if e.response is None:
+                raise e
             if not (self.skip_http_status_codes and e.response.status_code in self.skip_http_status_codes):
                 raise e
             errors = e.response.json().get("errorMessages")
@@ -355,23 +357,24 @@ class IssueFields(FullRefreshJiraStream):
 
 class Projects(FullRefreshJiraStream):
     """
-    https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-projects/#api-rest-api-3-project-search-get
-
+    Jira Data Center v2: GET /rest/api/2/project returns a list (no /search suffix).
     This stream is a dependency for the Issue stream, which in turn is a dependency for both the IssueComments and IssueWorklogs streams.
-    These latter streams cannot be migrated at the moment: https://github.com/airbytehq/airbyte-internal-issues/issues/7522
     """
 
-    extract_field = "values"
     use_cache = True
 
     def path(self, **kwargs) -> str:
-        return "project/search"
+        return "project"
 
     def request_params(self, **kwargs):
-        params = super().request_params(**kwargs)
-        params["expand"] = "description,lead"
-        params["status"] = ["live", "archived", "deleted"]
-        return params
+        # Data Center GET /rest/api/2/project returns full list; no pagination params
+        return {"expand": "description,lead"}
+
+    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+        """Data Center returns a list; Cloud/search returns {"values": [...]}."""
+        body = response.json()
+        records = body if isinstance(body, list) else body.get("values", [])
+        return records
 
     def read_records(self, **kwargs) -> Iterable[Mapping[str, Any]]:
         for project in super().read_records(**kwargs):
