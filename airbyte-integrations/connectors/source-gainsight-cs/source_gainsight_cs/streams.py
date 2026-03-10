@@ -119,11 +119,13 @@ class GainsightCsObjectStream(GainsightCsStream):
         stream_state: Optional[Mapping[str, Any]] = None,
         **kwargs,
     ) -> Iterable[Optional[Mapping[str, Any]]]:
+        logger = logging.getLogger(__name__)
         cursor = self.cursor_field
         cursor_name = cursor if isinstance(cursor, str) else (cursor[0] if cursor else None)
 
         # No cursor field or full refresh: single slice, no time bounds (existing full-scan behavior)
         if not cursor_name or sync_mode != SyncMode.incremental:
+            logger.debug("Stream '%s': no cursor or full-refresh mode, yielding single full-scan slice", self.object_name)
             yield {}
             return
 
@@ -132,6 +134,7 @@ class GainsightCsObjectStream(GainsightCsStream):
         schema_properties = self.get_json_schema().get("properties", {})
         cursor_format = schema_properties.get(cursor_name, {}).get("format")
         if cursor_format not in ("date", "date-time"):
+            logger.debug("Stream '%s': cursor '%s' is not a date/date-time field, yielding single GTE slice", self.object_name, cursor_name)
             yield {}
             return
 
@@ -139,12 +142,14 @@ class GainsightCsObjectStream(GainsightCsStream):
 
         # First sync with no prior state: full scan, one STATE checkpoint at end
         if not start_str:
+            logger.debug("Stream '%s': no prior state for cursor '%s', yielding single full-scan slice", self.object_name, cursor_name)
             yield {}
             return
 
         try:
             start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00"))
         except (ValueError, AttributeError):
+            logger.debug("Stream '%s': could not parse state value '%s' for cursor '%s', yielding single full-scan slice", self.object_name, start_str, cursor_name)
             yield {}
             return
 
@@ -160,6 +165,10 @@ class GainsightCsObjectStream(GainsightCsStream):
             else:
                 start_fmt = slice_start.strftime("%Y-%m-%dT%H:%M:%SZ")
                 end_fmt = slice_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+            logger.warning(
+                "Stream '%s': yielding slice %s -> %s on cursor '%s'",
+                self.object_name, start_fmt, end_fmt, cursor_name,
+            )
             yield {
                 "cursor_field": cursor_name,
                 "cursor_format": cursor_format,
@@ -176,6 +185,7 @@ class GainsightCsObjectStream(GainsightCsStream):
         stream_state: Optional[Mapping[str, Any]] = None,
         **kwargs
     ) -> Iterable[Mapping[str, Any]]:
+        logger = logging.getLogger(__name__)
         # Use configured cursor field (e.g. ["Date"]) when provided so streams can use different cursors
         if cursor_field and len(cursor_field) > 0:
             self._cursor_field_override = cursor_field[0]
@@ -183,6 +193,14 @@ class GainsightCsObjectStream(GainsightCsStream):
             self._cursor_field_override = None
         # Reset offset to 0 for each slice so pagination always starts from the beginning of the slice
         self.offset = 0
+        if stream_slice:
+            logger.warning(
+                "Stream '%s': reading slice %s -> %s (cursor: '%s', offset reset to 0)",
+                self.object_name,
+                stream_slice.get("start", "unbounded"),
+                stream_slice.get("end", "unbounded"),
+                stream_slice.get("cursor_field", "none"),
+            )
         try:
             yield from super().read_records(sync_mode, cursor_field, stream_slice, stream_state, **kwargs)
         finally:
@@ -324,7 +342,12 @@ class GainsightCsObjectStream(GainsightCsStream):
             data = body.get("data", {}).get("records", [])
             if len(data) < self.limit:
                 return None
+            prev_offset = self.offset
             self.offset = self.offset + self.limit
+            logger.debug(
+                "Stream '%s': fetched page at offset %d, advancing to %d",
+                self.object_name, prev_offset, self.offset,
+            )
             return self.offset
         except Exception as e:
             logger.error(

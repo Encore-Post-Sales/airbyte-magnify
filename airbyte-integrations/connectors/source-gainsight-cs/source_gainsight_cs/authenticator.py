@@ -1,6 +1,9 @@
+import logging
 import time
 import requests
 import base64
+
+logger = logging.getLogger(__name__)
 
 
 class GainsightCsAuthenticator(requests.auth.AuthBase):
@@ -34,6 +37,7 @@ class GainsightCsAuthenticator(requests.auth.AuthBase):
 
     def _rotate(self):
         if self._is_token_expired():
+            logger.warning("Access token expired or missing, requesting a new token")
             try:
                 credentials = f"{self._client_id}:{self._client_secret}"
                 encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
@@ -45,13 +49,23 @@ class GainsightCsAuthenticator(requests.auth.AuthBase):
 
                 response = requests.post(url=url, headers=headers)
                 if response.status_code != 200:
+                    logger.error("Token request failed with status %d: %s", response.status_code, response.text)
                     raise Exception(f"Error fetching access token: {response.text}")
 
                 self._token = response.json()
                 self._token_acquired_at = time.time()
                 self._expires_in = self._token.get("expires_in", 0)
+                logger.warning(
+                    "Access token refreshed successfully, expires in %ds (~%.1fh)",
+                    self._expires_in,
+                    self._expires_in / 3600,
+                )
             except requests.exceptions.RequestException as e:
+                logger.error("Network error while fetching access token: %s", e)
                 raise Exception(f"Error fetching access token: {e}") from e
+        else:
+            seconds_remaining = (self._token_acquired_at + self._expires_in - 60) - time.time()
+            logger.debug("Access token still valid, %.1fs remaining before expiry buffer", seconds_remaining)
 
     def __call__(self, r: requests.Request) -> requests.Request:
         self._rotate()
