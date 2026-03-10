@@ -29,6 +29,8 @@ class GainsightCsObjectStream(GainsightCsStream):
     SLICE_RANGE_DAYS = 30
     json_schema = None
     raise_on_http_errors = False
+    # Tells the Airbyte CDK to emit an intermediate STATE message every 5,000 records.
+    state_checkpoint_interval = 5000
 
     gainsight_airbyte_type_map = {
         "STRING": ["null", "string"],
@@ -54,6 +56,7 @@ class GainsightCsObjectStream(GainsightCsStream):
         self._primary_key = None
         self.offset = 0
         self._cursor_field_override: Optional[str] = None
+        self._current_slice: Optional[Mapping[str, Any]] = None
 
     @property
     def cursor_field(self) -> Union[str, List[str]]:
@@ -193,6 +196,7 @@ class GainsightCsObjectStream(GainsightCsStream):
             self._cursor_field_override = None
         # Reset offset to 0 for each slice so pagination always starts from the beginning of the slice
         self.offset = 0
+        self._current_slice = stream_slice
         if stream_slice:
             logger.warning(
                 "Stream '%s': reading slice %s -> %s (cursor: '%s', offset reset to 0)",
@@ -205,6 +209,7 @@ class GainsightCsObjectStream(GainsightCsStream):
             yield from super().read_records(sync_mode, cursor_field, stream_slice, stream_state, **kwargs)
         finally:
             self._cursor_field_override = None
+            self._current_slice = None
 
     @property
     def name(self):
@@ -363,7 +368,10 @@ class GainsightCsObjectStream(GainsightCsStream):
             return dict(current_stream_state) if current_stream_state else {}
         latest_cursor = latest_record.get(cursor) or ""
         current_cursor = current_stream_state.get(cursor, "")
-        return {cursor: max(current_cursor, latest_cursor)}
+        # Also consider the slice end so state advances forward even when records
+        # have an older cursor value (e.g. during the final page of a time-window slice)
+        slice_end = (self._current_slice or {}).get("end", "")
+        return {cursor: max(current_cursor, latest_cursor, slice_end)}
 
     def get_json_schema(self) -> Mapping[str, Any]:
         if self.json_schema is not None:

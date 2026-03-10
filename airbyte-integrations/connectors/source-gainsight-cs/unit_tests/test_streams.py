@@ -228,3 +228,78 @@ def test_source_defined_cursor_false_when_modified_date_absent(patch_base_class,
     stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
     mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"Gsid": {}, "Name": {}}})
     assert stream.source_defined_cursor is False
+
+
+def test_state_checkpoint_interval_is_set(patch_base_class, mock_authenticator):
+    """state_checkpoint_interval must be set so the CDK emits STATE messages mid-stream
+    for large streams like activity_timeline that would otherwise never checkpoint."""
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    assert stream.state_checkpoint_interval is not None
+    assert stream.state_checkpoint_interval > 0
+
+
+def test_get_updated_state_advances_to_slice_end_when_records_are_older(patch_base_class, mock_authenticator, mocker):
+    """When a time-window slice completes, state must advance to slice end even if all
+    records have an earlier ModifiedDate — preventing the same window from re-syncing."""
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
+    stream._current_slice = {
+        "cursor_field": "ModifiedDate",
+        "start": "2026-03-01T00:00:00Z",
+        "end": "2026-03-10T21:08:06Z",
+    }
+    current_state = {"ModifiedDate": "2026-03-01T00:00:00Z"}
+    # Record's ModifiedDate is older than slice end
+    latest_record = {"Gsid": "abc", "ModifiedDate": "2026-03-05T12:00:00Z"}
+    new_state = stream.get_updated_state(current_state, latest_record)
+    assert new_state == {"ModifiedDate": "2026-03-10T21:08:06Z"}
+
+
+def test_get_updated_state_uses_record_when_newer_than_slice_end(patch_base_class, mock_authenticator, mocker):
+    """If a record's cursor value is somehow newer than the slice end, the record value wins."""
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
+    stream._current_slice = {
+        "cursor_field": "ModifiedDate",
+        "start": "2026-03-01T00:00:00Z",
+        "end": "2026-03-05T00:00:00Z",
+    }
+    current_state = {"ModifiedDate": "2026-03-01T00:00:00Z"}
+    latest_record = {"Gsid": "abc", "ModifiedDate": "2026-03-09T00:04:30Z"}
+    new_state = stream.get_updated_state(current_state, latest_record)
+    assert new_state == {"ModifiedDate": "2026-03-09T00:04:30Z"}
+
+
+def test_get_updated_state_no_slice_still_advances_from_record(patch_base_class, mock_authenticator, mocker):
+    """Full-scan syncs (no active slice) still advance state from the latest record."""
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
+    stream._current_slice = None
+    current_state = {"ModifiedDate": "2026-03-01T00:00:00Z"}
+    latest_record = {"Gsid": "abc", "ModifiedDate": "2026-03-10T21:08:06Z"}
+    new_state = stream.get_updated_state(current_state, latest_record)
+    assert new_state == {"ModifiedDate": "2026-03-10T21:08:06Z"}
+
+
+def test_read_records_sets_and_clears_current_slice(patch_base_class, mock_authenticator, mocker):
+    """_current_slice must be set during read_records and cleared afterwards,
+    so get_updated_state has access to the slice boundaries during the read."""
+    from airbyte_cdk.models import SyncMode
+
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
+
+    captured_slice_during_read = {}
+    original_super_read = lambda *a, **kw: iter([{"ModifiedDate": "2026-03-05T00:00:00Z"}])
+
+    def fake_super_read(*args, **kwargs):
+        captured_slice_during_read["slice"] = stream._current_slice
+        return iter([{"ModifiedDate": "2026-03-05T00:00:00Z"}])
+
+    mocker.patch("airbyte_cdk.sources.streams.http.HttpStream.read_records", side_effect=fake_super_read)
+
+    test_slice = {"cursor_field": "ModifiedDate", "start": "2026-03-01T00:00:00Z", "end": "2026-03-10T21:08:06Z"}
+    list(stream.read_records(SyncMode.incremental, stream_slice=test_slice))
+
+    assert captured_slice_during_read["slice"] == test_slice
+    assert stream._current_slice is None
