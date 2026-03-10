@@ -57,6 +57,29 @@ class GainsightCsObjectStream(GainsightCsStream):
         self.offset = 0
         self._cursor_field_override: Optional[str] = None
         self._current_slice: Optional[Mapping[str, Any]] = None
+        self._state: MutableMapping[str, Any] = {}
+
+    @property
+    def state(self) -> MutableMapping[str, Any]:
+        """State getter so AbstractSource can set state before read(); CDK then uses this in Stream.read()."""
+        return self._state
+
+    @state.setter
+    def state(self, value: MutableMapping[str, Any]) -> None:
+        """State setter so incoming stream state from the state file is stored and passed to stream_slices."""
+        if value is None:
+            self._state = {}
+        elif isinstance(value, dict):
+            self._state = dict(value)
+        else:
+            self._state = {}
+
+    @property
+    def supports_incremental(self) -> bool:
+        """All streams support incremental; the actual cursor is set by the catalog (cursor_field arg).
+        Without this override, streams without ModifiedDate return cursor_field=[] which makes the
+        installed CDK treat them as full refresh and never call _read_incremental."""
+        return True
 
     @property
     def cursor_field(self) -> Union[str, List[str]]:
@@ -122,13 +145,16 @@ class GainsightCsObjectStream(GainsightCsStream):
         stream_state: Optional[Mapping[str, Any]] = None,
         **kwargs,
     ) -> Iterable[Optional[Mapping[str, Any]]]:
-        logger = logging.getLogger(__name__)
-        cursor = self.cursor_field
-        cursor_name = cursor if isinstance(cursor, str) else (cursor[0] if cursor else None)
+        # Use catalog-configured cursor when provided (incremental with custom cursor); else stream default
+        if cursor_field and len(cursor_field) > 0:
+            cursor_name = cursor_field[0]
+        else:
+            cursor = self.cursor_field
+            cursor_name = cursor if isinstance(cursor, str) else (cursor[0] if cursor else None)
 
         # No cursor field or full refresh: single slice, no time bounds (existing full-scan behavior)
         if not cursor_name or sync_mode != SyncMode.incremental:
-            logger.debug("Stream '%s': no cursor or full-refresh mode, yielding single full-scan slice", self.object_name)
+            self.logger.debug("Stream '%s': no cursor or full-refresh mode, yielding single full-scan slice", self.object_name)
             yield {}
             return
 
@@ -137,7 +163,10 @@ class GainsightCsObjectStream(GainsightCsStream):
         schema_properties = self.get_json_schema().get("properties", {})
         cursor_format = schema_properties.get(cursor_name, {}).get("format")
         if cursor_format not in ("date", "date-time"):
-            logger.debug("Stream '%s': cursor '%s' is not a date/date-time field, yielding single GTE slice", self.object_name, cursor_name)
+            self.logger.info(
+                "Stream '%s': cursor '%s' is not a date/date-time field, yielding single GTE slice",
+                self.object_name, cursor_name,
+            )
             yield {}
             return
 
@@ -145,14 +174,20 @@ class GainsightCsObjectStream(GainsightCsStream):
 
         # First sync with no prior state: full scan, one STATE checkpoint at end
         if not start_str:
-            logger.debug("Stream '%s': no prior state for cursor '%s', yielding single full-scan slice", self.object_name, cursor_name)
+            self.logger.info(
+                "Stream '%s': incremental with cursor '%s', no prior state — full scan (single slice)",
+                self.object_name, cursor_name,
+            )
             yield {}
             return
 
         try:
             start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00"))
         except (ValueError, AttributeError):
-            logger.debug("Stream '%s': could not parse state value '%s' for cursor '%s', yielding single full-scan slice", self.object_name, start_str, cursor_name)
+            self.logger.info(
+                "Stream '%s': could not parse state for cursor '%s' (value: %s), yielding single full-scan slice",
+                self.object_name, cursor_name, start_str,
+            )
             yield {}
             return
 
@@ -168,7 +203,7 @@ class GainsightCsObjectStream(GainsightCsStream):
             else:
                 start_fmt = slice_start.strftime("%Y-%m-%dT%H:%M:%SZ")
                 end_fmt = slice_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-            logger.warning(
+            self.logger.info(
                 "Stream '%s': yielding slice %s -> %s on cursor '%s'",
                 self.object_name, start_fmt, end_fmt, cursor_name,
             )
@@ -188,7 +223,6 @@ class GainsightCsObjectStream(GainsightCsStream):
         stream_state: Optional[Mapping[str, Any]] = None,
         **kwargs
     ) -> Iterable[Mapping[str, Any]]:
-        logger = logging.getLogger(__name__)
         # Use configured cursor field (e.g. ["Date"]) when provided so streams can use different cursors
         if cursor_field and len(cursor_field) > 0:
             self._cursor_field_override = cursor_field[0]
@@ -198,7 +232,7 @@ class GainsightCsObjectStream(GainsightCsStream):
         self.offset = 0
         self._current_slice = stream_slice
         if stream_slice:
-            logger.warning(
+            self.logger.info(
                 "Stream '%s': reading slice %s -> %s (cursor: '%s', offset reset to 0)",
                 self.object_name,
                 stream_slice.get("start", "unbounded"),
@@ -208,6 +242,17 @@ class GainsightCsObjectStream(GainsightCsStream):
         try:
             yield from super().read_records(sync_mode, cursor_field, stream_slice, stream_state, **kwargs)
         finally:
+            # Advance self._state to at least the slice end so empty slices still move state forward.
+            # _checkpoint_state reads stream.state directly, so we must keep it up to date here.
+            cursor = self._cursor_field_override or (
+                self.cursor_field if isinstance(self.cursor_field, str)
+                else (self.cursor_field[0] if self.cursor_field else None)
+            )
+            slice_end = (self._current_slice or {}).get("end", "")
+            if cursor and slice_end:
+                current = self._state.get(cursor, "")
+                if slice_end > current:
+                    self._state = {cursor: slice_end}
             self._cursor_field_override = None
             self._current_slice = None
 
@@ -371,7 +416,10 @@ class GainsightCsObjectStream(GainsightCsStream):
         # Also consider the slice end so state advances forward even when records
         # have an older cursor value (e.g. during the final page of a time-window slice)
         slice_end = (self._current_slice or {}).get("end", "")
-        return {cursor: max(current_cursor, latest_cursor, slice_end)}
+        new_state = {cursor: max(current_cursor, latest_cursor, slice_end)}
+        # Keep self._state current so _checkpoint_state (which reads stream.state) gets the latest value
+        self._state = new_state
+        return new_state
 
     def get_json_schema(self) -> Mapping[str, Any]:
         if self.json_schema is not None:

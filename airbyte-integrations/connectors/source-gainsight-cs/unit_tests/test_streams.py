@@ -160,6 +160,7 @@ def test_get_updated_state_advances_cursor(patch_base_class, mock_authenticator,
     latest_record = {"Gsid": "abc", "ModifiedDate": "2024-02-01T12:00:00Z"}
     new_state = stream.get_updated_state(current_state, latest_record)
     assert new_state == {"ModifiedDate": "2024-02-01T12:00:00Z"}
+    assert stream.state == {"ModifiedDate": "2024-02-01T12:00:00Z"}
 
 
 def test_get_updated_state_keeps_cursor_when_record_older(patch_base_class, mock_authenticator, mocker):
@@ -303,3 +304,48 @@ def test_read_records_sets_and_clears_current_slice(patch_base_class, mock_authe
 
     assert captured_slice_during_read["slice"] == test_slice
     assert stream._current_slice is None
+
+
+def test_stream_slices_uses_catalog_cursor_when_no_modified_date(patch_base_class, mock_authenticator, mocker):
+    """When stream has no ModifiedDate but catalog selects incremental with a different cursor (e.g. LastModifiedDate),
+    stream_slices must use the passed cursor_field for time-window slicing and state key."""
+    from airbyte_cdk.models import SyncMode
+
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    # Schema has LastModifiedDate (date-time) but NOT ModifiedDate
+    mocker.patch.object(
+        stream,
+        "get_json_schema",
+        return_value={
+            "properties": {
+                "Gsid": {},
+                "LastModifiedDate": {"type": ["null", "string"], "format": "date-time"},
+            }
+        },
+    )
+
+    # No cursor_field passed -> stream has no default cursor -> single full-scan slice
+    slices_no_cursor = list(
+        stream.stream_slices(
+            sync_mode=SyncMode.incremental,
+            cursor_field=None,
+            stream_state={"LastModifiedDate": "2024-01-01T00:00:00Z"},
+        )
+    )
+    assert len(slices_no_cursor) == 1
+    assert slices_no_cursor[0] == {}
+
+    # cursor_field passed from catalog (e.g. user chose LastModifiedDate) -> use it for slicing
+    slices_with_cursor = list(
+        stream.stream_slices(
+            sync_mode=SyncMode.incremental,
+            cursor_field=["LastModifiedDate"],
+            stream_state={"LastModifiedDate": "2024-01-01T00:00:00Z"},
+        )
+    )
+    # Should yield time-window slices with cursor_field LastModifiedDate
+    assert len(slices_with_cursor) >= 1
+    first = slices_with_cursor[0]
+    assert first.get("cursor_field") == "LastModifiedDate"
+    assert "start" in first and "end" in first
+    assert first.get("cursor_format") == "date-time"
