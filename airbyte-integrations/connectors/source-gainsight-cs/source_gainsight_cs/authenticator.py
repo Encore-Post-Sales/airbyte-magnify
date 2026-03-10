@@ -25,8 +25,8 @@ class GainsightCsAuthenticator(requests.auth.AuthBase):
         if not self._token or self._token_acquired_at is None or self._expires_in is None:
             return True
 
-        current_time = time.time()  # seconds since epoch
-        # Subtract a buffer (e.g., 60 seconds) to account for network delays.
+        current_time = time.time()
+        # Subtract a 60-second buffer to account for network delays.
         if current_time > self._token_acquired_at + self._expires_in - 60:
             return True
 
@@ -35,7 +35,6 @@ class GainsightCsAuthenticator(requests.auth.AuthBase):
     def _rotate(self):
         if self._is_token_expired():
             try:
-                # Prepare the authorization header with encoded credentials
                 credentials = f"{self._client_id}:{self._client_secret}"
                 encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
                 headers = {
@@ -63,6 +62,5 @@ class GainsightCsAuthenticator(requests.auth.AuthBase):
         """
         Returns the authorization header with the current access token.
         """
-        if not self._token or 'access_token' not in self._token:
-            self._rotate()
+        self._rotate()
         return {"Authorization": f"Bearer {self._token.get('access_token')}"}
