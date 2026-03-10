@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from time import sleep, time
 import requests
 from abc import ABC
@@ -24,7 +25,8 @@ class GainsightCsStream(HttpStream, ABC):
 
 
 class GainsightCsObjectStream(GainsightCsStream):
-    limit = 500
+    limit = 5000
+    SLICE_RANGE_DAYS = 30
     json_schema = None
     raise_on_http_errors = False
 
@@ -110,6 +112,62 @@ class GainsightCsObjectStream(GainsightCsStream):
             return cf[0]
         return None
 
+    def stream_slices(
+        self,
+        sync_mode: SyncMode,
+        cursor_field: Optional[List[str]] = None,
+        stream_state: Optional[Mapping[str, Any]] = None,
+        **kwargs,
+    ) -> Iterable[Optional[Mapping[str, Any]]]:
+        cursor = self.cursor_field
+        cursor_name = cursor if isinstance(cursor, str) else (cursor[0] if cursor else None)
+
+        # No cursor field or full refresh: single slice, no time bounds (existing full-scan behavior)
+        if not cursor_name or sync_mode != SyncMode.incremental:
+            yield {}
+            return
+
+        # Only apply time-window slicing to date/date-time cursor fields.
+        # Non-datetime cursors (e.g. numeric Id, string) fall back to single GTE slice.
+        schema_properties = self.get_json_schema().get("properties", {})
+        cursor_format = schema_properties.get(cursor_name, {}).get("format")
+        if cursor_format not in ("date", "date-time"):
+            yield {}
+            return
+
+        start_str = (stream_state or {}).get(cursor_name)
+
+        # First sync with no prior state: full scan, one STATE checkpoint at end
+        if not start_str:
+            yield {}
+            return
+
+        try:
+            start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00"))
+        except (ValueError, AttributeError):
+            yield {}
+            return
+
+        now_dt = datetime.now(tz=timezone.utc)
+        delta = timedelta(days=self.SLICE_RANGE_DAYS)
+        slice_start = start_dt
+
+        while slice_start < now_dt:
+            slice_end = min(slice_start + delta, now_dt)
+            if cursor_format == "date":
+                start_fmt = slice_start.strftime("%Y-%m-%d")
+                end_fmt = slice_end.strftime("%Y-%m-%d")
+            else:
+                start_fmt = slice_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+                end_fmt = slice_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+            yield {
+                "cursor_field": cursor_name,
+                "cursor_format": cursor_format,
+                "start": start_fmt,
+                "end": end_fmt,
+            }
+            slice_start = slice_end
+
     def read_records(
         self,
         sync_mode: SyncMode,
@@ -123,6 +181,8 @@ class GainsightCsObjectStream(GainsightCsStream):
             self._cursor_field_override = cursor_field[0]
         else:
             self._cursor_field_override = None
+        # Reset offset to 0 for each slice so pagination always starts from the beginning of the slice
+        self.offset = 0
         try:
             yield from super().read_records(sync_mode, cursor_field, stream_slice, stream_state, **kwargs)
         finally:
@@ -177,23 +237,48 @@ class GainsightCsObjectStream(GainsightCsStream):
         body = {
             "select": select_columns,
             "limit": self.limit,
-            "offset": offset
+            "offset": offset,
         }
-        cursor_field_name = self._effective_cursor_field()
-        cursor_value = (stream_state or {}).get(cursor_field_name) if cursor_field_name else None
-        if cursor_value and cursor_field_name:
-            schema_properties = self.get_json_schema().get("properties", {})
+
+        slice_start = (stream_slice or {}).get("start")
+        slice_end = (stream_slice or {}).get("end")
+        slice_cursor = (stream_slice or {}).get("cursor_field")
+        cursor_field_name = slice_cursor or self._effective_cursor_field()
+        schema_properties = self.get_json_schema().get("properties", {})
+
+        if slice_start and slice_end and cursor_field_name:
+            # Time-window slice: bounded GTE + LT filter with orderBy for deterministic offset pagination
             if cursor_field_name in schema_properties:
                 body["where"] = {
-                    "conditions": [{"name": cursor_field_name, "alias": "A", "value": [cursor_value], "operator": "GTE"}],
-                    "expression": "A"
+                    "conditions": [
+                        {"name": cursor_field_name, "alias": "A", "value": [slice_start], "operator": "GTE"},
+                        {"name": cursor_field_name, "alias": "B", "value": [slice_end], "operator": "LT"},
+                    ],
+                    "expression": "A AND B",
                 }
+                body["orderBy"] = {cursor_field_name: "asc"}
             else:
                 logger.warning(
                     "Cursor field '%s' not present on object '%s'; skipping incremental filter to avoid API error. Sync will read all records.",
                     cursor_field_name,
                     self.object_name,
                 )
+        elif cursor_field_name:
+            # Single-slice fallback: open-ended GTE filter for non-datetime cursors or first sync
+            cursor_value = (stream_state or {}).get(cursor_field_name)
+            if cursor_value:
+                if cursor_field_name in schema_properties:
+                    body["where"] = {
+                        "conditions": [{"name": cursor_field_name, "alias": "A", "value": [cursor_value], "operator": "GTE"}],
+                        "expression": "A",
+                    }
+                else:
+                    logger.warning(
+                        "Cursor field '%s' not present on object '%s'; skipping incremental filter to avoid API error. Sync will read all records.",
+                        cursor_field_name,
+                        self.object_name,
+                    )
+
         return body
 
     def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
