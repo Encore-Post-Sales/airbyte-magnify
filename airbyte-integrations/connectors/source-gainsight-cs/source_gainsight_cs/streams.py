@@ -26,7 +26,7 @@ class GainsightCsStream(HttpStream, ABC):
 
 class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
     limit = 5000
-    SLICE_RANGE_DAYS = 30
+    SLICE_RANGE_DAYS = 1
     json_schema = None
     raise_on_http_errors = False
     # Tells the Airbyte CDK to emit an intermediate STATE message every 5,000 records.
