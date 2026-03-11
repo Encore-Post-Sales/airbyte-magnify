@@ -61,6 +61,24 @@ def test_next_page_token_end(patch_base_class, mock_authenticator):
     assert stream.next_page_token(**inputs) == expected_token
 
 
+def test_next_page_token_error_response_returns_none(patch_base_class, mock_authenticator):
+    """An API error response (result=False) skips past the errored page by advancing the offset."""
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    response = MagicMock()
+    response.json.return_value = {"result": False, "errorDesc": "Some API error"}
+    expected_token = stream.offset + stream.limit
+    assert stream.next_page_token(response=response) == expected_token
+
+
+def test_next_page_token_exception_returns_none(patch_base_class, mock_authenticator):
+    """A response that cannot be parsed advances the offset to skip past the problematic page."""
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    response = MagicMock()
+    response.json.side_effect = Exception("malformed JSON")
+    expected_token = stream.offset + stream.limit
+    assert stream.next_page_token(response=response) == expected_token
+
+
 def test_parse_response(patch_base_class, mock_authenticator, mocker):
     stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
     mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"test_id": {}}})
@@ -153,37 +171,9 @@ def test_request_body_json_state_but_cursor_not_in_schema_no_where(patch_base_cl
     assert "where" not in body
 
 
-def test_get_updated_state_advances_cursor(patch_base_class, mock_authenticator, mocker):
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
-    current_state = {"ModifiedDate": "2024-01-01T00:00:00Z"}
-    latest_record = {"Gsid": "abc", "ModifiedDate": "2024-02-01T12:00:00Z"}
-    new_state = stream.get_updated_state(current_state, latest_record)
-    assert new_state == {"ModifiedDate": "2024-02-01T12:00:00Z"}
-    assert stream.state == {"ModifiedDate": "2024-02-01T12:00:00Z"}
-
-
-def test_get_updated_state_keeps_cursor_when_record_older(patch_base_class, mock_authenticator, mocker):
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
-    current_state = {"ModifiedDate": "2024-02-01T12:00:00Z"}
-    latest_record = {"Gsid": "abc", "ModifiedDate": "2024-01-01T00:00:00Z"}
-    new_state = stream.get_updated_state(current_state, latest_record)
-    assert new_state == {"ModifiedDate": "2024-02-01T12:00:00Z"}
-
-
-def test_get_updated_state_no_cursor_returns_current_state(patch_base_class, mock_authenticator, mocker):
-    """When stream has no cursor field (e.g. ModifiedDate not in schema), state is unchanged."""
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"Gsid": {}, "Name": {}}})
-    current_state = {"other_key": "value"}
-    latest_record = {"Gsid": "abc", "Name": "foo"}
-    new_state = stream.get_updated_state(current_state, latest_record)
-    assert new_state == {"other_key": "value"}
-
-
-def test_as_airbyte_stream_with_modified_date(patch_base_class, mock_authenticator, mocker):
-    """Streams with ModifiedDate should advertise both sync modes, source-defined cursor, and ModifiedDate as default cursor field."""
+def test_as_airbyte_stream(patch_base_class, mock_authenticator, mocker):
+    """All streams advertise both sync modes with no source-defined cursor.
+    The catalog always supplies the cursor field for incremental syncs."""
     stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
     mocker.patch.object(
         stream,
@@ -195,40 +185,8 @@ def test_as_airbyte_stream_with_modified_date(patch_base_class, mock_authenticat
     from airbyte_cdk.models import SyncMode as SM
     assert SM.full_refresh in airbyte_stream.supported_sync_modes
     assert SM.incremental in airbyte_stream.supported_sync_modes
-    assert airbyte_stream.source_defined_cursor is True
-    assert airbyte_stream.default_cursor_field == ["ModifiedDate"]
-
-
-def test_as_airbyte_stream_without_modified_date(patch_base_class, mock_authenticator, mocker):
-    """Streams without ModifiedDate should still advertise both sync modes, but with no source-defined cursor and no default cursor field,
-    so the UI defaults to Full Refresh | Append while still allowing Incremental | Append with a user-chosen cursor."""
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(
-        stream,
-        "get_json_schema",
-        return_value={"properties": {"Gsid": {}, "Date": {"type": ["null", "string"], "format": "date"}}},
-    )
-    airbyte_stream = stream.as_airbyte_stream()
-
-    from airbyte_cdk.models import SyncMode as SM
-    assert SM.full_refresh in airbyte_stream.supported_sync_modes
-    assert SM.incremental in airbyte_stream.supported_sync_modes
     assert airbyte_stream.source_defined_cursor is False
     assert not airbyte_stream.default_cursor_field
-
-
-def test_source_defined_cursor_true_when_modified_date_present(patch_base_class, mock_authenticator, mocker):
-    """source_defined_cursor should be True when ModifiedDate is in the stream schema."""
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"Gsid": {}, "ModifiedDate": {}}})
-    assert stream.source_defined_cursor is True
-
-
-def test_source_defined_cursor_false_when_modified_date_absent(patch_base_class, mock_authenticator, mocker):
-    """source_defined_cursor should be False when ModifiedDate is not in the stream schema."""
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"Gsid": {}, "Name": {}}})
-    assert stream.source_defined_cursor is False
 
 
 def test_state_checkpoint_interval_is_set(patch_base_class, mock_authenticator):
@@ -239,52 +197,9 @@ def test_state_checkpoint_interval_is_set(patch_base_class, mock_authenticator):
     assert stream.state_checkpoint_interval > 0
 
 
-def test_get_updated_state_advances_to_slice_end_when_records_are_older(patch_base_class, mock_authenticator, mocker):
-    """When a time-window slice completes, state must advance to slice end even if all
-    records have an earlier ModifiedDate — preventing the same window from re-syncing."""
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
-    stream._current_slice = {
-        "cursor_field": "ModifiedDate",
-        "start": "2026-03-01T00:00:00Z",
-        "end": "2026-03-10T21:08:06Z",
-    }
-    current_state = {"ModifiedDate": "2026-03-01T00:00:00Z"}
-    # Record's ModifiedDate is older than slice end
-    latest_record = {"Gsid": "abc", "ModifiedDate": "2026-03-05T12:00:00Z"}
-    new_state = stream.get_updated_state(current_state, latest_record)
-    assert new_state == {"ModifiedDate": "2026-03-10T21:08:06Z"}
-
-
-def test_get_updated_state_uses_record_when_newer_than_slice_end(patch_base_class, mock_authenticator, mocker):
-    """If a record's cursor value is somehow newer than the slice end, the record value wins."""
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
-    stream._current_slice = {
-        "cursor_field": "ModifiedDate",
-        "start": "2026-03-01T00:00:00Z",
-        "end": "2026-03-05T00:00:00Z",
-    }
-    current_state = {"ModifiedDate": "2026-03-01T00:00:00Z"}
-    latest_record = {"Gsid": "abc", "ModifiedDate": "2026-03-09T00:04:30Z"}
-    new_state = stream.get_updated_state(current_state, latest_record)
-    assert new_state == {"ModifiedDate": "2026-03-09T00:04:30Z"}
-
-
-def test_get_updated_state_no_slice_still_advances_from_record(patch_base_class, mock_authenticator, mocker):
-    """Full-scan syncs (no active slice) still advance state from the latest record."""
-    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
-    mocker.patch.object(stream, "get_json_schema", return_value={"properties": {"ModifiedDate": {}}})
-    stream._current_slice = None
-    current_state = {"ModifiedDate": "2026-03-01T00:00:00Z"}
-    latest_record = {"Gsid": "abc", "ModifiedDate": "2026-03-10T21:08:06Z"}
-    new_state = stream.get_updated_state(current_state, latest_record)
-    assert new_state == {"ModifiedDate": "2026-03-10T21:08:06Z"}
-
-
 def test_read_records_sets_and_clears_current_slice(patch_base_class, mock_authenticator, mocker):
     """_current_slice must be set during read_records and cleared afterwards,
-    so get_updated_state has access to the slice boundaries during the read."""
+    so the finally block has access to the slice boundaries to advance self._state."""
     from airbyte_cdk.models import SyncMode
 
     stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
@@ -349,3 +264,33 @@ def test_stream_slices_uses_catalog_cursor_when_no_modified_date(patch_base_clas
     assert first.get("cursor_field") == "LastModifiedDate"
     assert "start" in first and "end" in first
     assert first.get("cursor_format") == "date-time"
+
+
+def test_parse_response_advances_state_per_record(patch_base_class, mock_authenticator, mocker):
+    """parse_response must update self._state for each record so that CDK 0.90's
+    _observe_state() reads the correct cursor value for mid-stream and final STATE checkpoints."""
+    stream = GainsightCsObjectStream(name=GAINSIGHT_STREAM_NAME, authenticator=mock_authenticator)
+    mocker.patch.object(
+        stream,
+        "get_json_schema",
+        return_value={"properties": {"Gsid": {}, "ModifiedDate": {"type": ["null", "string"], "format": "date-time"}}},
+    )
+    stream._cursor_field_override = "ModifiedDate"
+
+    response = MagicMock()
+    response.json.return_value = {
+        "result": True,
+        "data": {
+            "records": [
+                {"Gsid": "a", "ModifiedDate": "2024-01-01T00:00:00Z"},
+                {"Gsid": "b", "ModifiedDate": "2024-03-01T00:00:00Z"},
+                {"Gsid": "c", "ModifiedDate": "2024-02-01T00:00:00Z"},
+            ]
+        },
+    }
+
+    records = list(stream.parse_response(response))
+
+    assert len(records) == 3
+    # State must reflect the highest cursor value seen, not just the last record
+    assert stream.state == {"ModifiedDate": "2024-03-01T00:00:00Z"}

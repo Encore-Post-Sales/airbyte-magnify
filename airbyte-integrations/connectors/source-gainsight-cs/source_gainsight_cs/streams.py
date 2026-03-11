@@ -4,7 +4,7 @@ import requests
 from abc import ABC
 from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Union
 from airbyte_cdk.models import AirbyteStream, SyncMode
-from airbyte_cdk.sources.streams.core import Stream
+from airbyte_cdk.sources.streams.core import CheckpointMixin, Stream
 from airbyte_cdk.sources.streams.http import HttpStream
 import logging
 
@@ -24,7 +24,7 @@ class GainsightCsStream(HttpStream, ABC):
         return f"{self._authenticator.domain_url}/v1/"
 
 
-class GainsightCsObjectStream(GainsightCsStream):
+class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
     limit = 5000
     SLICE_RANGE_DAYS = 30
     json_schema = None
@@ -74,52 +74,32 @@ class GainsightCsObjectStream(GainsightCsStream):
         else:
             self._state = {}
 
-    @property
-    def supports_incremental(self) -> bool:
-        """All streams support incremental; the actual cursor is set by the catalog (cursor_field arg).
-        Without this override, streams without ModifiedDate return cursor_field=[] which makes the
-        installed CDK treat them as full refresh and never call _read_incremental."""
-        return True
-
-    @property
-    def cursor_field(self) -> Union[str, List[str]]:
-        """Default cursor is ModifiedDate only if present in this stream's schema; else no cursor (full refresh only)."""
-        schema_properties = self.get_json_schema().get("properties", {})
-        if "ModifiedDate" in schema_properties:
-            return "ModifiedDate"
-        return []
-
-    @property
-    def source_defined_cursor(self) -> bool:
-        """Cursor is source-defined only when ModifiedDate exists in the schema; otherwise users pick their own cursor."""
-        schema_properties = self.get_json_schema().get("properties", {})
-        return "ModifiedDate" in schema_properties
+    def _get_checkpoint_reader(self, logger, cursor_field, sync_mode, stream_state):
+        """Override to set _cursor_field_override from the catalog cursor_field *before*
+        _checkpoint_mode is evaluated. Without this, cursor_field returns [] and CDK 0.90
+        routes the stream to RESUMABLE_FULL_REFRESH, which re-calls stream_slices with
+        updated state after every STATE emission — causing an infinite sync loop."""
+        if cursor_field and len(cursor_field) > 0:
+            self._cursor_field_override = cursor_field[0]
+        else:
+            self._cursor_field_override = None
+        return super()._get_checkpoint_reader(
+            logger=logger, cursor_field=cursor_field, sync_mode=sync_mode, stream_state=stream_state
+        )
 
     def as_airbyte_stream(self) -> AirbyteStream:
-        """Always expose both full_refresh and incremental sync modes.
-
-        When ModifiedDate is present: source-defined cursor defaulting to ModifiedDate.
-        When ModifiedDate is absent: no default cursor so the UI defaults to Full Refresh | Append,
-        but incremental is still offered so the user can select any cursor field.
+        """Expose both full_refresh and incremental sync modes with no source-defined cursor.
+        The user selects a cursor field in the catalog for any stream they want to sync incrementally.
         """
-        schema = self.get_json_schema()
-        schema_properties = schema.get("properties", {})
-        has_modified_date = "ModifiedDate" in schema_properties
-
         stream = AirbyteStream(
             name=self.name,
-            json_schema=dict(schema),
+            json_schema=dict(self.get_json_schema()),
             supported_sync_modes=[SyncMode.full_refresh, SyncMode.incremental],
+            source_defined_cursor=False,
         )
 
         if self.namespace:
             stream.namespace = self.namespace
-
-        if has_modified_date:
-            stream.source_defined_cursor = True
-            stream.default_cursor_field = ["ModifiedDate"]
-        else:
-            stream.source_defined_cursor = False
 
         keys = Stream._wrapped_primary_key(self.primary_key)
         if keys and len(keys) > 0:
@@ -127,16 +107,16 @@ class GainsightCsObjectStream(GainsightCsStream):
 
         return stream
 
-    def _effective_cursor_field(self) -> Optional[str]:
-        """Use configured cursor field from read_records when set, else stream default. None if stream has no cursor."""
-        if self._cursor_field_override is not None:
+    @property
+    def cursor_field(self) -> Union[str, List[str]]:
+        """Return the catalog-configured cursor field so CDK routes to INCREMENTAL (not RESUMABLE_FULL_REFRESH)."""
+        if self._cursor_field_override:
             return self._cursor_field_override
-        cf = self.cursor_field
-        if isinstance(cf, str):
-            return cf
-        if isinstance(cf, list) and len(cf) > 0:
-            return cf[0]
-        return None
+        return []
+
+    def _effective_cursor_field(self) -> Optional[str]:
+        """Returns the catalog-configured cursor field when set by read_records, else None."""
+        return self._cursor_field_override
 
     def stream_slices(
         self,
@@ -145,12 +125,11 @@ class GainsightCsObjectStream(GainsightCsStream):
         stream_state: Optional[Mapping[str, Any]] = None,
         **kwargs,
     ) -> Iterable[Optional[Mapping[str, Any]]]:
-        # Use catalog-configured cursor when provided (incremental with custom cursor); else stream default
+        # Use catalog-configured cursor when provided (incremental with custom cursor); else no cursor
         if cursor_field and len(cursor_field) > 0:
             cursor_name = cursor_field[0]
         else:
-            cursor = self.cursor_field
-            cursor_name = cursor if isinstance(cursor, str) else (cursor[0] if cursor else None)
+            cursor_name = None
 
         # No cursor field or full refresh: single slice, no time bounds (existing full-scan behavior)
         if not cursor_name or sync_mode != SyncMode.incremental:
@@ -243,11 +222,9 @@ class GainsightCsObjectStream(GainsightCsStream):
             yield from super().read_records(sync_mode, cursor_field, stream_slice, stream_state, **kwargs)
         finally:
             # Advance self._state to at least the slice end so empty slices still move state forward.
-            # _checkpoint_state reads stream.state directly, so we must keep it up to date here.
-            cursor = self._cursor_field_override or (
-                self.cursor_field if isinstance(self.cursor_field, str)
-                else (self.cursor_field[0] if self.cursor_field else None)
-            )
+            # CDK 0.90 reads stream.state via _observe_state() after each slice, so this ensures
+            # slices with no records still advance the checkpoint rather than stalling.
+            cursor = self._cursor_field_override
             slice_end = (self._current_slice or {}).get("end", "")
             if cursor and slice_end:
                 current = self._state.get(cursor, "")
@@ -371,11 +348,19 @@ class GainsightCsObjectStream(GainsightCsStream):
             if field_schema.get("format") in ["date", "date-time"]
         ]
         
-        # Transform empty strings to null for date/datetime fields
+        # Transform empty strings to null for date/datetime fields, and advance self._state
+        # per record so CDK 0.90's _observe_state() reads the correct cursor value for each
+        # mid-stream STATE checkpoint (state_checkpoint_interval) and for the final checkpoint.
+        cursor = self._effective_cursor_field()
         for record in records:
             for field_name in date_fields:
                 if field_name in record and record[field_name] == "":
                     record[field_name] = None
+            if cursor and record.get(cursor):
+                current = self._state.get(cursor, "")
+                new_val = record[cursor]
+                if new_val > current:
+                    self._state = {cursor: new_val}
             yield record
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
@@ -406,20 +391,6 @@ class GainsightCsObjectStream(GainsightCsStream):
             )
             self.offset = self.offset + self.limit
             return self.offset
-
-    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
-        cursor = self._effective_cursor_field()
-        if cursor is None:
-            return dict(current_stream_state) if current_stream_state else {}
-        latest_cursor = latest_record.get(cursor) or ""
-        current_cursor = current_stream_state.get(cursor, "")
-        # Also consider the slice end so state advances forward even when records
-        # have an older cursor value (e.g. during the final page of a time-window slice)
-        slice_end = (self._current_slice or {}).get("end", "")
-        new_state = {cursor: max(current_cursor, latest_cursor, slice_end)}
-        # Keep self._state current so _checkpoint_state (which reads stream.state) gets the latest value
-        self._state = new_state
-        return new_state
 
     def get_json_schema(self) -> Mapping[str, Any]:
         if self.json_schema is not None:
