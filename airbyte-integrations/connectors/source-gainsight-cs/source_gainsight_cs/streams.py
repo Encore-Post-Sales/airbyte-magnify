@@ -171,6 +171,8 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
         else:
             try:
                 start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00"))
+                if start_dt.tzinfo is None:
+                    start_dt = start_dt.replace(tzinfo=timezone.utc)
             except (ValueError, AttributeError):
                 self.logger.info(
                     "Stream '%s': could not parse state for cursor '%s' (value: %s), yielding single full-scan slice",
