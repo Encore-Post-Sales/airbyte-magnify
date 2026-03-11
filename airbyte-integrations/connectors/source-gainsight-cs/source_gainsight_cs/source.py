@@ -48,7 +48,12 @@ class SourceGainsightCs(AbstractSource):
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         authenticator = GainsightCsAuthenticator(config)
         all_objects = self.get_objects(config)
+        lookback_days = config.get("lookback_730_day_streams", [])
         result = []
         for object_name in all_objects:
-            result.append(GainsightCsObjectStream(name=object_name, authenticator=authenticator))
+            result.append(GainsightCsObjectStream(
+                name=object_name,
+                authenticator=authenticator,
+                lookback_730_day_streams=lookback_days,
+            ))
         return result

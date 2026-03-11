@@ -50,7 +50,7 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
         "JSONSTRING": ["null", "string"]
     }
 
-    def __init__(self, name: str, authenticator: GainsightCsAuthenticator, **kwargs):
+    def __init__(self, name: str, authenticator: GainsightCsAuthenticator, lookback_730_day_streams: Optional[List[str]] = None, **kwargs):
         super().__init__(authenticator, **kwargs)
         self.object_name = name
         self._primary_key = None
@@ -58,6 +58,7 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
         self._cursor_field_override: Optional[str] = None
         self._current_slice: Optional[Mapping[str, Any]] = None
         self._state: MutableMapping[str, Any] = {}
+        self._lookback_730_day_streams: List[str] = lookback_730_day_streams or []
 
     @property
     def state(self) -> MutableMapping[str, Any]:
@@ -151,24 +152,32 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
 
         start_str = (stream_state or {}).get(cursor_name)
 
-        # First sync with no prior state: full scan, one STATE checkpoint at end
         if not start_str:
+            if self.object_name in self._lookback_730_day_streams:
+                lookback_days = 730
+            else:
+                # First sync with no prior state: full scan, one STATE checkpoint at end
+                self.logger.info(
+                    "Stream '%s': incremental with cursor '%s', no prior state — full scan (single slice)",
+                    self.object_name, cursor_name,
+                )
+                yield {}
+                return
             self.logger.info(
-                "Stream '%s': incremental with cursor '%s', no prior state — full scan (single slice)",
-                self.object_name, cursor_name,
+                "Stream '%s': incremental with cursor '%s', no prior state — limiting to last %d days",
+                self.object_name, cursor_name, lookback_days,
             )
-            yield {}
-            return
-
-        try:
-            start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00"))
-        except (ValueError, AttributeError):
-            self.logger.info(
-                "Stream '%s': could not parse state for cursor '%s' (value: %s), yielding single full-scan slice",
-                self.object_name, cursor_name, start_str,
-            )
-            yield {}
-            return
+            start_dt = datetime.now(tz=timezone.utc) - timedelta(days=lookback_days)
+        else:
+            try:
+                start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00"))
+            except (ValueError, AttributeError):
+                self.logger.info(
+                    "Stream '%s': could not parse state for cursor '%s' (value: %s), yielding single full-scan slice",
+                    self.object_name, cursor_name, start_str,
+                )
+                yield {}
+                return
 
         now_dt = datetime.now(tz=timezone.utc)
         delta = timedelta(days=self.SLICE_RANGE_DAYS)
@@ -292,7 +301,7 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
         schema_properties = self.get_json_schema().get("properties", {})
 
         if slice_start and slice_end and cursor_field_name:
-            # Time-window slice: bounded GTE + LT filter with orderBy for deterministic offset pagination
+            # Time-window slice: bounded GTE + LT filter
             if cursor_field_name in schema_properties:
                 body["where"] = {
                     "conditions": [
@@ -301,7 +310,6 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
                     ],
                     "expression": "A AND B",
                 }
-                body["orderBy"] = {cursor_field_name: "asc"}
             else:
                 logger.warning(
                     "Cursor field '%s' not present on object '%s'; skipping incremental filter to avoid API error. Sync will read all records.",
@@ -323,6 +331,9 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
                         cursor_field_name,
                         self.object_name,
                     )
+
+        if cursor_field_name:
+            body["orderBy"] = {cursor_field_name: "asc"}
 
         return body
 
