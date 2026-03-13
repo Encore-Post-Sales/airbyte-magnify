@@ -211,41 +211,8 @@
                     }
                   },
                   "body": {
-                    "description": "Details of the body of the comment.",
-                    "type": ["null", "object"],
-                    "properties": {
-                      "version": {
-                        "type": ["null", "integer"]
-                      },
-                      "type": {
-                        "type": ["null", "string"]
-                      },
-                      "content": {
-                        "type": ["null", "array"],
-                        "items": {
-                          "type": ["null", "object"],
-                          "properties": {
-                            "type": {
-                              "type": ["null", "string"]
-                            },
-                            "content": {
-                              "type": "array",
-                              "items": {
-                                "type": ["null", "object"],
-                                "properties": {
-                                  "type": {
-                                    "type": ["null", "string"]
-                                  },
-                                  "text": {
-                                    "type": ["null", "string"]
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
+                    "description": "Body of the comment. Jira Data Center v2 returns string (e.g. rendered HTML/wiki); not ADF.",
+                    "type": ["null", "string"]
                   },
                   "updateAuthor": {
                     "description": "Details of the author who updated the comment.",
@@ -1124,41 +1091,8 @@
                     }
                   },
                   "comment": {
-                    "description": "Details of the comment in the worklog.",
-                    "type": ["null", "object"],
-                    "properties": {
-                      "version": {
-                        "type": ["null", "integer"]
-                      },
-                      "type": {
-                        "type": ["null", "string"]
-                      },
-                      "content": {
-                        "type": ["null", "array"],
-                        "items": {
-                          "type": ["null", "object"],
-                          "properties": {
-                            "type": {
-                              "type": ["null", "string"]
-                            },
-                            "content": {
-                              "type": "array",
-                              "items": {
-                                "type": ["null", "object"],
-                                "properties": {
-                                  "type": {
-                                    "type": ["null", "string"]
-                                  },
-                                  "text": {
-                                    "type": ["null", "string"]
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
+                    "description": "Comment in the worklog. Jira Data Center v2 returns string; not ADF.",
+                    "type": ["null", "string"]
                   },
                   "created": {
                     "description": "The timestamp when the worklog was created.",

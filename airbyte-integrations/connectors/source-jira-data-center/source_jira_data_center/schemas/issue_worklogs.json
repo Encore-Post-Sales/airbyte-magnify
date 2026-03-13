@@ -158,11 +158,8 @@
       }
     },
     "comment": {
-      "description": "Comment text; Data Center v2 may return string (wiki markup) or document object. Optional when creating or updating a worklog. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/).",
-      "oneOf": [
-        { "type": "string" },
-        { "type": "object", "additionalProperties": true }
-      ]
+      "description": "Comment text. Jira Data Center v2 returns string (wiki markup) or null; not ADF.",
+      "type": ["null", "string"]
     },
     "created": {
       "description": "The datetime on which the worklog was created.",

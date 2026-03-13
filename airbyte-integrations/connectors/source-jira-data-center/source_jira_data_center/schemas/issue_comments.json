@@ -22,11 +22,8 @@
       "readOnly": true
     },
     "body": {
-      "description": "Comment text. Data Center v2 typically returns string (wiki markup); some versions may return a document object.",
-      "oneOf": [
-        { "type": "string" },
-        { "type": "object", "additionalProperties": true }
-      ]
+      "description": "Comment text. Jira Data Center v2 returns string (wiki markup) or null; not ADF.",
+      "type": ["null", "string"]
     },
     "renderedBody": {
       "description": "The rendered version of the comment.",
