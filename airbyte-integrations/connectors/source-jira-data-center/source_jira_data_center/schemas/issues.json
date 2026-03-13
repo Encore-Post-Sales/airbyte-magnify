@@ -713,12 +713,8 @@
           }
         },
         "description": {
-          "description": "Issue description. Jira Data Center v2 typically returns string (wiki markup); some fixtures or versions may return a document object.",
-          "oneOf": [
-            { "type": "null" },
-            { "type": "string" },
-            { "type": "object", "additionalProperties": true }
-          ]
+          "description": "Issue description. Jira Data Center v2 returns string (wiki markup) or null.",
+          "type": ["null", "string"]
         },
         "fixVersions": {
           "type": ["null", "array"]
