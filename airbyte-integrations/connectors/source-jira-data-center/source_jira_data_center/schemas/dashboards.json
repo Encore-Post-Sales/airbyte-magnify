@@ -23,7 +23,7 @@
       "type": "object",
       "properties": {
         "key": {
-          "description": "Deprecated. Use `accountId` for privacy reasons.",
+          "description": "Optional. Prefer accountId when available. Valid in Data Center v2.",
           "type": "string"
         },
         "self": {
@@ -31,7 +31,7 @@
           "type": "string"
         },
         "name": {
-          "description": "Deprecated. Use `accountId` for privacy reasons.",
+          "description": "Optional. Prefer accountId when available. Valid in Data Center v2.",
           "type": "string"
         },
         "displayName": {
@@ -143,7 +143,7 @@
                   },
                   "key": {
                     "type": "string",
-                    "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                    "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                   },
                   "accountId": {
                     "maxLength": 128,
@@ -157,7 +157,7 @@
                   },
                   "name": {
                     "type": "string",
-                    "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                    "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                   },
                   "emailAddress": {
                     "type": "string",
@@ -287,7 +287,7 @@
                             },
                             "defined": {
                               "type": "boolean",
-                              "description": "Deprecated."
+                              "description": "Optional; may be absent in some Data Center versions."
                             },
                             "numberOfSeats": {
                               "type": "integer",
@@ -371,7 +371,7 @@
                         },
                         "key": {
                           "type": "string",
-                          "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                          "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                         },
                         "accountId": {
                           "maxLength": 128,
@@ -385,7 +385,7 @@
                         },
                         "name": {
                           "type": "string",
-                          "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                          "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                         },
                         "emailAddress": {
                           "type": "string",
@@ -515,7 +515,7 @@
                                   },
                                   "defined": {
                                     "type": "boolean",
-                                    "description": "Deprecated."
+                                    "description": "Optional; may be absent in some Data Center versions."
                                   },
                                   "numberOfSeats": {
                                     "type": "integer",
@@ -569,7 +569,7 @@
                     },
                     "leadUserName": {
                       "type": "string",
-                      "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                      "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                     },
                     "leadAccountId": {
                       "maxLength": 128,
@@ -597,7 +597,7 @@
                         },
                         "key": {
                           "type": "string",
-                          "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                          "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                         },
                         "accountId": {
                           "maxLength": 128,
@@ -611,7 +611,7 @@
                         },
                         "name": {
                           "type": "string",
-                          "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                          "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                         },
                         "emailAddress": {
                           "type": "string",
@@ -741,7 +741,7 @@
                                   },
                                   "defined": {
                                     "type": "boolean",
-                                    "description": "Deprecated."
+                                    "description": "Optional; may be absent in some Data Center versions."
                                   },
                                   "numberOfSeats": {
                                     "type": "integer",
@@ -813,7 +813,7 @@
                         },
                         "key": {
                           "type": "string",
-                          "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                          "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                         },
                         "accountId": {
                           "maxLength": 128,
@@ -827,7 +827,7 @@
                         },
                         "name": {
                           "type": "string",
-                          "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                          "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                         },
                         "emailAddress": {
                           "type": "string",
@@ -957,7 +957,7 @@
                                   },
                                   "defined": {
                                     "type": "boolean",
-                                    "description": "Deprecated."
+                                    "description": "Optional; may be absent in some Data Center versions."
                                   },
                                   "numberOfSeats": {
                                     "type": "integer",
@@ -1229,7 +1229,7 @@
                     },
                     "project": {
                       "type": "string",
-                      "description": "Deprecated. Use `projectId`."
+                      "description": "Optional. Use projectId when available."
                     },
                     "projectId": {
                       "type": "integer",
@@ -1471,7 +1471,7 @@
                   },
                   "key": {
                     "type": "string",
-                    "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                    "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                   },
                   "accountId": {
                     "maxLength": 128,
@@ -1485,7 +1485,7 @@
                   },
                   "name": {
                     "type": "string",
-                    "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                    "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                   },
                   "emailAddress": {
                     "type": "string",
@@ -1615,7 +1615,7 @@
                             },
                             "defined": {
                               "type": "boolean",
-                              "description": "Deprecated."
+                              "description": "Optional; may be absent in some Data Center versions."
                             },
                             "numberOfSeats": {
                               "type": "integer",
@@ -1686,7 +1686,7 @@
                   },
                   "key": {
                     "type": "string",
-                    "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                    "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                   },
                   "accountId": {
                     "maxLength": 128,
@@ -1700,7 +1700,7 @@
                   },
                   "name": {
                     "type": "string",
-                    "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                    "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                   },
                   "emailAddress": {
                     "type": "string",
@@ -1830,7 +1830,7 @@
                             },
                             "defined": {
                               "type": "boolean",
-                              "description": "Deprecated."
+                              "description": "Optional; may be absent in some Data Center versions."
                             },
                             "numberOfSeats": {
                               "type": "integer",
@@ -1928,7 +1928,7 @@
                     },
                     "name": {
                       "type": "string",
-                      "description": "This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details."
+                      "description": "Optional; may be absent in some Data Center versions. See [Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
                     },
                     "avatarUrl": {
                       "type": "string",

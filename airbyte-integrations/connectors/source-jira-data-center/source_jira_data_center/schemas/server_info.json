@@ -18,7 +18,7 @@
       }
     },
     "deploymentType": {
-      "description": "The type of server deployment. This is always returned as *Cloud*.",
+      "description": "The type of server deployment. For Data Center this is returned as Server.",
       "type": "string"
     },
     "buildNumber": {
@@ -44,7 +44,7 @@
       "type": "string"
     },
     "healthChecks": {
-      "description": "Jira instance health check results. Deprecated and no longer returned.",
+      "description": "Jira instance health check results. Optional; may be absent in some Data Center versions.",
       "type": "array",
       "items": {
         "type": "object",

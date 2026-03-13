@@ -22,8 +22,11 @@
       "readOnly": true
     },
     "body": {
-      "description": "The comment text in Atlassian Document Format.",
-      "type": "object"
+      "description": "Comment text. Data Center v2 typically returns string (wiki markup); some versions may return a document object.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object", "additionalProperties": true }
+      ]
     },
     "renderedBody": {
       "description": "The rendered version of the comment.",
@@ -65,7 +68,7 @@
       "additionalProperties": true
     },
     "jsdPublic": {
-      "description": "Whether the comment is visible in Jira Service Desk. Defaults to true when comments are created in the Jira Cloud Platform.",
+      "description": "Whether the comment is visible in Jira Service Desk.",
       "type": "boolean",
       "readOnly": true
     },

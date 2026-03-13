@@ -88,6 +88,29 @@ poetry add <package-name>
 
 Please commit the changes to `pyproject.toml` and `poetry.lock` files.
 
+### Issues stream and destination compatibility
+
+The **issues** stream returns the full Jira issue search response from the **Jira Data Center REST API v2** (`/rest/api/2/search`). In v2, `fields.description` is a string (wiki markup or plain text), not Atlassian Document Format (ADF). If you sync to a destination that uses **Avro** and see conversion errors (e.g. `field fields is expected to be one of these: NULL, RECORD`):
+
+1. Re-run **discover** so the catalog uses the latest stream schema.
+2. If errors persist, the destination may require stricter types; consider excluding the issues stream or using a destination that supports flexible/JSON object types.
+
+For response shapes, see [Jira Data Center REST API – search](https://developer.atlassian.com/server/jira/platform/rest/v10002/api-group-search/) and [Getting started](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/#gettingstarted).
+
+### Schema v2 alignment
+
+Stream schemas in `source_jira_data_center/schemas/` must align with the **Jira Data Center REST API v2** (`/rest/api/2/`), not Cloud v3. When editing or adding schemas, follow these rules:
+
+| Area | Cloud v3 (avoid) | Data Center v2 rule |
+|------|------------------|----------------------|
+| **User identifiers** | `accountId` primary; `key`/`name` deprecated | Allow both; describe `key`/`name` as valid for v2; do not link to Cloud deprecation notice. |
+| **Comment/description body** | ADF object only | Prefer `string` (wiki/plain) for v2; allow `object` only if a specific DC version returns ADF. |
+| **Deprecation text** | "no longer available", link to Cloud deprecation notice | Remove or replace with "Optional; may be absent in some Data Center versions" and link to [Data Center REST API intro](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/). |
+| **deploymentType** (server_info) | "always returned as *Cloud*" | Use "Server" or "Data Center" for this connector. |
+| **External links** | `developer.atlassian.com/cloud/...` | Use `developer.atlassian.com/server/jira/platform/rest/v10002/...` where applicable. |
+
+Reference: [Jira Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/).
+
 ## Publishing a new version of the connector
 
 You've checked out the repo, implemented a million dollar feature, and you're ready to share your changes with the world. Now what?

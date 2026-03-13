@@ -18,7 +18,7 @@
       "readOnly": true
     },
     "authorKey": {
-      "description": "Deprecated, use `authorAccountId` instead. The key of the user who created the audit record.",
+      "description": "The key of the user who created the audit record. Optional; prefer authorAccountId when available.",
       "type": "string",
       "readOnly": true
     },

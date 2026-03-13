@@ -713,47 +713,23 @@
           }
         },
         "description": {
-          "description": "Details of the description of the issue.",
-          "type": ["null", "object"],
-          "properties": {
-            "content": {
-              "type": ["null", "array"],
-              "items": {
-                "type": ["null", "object"],
-                "properties": {
-                  "content": {
-                    "type": ["null", "array"],
-                    "items": {
-                      "type": ["null", "object"],
-                      "properties": {
-                        "text": {
-                          "type": ["null", "string"]
-                        },
-                        "type": {
-                          "type": ["null", "string"]
-                        }
-                      }
-                    }
-                  },
-                  "type": {
-                    "type": ["null", "string"]
-                  }
-                }
-              }
-            },
-            "type": {
-              "type": ["null", "string"]
-            },
-            "version": {
-              "type": ["null", "integer"]
-            }
-          }
+          "description": "Issue description. Jira Data Center v2 typically returns string (wiki markup); some fixtures or versions may return a document object.",
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string" },
+            { "type": "object", "additionalProperties": true }
+          ]
         },
         "fixVersions": {
           "type": ["null", "array"]
         },
         "issuelinks": {
-          "type": ["null", "array"]
+          "description": "Issue links; items may contain inwardIssue/outwardIssue with nested fields of variable shape.",
+          "type": ["null", "array"],
+          "items": {
+            "type": ["null", "object"],
+            "additionalProperties": true
+          }
         },
         "issuerestriction": {
           "description": "Details of the issue restriction.",

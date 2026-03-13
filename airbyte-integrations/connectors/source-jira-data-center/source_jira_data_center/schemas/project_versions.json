@@ -61,7 +61,7 @@
       "readOnly": true
     },
     "project": {
-      "description": "Deprecated field. Use projectId instead.",
+      "description": "Optional. Use projectId when available.",
       "type": "string"
     },
     "projectId": {

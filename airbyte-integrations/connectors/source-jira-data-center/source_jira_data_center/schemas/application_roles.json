@@ -31,7 +31,7 @@
       "type": "boolean"
     },
     "defined": {
-      "description": "Deprecated.",
+      "description": "Optional; may be absent in some Data Center versions.",
       "type": "boolean"
     },
     "numberOfSeats": {

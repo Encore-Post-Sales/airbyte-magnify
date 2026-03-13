@@ -75,7 +75,7 @@ class JiraAvailabilityStrategy(HttpAvailabilityStrategy):
 
 class JiraStream(HttpStream, ABC):
     """
-    Jira API Reference: https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+    Jira Data Center REST API v2. Reference: https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/
     """
 
     page_size = 50
@@ -259,7 +259,7 @@ class IncrementalJiraStream(StartDateJiraStream, CheckpointMixin, ABC):
 
 class Issues(IncrementalJiraStream):
     """
-    https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-get
+    Jira Data Center v2: GET /rest/api/2/search. https://developer.atlassian.com/server/jira/platform/rest/v10002/api-group-search/
     """
 
     cursor_field = "updated"
@@ -337,7 +337,7 @@ class Issues(IncrementalJiraStream):
 
 class IssueFields(FullRefreshJiraStream):
     """
-    https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-fields/#api-rest-api-3-field-get
+    Jira Data Center v2: GET /rest/api/2/field. https://developer.atlassian.com/server/jira/platform/rest/v10002/api-group-field/
 
     This stream is a dependency for the Issue stream, which in turn is a dependency for both the IssueComments and IssueWorklogs streams.
     These latter streams cannot be migrated at the moment: https://github.com/airbytehq/airbyte-internal-issues/issues/7522
@@ -384,7 +384,7 @@ class Projects(FullRefreshJiraStream):
 
 class IssueWorklogs(IncrementalJiraStream):
     """
-    https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-worklogs/#api-rest-api-3-issue-issueidorkey-worklog-get
+    Jira Data Center v2: GET /rest/api/2/issue/{idOrKey}/worklog. https://developer.atlassian.com/server/jira/platform/rest/v10002/api-group-worklog/
 
     Cannot be migrated at the moment: https://github.com/airbytehq/airbyte-internal-issues/issues/7522
     """
@@ -414,7 +414,7 @@ class IssueWorklogs(IncrementalJiraStream):
 
 class IssueComments(IncrementalJiraStream):
     """
-    https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-comments/#api-rest-api-3-issue-issueidorkey-comment-get
+    Jira Data Center v2: GET /rest/api/2/issue/{idOrKey}/comment. https://developer.atlassian.com/server/jira/platform/rest/v10002/api-group-comment/
 
     Cannot be migrated at the moment: https://github.com/airbytehq/airbyte-internal-issues/issues/7522
     """

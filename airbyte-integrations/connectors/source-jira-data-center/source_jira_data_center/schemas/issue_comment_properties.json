@@ -11,5 +11,5 @@
     }
   },
   "additionalProperties": true,
-  "description": "An entity property, for more information see [Entity properties](https://developer.atlassian.com/cloud/jira/platform/jira-entity-properties/)."
+  "description": "An entity property. See [Jira Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
 }
