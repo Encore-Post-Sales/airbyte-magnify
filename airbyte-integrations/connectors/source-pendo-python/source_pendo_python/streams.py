@@ -72,6 +72,9 @@ class PendoPythonStream(HttpStream, ABC):
                         fields[field] = {"type": ["null", "string", "number"]}
                     elif field == "sfpendolivedate": # sfpendogolivedate can be empty string or datetime string - tenant: ten_01k9qy066cfvgv3m14v0zprfd7
                         fields[field] = {"type": ["null", "string", "number"]}
+                    elif key == "agent" and field == "role":
+                        # Pendo metadata schema reports integer; API sometimes returns string slugs (e.g. "backoffice-user"). - tenant: ten_01kk264pkrf27teg2epq19qf1f
+                        fields[field] = {"type": ["null", "integer", "string"]}
                     else:
                         fields[field] = self.get_valid_field_info(field_type)
 
@@ -470,6 +473,7 @@ class FeatureEvents(PendoTimeSeriesAggregationStream):
         super().__init__(**kwargs)
         self.start_date = start_date
         self.day_page_size = day_page_size
+
 class GuideEvents(PendoTimeSeriesAggregationStream):
     name = "guide_events"
     source_name = "guideEvents"
