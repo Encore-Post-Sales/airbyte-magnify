@@ -70,7 +70,7 @@ class SourcePendoPython(AbstractSource):
 
         default_start_date = datetime.now() - timedelta(days=2 * 365)
         start_date = config.get("start_date", default_start_date.strftime("%Y-%m-%dT%H:%M:%S"))
-        day_page_size = config.get("day_page_size", 21)
+        day_page_size = config.get("day_page_size", 5)
 
         url_base = self._url_base(config)
 
