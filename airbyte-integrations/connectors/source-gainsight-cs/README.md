@@ -9,14 +9,16 @@ For information about how to use this connector within Airbyte, see [the documen
 
 **To iterate on this connector, make sure to complete this prerequisites section.**
 
-#### Minimum Python version required `= 3.9.0`
+#### Python version required `>= 3.9.0, <= 3.11.x`
+
+> **Important:** Python 3.12+ is **not supported**. The `pendulum` dependency (pulled in by `airbyte-cdk`) uses `distutils`, which was removed from the standard library in Python 3.12. Use Python 3.11 or earlier.
 
 #### Activate Virtual Environment and install dependencies
 
-From this connector directory, create a virtual environment:
+From this connector directory, create a virtual environment with Python 3.11:
 
 ```
-python -m venv .venv
+python3.11 -m venv .venv
 ```
 
 This will generate a virtualenv for this module in `.venv/`. Make sure this venv is active in your
@@ -35,25 +37,15 @@ used for editable installs (`pip install -e`) to pull in Python dependencies fro
 If this is mumbo jumbo to you, don't worry about it, just put your deps in `setup.py` but install using `pip install -r requirements.txt` and everything
 should work as you expect.
 
-# In event there is a bad env:
+#### Resetting a broken environment
 
-# Deactivate the current venv and remove it
+If you need to start fresh (e.g. you created the venv with the wrong Python version):
 
 ```
 deactivate
 rm -rf .venv
-```
-
-# Create a new venv with Python 3.10 (distutils is built-in)
-
-```
-python3.10 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
-```
-
-# Install
-
-```
 pip install -r requirements.txt
 ```
 

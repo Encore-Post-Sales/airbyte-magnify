@@ -47,7 +47,9 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
         "JSON": ["null", "object"],
         "JSONBOOLEAN": ["null", "boolean"],
         "JSONNUMBER": ["null", "number"],
-        "JSONSTRING": ["null", "string"]
+        "JSONSTRING": ["null", "string"],
+        "PICKLIST": ["null", "string"],
+        "MULTISELECTDROPDOWNLIST": ["null", "string"]
     }
 
     def __init__(self, name: str, authenticator: GainsightCsAuthenticator, lookback_730_day_streams: Optional[List[str]] = None, **kwargs):
@@ -405,44 +407,44 @@ class GainsightCsObjectStream(GainsightCsStream, CheckpointMixin):
             self.offset = self.offset + self.limit
             return self.offset
 
-    def get_json_schema(self) -> Mapping[str, Any]:
-        if self.json_schema is not None:
-            return self.json_schema
-
+    def _build_schema_from_describe_response(self, body: dict) -> Mapping[str, Any]:
+        """Build and cache json_schema + primary key from a /describe API response."""
         base_schema = {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
             "properties": {}
         }
+        if body.get('result', True):
+            fields = body.get('data', [{}])[0].get('fields', [])
+            base_schema = self.dynamic_schema(base_schema, fields)
+
+        self.json_schema = base_schema
+        if self.json_schema['properties'].get('Gsid') is not None:
+            self._primary_key = "Gsid"
+        return self.json_schema
+
+    def get_json_schema(self) -> Mapping[str, Any]:
+        if self.json_schema is not None:
+            return self.json_schema
 
         url = f"{self.url_base}meta/services/objects/{self.name}/describe?idd=true"
 
         while True:
             try:
-                session = requests.get(url, auth=self.authenticator)
-                body = session.json()
-                
-                # Check if the response indicates success
+                response = requests.get(url, auth=self.authenticator)
+                body = response.json()
+
                 if body.get('result', True):
-                    full_schema = base_schema
-                    fields = body['data'][0]['fields']
-                    full_schema = self.dynamic_schema(full_schema, fields)
-                    self.json_schema = full_schema
-                    break
+                    return self._build_schema_from_describe_response(body)
                 else:
                     # Handle rate limiting
                     if body.get('result') == False and body.get('errorCode') == 'GS_APIG_2404':
                         print("Rate limit reached. Will retry after 60 seconds...")
                         sleep(60)
                         continue
+                    return self._build_schema_from_describe_response(body)
             except requests.exceptions.RequestException:
-                self.json_schema = base_schema
-                break
-
-        # Workaround for missing gsid in many objects. Primary Key is either None or "Gsid".
-        if self.json_schema['properties'].get('Gsid') is not None:
-            self._primary_key = "Gsid"
-        return self.json_schema
+                return self._build_schema_from_describe_response({})
 
     def get_select_columns(self):
         json_schema = self.get_json_schema()

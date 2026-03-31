@@ -2,7 +2,10 @@
 # Copyright (c) 2023 Airbyte, Inc., all rights reserved.
 #
 
+import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, List, Mapping, Tuple
+
 import requests
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
@@ -11,6 +14,8 @@ from .streams import (
     GainsightCsObjectStream
 )
 from .authenticator import GainsightCsAuthenticator
+
+logger = logging.getLogger(__name__)
 
 class SourceGainsightCs(AbstractSource):
 
@@ -49,11 +54,31 @@ class SourceGainsightCs(AbstractSource):
         authenticator = GainsightCsAuthenticator(config)
         all_objects = self.get_objects(config)
         lookback_days = config.get("lookback_730_day_streams", [])
-        result = []
+
+        streams_by_name = {}
         for object_name in all_objects:
-            result.append(GainsightCsObjectStream(
+            streams_by_name[object_name] = GainsightCsObjectStream(
                 name=object_name,
                 authenticator=authenticator,
                 lookback_730_day_streams=lookback_days,
-            ))
-        return result
+            )
+
+        authenticator._rotate()
+        base_url = f"{authenticator.domain_url}/v1/meta/services/objects"
+
+        def _fetch_describe(object_name: str):
+            url = f"{base_url}/{object_name}/describe?idd=true"
+            resp = requests.get(url, auth=authenticator)
+            return object_name, resp.json()
+
+        with ThreadPoolExecutor(max_workers=5) as pool:
+            futures = {pool.submit(_fetch_describe, name): name for name in all_objects}
+            for future in as_completed(futures):
+                name = futures[future]
+                try:
+                    _, body = future.result()
+                    streams_by_name[name]._build_schema_from_describe_response(body)
+                except Exception:
+                    logger.warning("Parallel describe fetch failed for '%s'; will fall back to lazy fetch", name, exc_info=True)
+
+        return list(streams_by_name.values())
