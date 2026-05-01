@@ -20,4 +20,15 @@ connectionSpecification:
       type: string
       title: Client Secret
       airbyte_secret: true
+    lookback_730_day_streams:
+      type: array
+      title: Lookback 730 Day Streams
+      description: >
+        List of stream/object names that should look back 730 days on the first
+        incremental sync (when there is no prior state). Streams not listed will
+        perform a full scan on first sync.
+      items:
+        type: string
+      examples:
+        - ["time_series_daily"]
   additionalProperties: true

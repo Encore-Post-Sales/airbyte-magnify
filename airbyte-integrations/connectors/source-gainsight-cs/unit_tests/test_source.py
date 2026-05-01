@@ -10,13 +10,19 @@ from source_gainsight_cs.source import SourceGainsightCs, GainsightCsAuthenticat
 
 
 GAINSIGHT_DOMAIN_URL = "https://fake-domain.gainsightcloud.com"
-FAKE_TOKEN = 'ABC123'
+FAKE_CLIENT_ID = "my-client-id"
+FAKE_CLIENT_SECRET = "my-client-secret"
+FAKE_ACCESS_TOKEN = "fake-access-token"
 GAINSIGHT_OBJECTS = ["person", "playbook", "gsuer", "company", "custom1", "custom2"]
 
 
 @pytest.fixture(name="config")
 def config_fixture():
-    return {"access_key": FAKE_TOKEN, "domain_url": GAINSIGHT_DOMAIN_URL}
+    return {
+        "client_id": FAKE_CLIENT_ID,
+        "client_secret": FAKE_CLIENT_SECRET,
+        "domain_url": GAINSIGHT_DOMAIN_URL,
+    }
 
 
 @pytest.fixture
@@ -24,25 +30,27 @@ def mock_get_objects(mocker):
     mocker.patch.object(SourceGainsightCs, "get_objects", return_value=GAINSIGHT_OBJECTS)
 
 
-def test_gainsight_cs_authenticator():
-    authenticator = GainsightCsAuthenticator(FAKE_TOKEN)
-    assert authenticator.get_auth_header() == {"AccessKey": FAKE_TOKEN}
-
-
-def test_get_authenticator(config):
-    auth = SourceGainsightCs._get_authenticator(config)
-    assert auth._token == GainsightCsAuthenticator(FAKE_TOKEN)._token
+def test_gainsight_cs_authenticator(config):
+    authenticator = GainsightCsAuthenticator(config)
+    assert authenticator._client_id == FAKE_CLIENT_ID
+    assert authenticator._client_secret == FAKE_CLIENT_SECRET
+    assert authenticator.domain_url == GAINSIGHT_DOMAIN_URL
 
 
 @responses.activate
 def test_check_connection(config):
-    source = SourceGainsightCs()
-    logger_mock = MagicMock()
+    responses.add(
+        responses.POST,
+        f"{GAINSIGHT_DOMAIN_URL}/v1/users/m2m/oauth/token",
+        json={"access_token": FAKE_ACCESS_TOKEN, "expires_in": 3600},
+    )
     responses.add(
         responses.GET,
         f"{GAINSIGHT_DOMAIN_URL}/v1/meta/services/objects/Person/describe?idd=true",
         json=[],
     )
+    source = SourceGainsightCs()
+    logger_mock = MagicMock()
     ok, error_msg = source.check_connection(logger_mock, config)
 
     assert ok

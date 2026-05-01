@@ -1,5 +1,26 @@
-{
-  "todo-stream-name": {
-    "todo-field-name": "value"
+[
+  {
+    "type": "STREAM",
+    "stream": {
+      "stream_descriptor": {
+        "name": "company",
+        "namespace": null
+      },
+      "stream_state": {
+        "ModifiedDate": "2020-03-04T00:00:00Z"
+      }
+    }
+  },
+  {
+    "type": "STREAM",
+    "stream": {
+      "stream_descriptor": {
+        "name": "activity_timeline",
+        "namespace": null
+      },
+      "stream_state": {
+        "LastModifiedDate": "2023-01-01T00:00:00Z"
+      }
+    }
   }
-}
+]
