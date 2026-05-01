@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "key": {
+      "description": "The key of the property. Required on create and update.",
+      "type": "string"
+    },
+    "value": {
+      "description": "The value of the property. Required on create and update."
+    }
+  },
+  "additionalProperties": true,
+  "description": "An entity property. See [Jira Data Center REST API](https://developer.atlassian.com/server/jira/platform/rest/v10002/intro/)."
+}

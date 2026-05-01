@@ -1,0 +1,7 @@
+{
+  "description": "Label. Data Center v2 may return a string or an object with label.",
+  "oneOf": [
+    { "type": "string" },
+    { "type": ["object", "null"], "properties": { "label": { "type": ["string", "null"] } } }
+  ]
+}
