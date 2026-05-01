@@ -18,7 +18,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Projections;
 import io.airbyte.commons.exceptions.ConfigErrorException;
@@ -36,9 +35,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -75,20 +74,6 @@ public class MongoUtil {
 
   static final Set<String> SCHEMALESS_FIELDS =
       Set.of(CDC_UPDATED_AT, CDC_DELETED_AT, DEFAULT_CURSOR_FIELD, DEFAULT_PRIMARY_KEY, SCHEMALESS_MODE_DATA_FIELD);
-
-  /**
-   * Tests whether the database exists in target MongoDB instance.
-   *
-   * @param mongoClient The {@link MongoClient} used to query the MongoDB server for the database
-   *        names.
-   * @param databaseName The database name from the source's configuration.
-   * @return {@code true} if the database exists, {@code false} otherwise.
-   */
-  public static boolean checkDatabaseExists(final MongoClient mongoClient, final String databaseName) {
-    final MongoIterable<String> databaseNames = mongoClient.listDatabaseNames();
-    return StreamSupport.stream(databaseNames.spliterator(), false)
-        .anyMatch(name -> name.equalsIgnoreCase(databaseName));
-  }
 
   /**
    * Returns the set of collections that the current credentials are authorized to access.
@@ -136,6 +121,7 @@ public class MongoUtil {
                                                       final String databaseName,
                                                       final Integer sampleSize,
                                                       final boolean isSchemaEnforced,
+                                                      final Integer discoverTimeout,
                                                       final List<String> collections,
                                                       final JsonNode schemas) {
     final Set<String> authorizedCollections = getAuthorizedCollections(mongoClient, databaseName);
@@ -156,7 +142,7 @@ public class MongoUtil {
     return authorizedCollections.parallelStream()
         .map(collectionName -> {
             JsonNode collectionSchema = collectionSchemas.get(collectionName);
-            return discoverFields(collectionName, mongoClient, databaseName, sampleSize, isSchemaEnforced, collectionSchema);
+            return discoverFields(collectionName, mongoClient, databaseName, sampleSize, isSchemaEnforced, discoverTimeout, collectionSchema);
         })
         .filter(Optional::isPresent)
         .map(Optional::get)
@@ -357,6 +343,7 @@ public class MongoUtil {
                                                         final String databaseName,
                                                         final Integer sampleSize,
                                                         final boolean isSchemaEnforced,
+                                                        final Integer discoverTimeout,
                                                         final JsonNode schema) {
     /*
      * Fetch the keys/types from the first N documents and the last N documents from the collection.
@@ -373,11 +360,11 @@ public class MongoUtil {
         }
       }
     } else if (isSchemaEnforced) {
-      discoveredFields = new HashSet<>(getFieldsInCollection(mongoCollection, sampleSize));
+      discoveredFields = new HashSet<>(getFieldsInCollection(mongoCollection, sampleSize, discoverTimeout));
     } else {
       // In schemaless mode, we only sample one record as we're only interested in the _id field (which
       // exists on every record).
-      discoveredFields = new HashSet<>(getFieldsForSchemaless(mongoCollection));
+      discoveredFields = new HashSet<>(getFieldsForSchemaless(mongoCollection, discoverTimeout));
     }
     return Optional
         .ofNullable(
@@ -385,7 +372,9 @@ public class MongoUtil {
                 : null);
   }
 
-  private static Set<Field> getFieldsInCollection(final MongoCollection<Document> collection, final Integer sampleSize) {
+  private static Set<Field> getFieldsInCollection(final MongoCollection<Document> collection,
+                                                  final Integer sampleSize,
+                                                  final Integer discoverTimeout) {
     final Set<Field> discoveredFields = new HashSet<>();
     final Map<String, Object> fieldsMap = Map.of("input", Map.of("$objectToArray", "$$ROOT"),
         "as", "each",
@@ -414,8 +403,7 @@ public class MongoUtil {
      * "$$each.v" } } } } } } }, { "$unwind" : "$fields" }, { "$group" : { "_id" : $fields } } ] )
      */
     final AggregateIterable<Document> output = collection.aggregate(aggregateList);
-
-    try (final MongoCursor<Document> cursor = output.allowDiskUse(true).cursor()) {
+    try (final MongoCursor<Document> cursor = output.allowDiskUse(true).maxTime(discoverTimeout, TimeUnit.SECONDS).cursor()) {
       while (cursor.hasNext()) {
         @SuppressWarnings("unchecked")
         final Map<String, String> fields = (Map<String, String>) cursor.next().get("_id");
@@ -423,26 +411,28 @@ public class MongoUtil {
             .map(e -> new MongoField(e.getKey(), convertToSchemaType(e.getValue())))
             .collect(Collectors.toSet()));
       }
+    } catch (Exception e) {
+      LOGGER.warn("Running discovery for document: {}. Error processing cursor: {}", collection.getNamespace().getFullName(), e.getMessage());
     }
-
     return discoveredFields;
   }
 
-  private static Set<Field> getFieldsForSchemaless(final MongoCollection<Document> collection) {
+  private static Set<Field> getFieldsForSchemaless(final MongoCollection<Document> collection, final Integer discoverTimeout) {
     final Set<Field> discoveredFields = new HashSet<>();
-
     final AggregateIterable<Document> output = collection.aggregate(Arrays.asList(
         Aggregates.sample(1), // Selects one random document
         Aggregates.project(Projections.fields(
             Projections.excludeId(), // Excludes the _id field from the result
             Projections.computed("_idType", new Document("$type", "$_id")) // Gets the type of the _id field
         ))));
-
-    try (final MongoCursor<Document> cursor = output.allowDiskUse(true).cursor()) {
+    LOGGER.info("Stream discover timeout value (seconds): " + discoverTimeout);
+    try (final MongoCursor<Document> cursor = output.allowDiskUse(true).maxTime(discoverTimeout, TimeUnit.SECONDS).cursor()) {
       while (cursor.hasNext()) {
         final JsonSchemaType schemaType = convertToSchemaType((String) cursor.next().get("_idType"));
         discoveredFields.add(new MongoField(MongoConstants.ID_FIELD, schemaType));
       }
+    } catch (Exception e) {
+      LOGGER.warn("Running discovery for document: {}. Error processing cursor: {}", collection.getNamespace().getFullName(), e.getMessage());
     }
 
     return discoveredFields;
