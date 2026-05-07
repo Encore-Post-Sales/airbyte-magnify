@@ -6,12 +6,12 @@ data:
   dockerRepository: airbyte/source-google-workspace-admin-reports
   githubIssueLabel: source-google-workspace-admin-reports
   icon: googleworkpace.svg
-  license: MIT
+  license: ELv2
   name: Google Workspace Admin Reports
   remoteRegistries:
     pypi:
       enabled: false
-      # TODO: Set enabled=true after `airbyte-lib-validate-source` is passing.
+      # TODO: Set enabled=true after `pyab validate` is passing.
       packageName: airbyte-source-google-workspace-admin-reports
   registryOverrides:
     cloud:

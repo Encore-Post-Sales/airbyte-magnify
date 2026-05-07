@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Airbyte, Inc., all rights reserved.
+# Copyright (c) 2024 Airbyte, Inc., all rights reserved.
 #
 
 
@@ -9,6 +9,8 @@ from json import JSONDecodeError
 from typing import Any, List, Mapping, Tuple, Union
 
 import requests
+from requests_oauthlib import OAuth1
+
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
 from requests_oauthlib import OAuth1
@@ -17,7 +19,6 @@ from source_netsuite.streams import CustomIncrementalNetsuiteStream, Incremental
 
 
 class SourceNetsuite(AbstractSource):
-
     logger: logging.Logger = logging.getLogger("airbyte")
 
     def auth(self, config: Mapping[str, Any]) -> OAuth1:
@@ -92,7 +93,6 @@ class SourceNetsuite(AbstractSource):
         window_in_days: int,
         max_retry: int = 3,
     ) -> Union[NetsuiteStream, IncrementalNetsuiteStream, CustomIncrementalNetsuiteStream]:
-
         input_args = {
             "auth": auth,
             "object_name": object_name,
