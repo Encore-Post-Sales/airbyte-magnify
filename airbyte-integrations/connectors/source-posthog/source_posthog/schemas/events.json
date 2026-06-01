@@ -8,7 +8,83 @@
       "type": "string"
     },
     "properties": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "application": {
+          "type": ["string", "null"]
+        },
+        "status": {
+          "type": ["string", "null"]
+        },
+        "region": {
+          "type": ["string", "null"]
+        },
+        "tenantId": {
+          "type": ["integer", "string","null"]
+        },
+        "tenantName": {
+          "type": ["string", "null"]
+        },
+        "organizationName": {
+          "type": ["string", "null"]
+        },
+        "organizationId": {
+          "type": ["integer", "null"]
+        },
+        "accountName": {
+          "type": ["string", "null"]
+        },
+        "accountOwner": {
+          "type": ["string", "null"]
+        },
+        "email": {
+          "type": ["string", "null"]
+        },
+        "startedDate": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "completedDate": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": ["string", "null"]
+        },
+        "applicationUrl": {
+          "type": ["string", "null"]
+        },
+        "salesforce_org_id": {
+          "type": ["string", "null"]
+        },
+        "salesforce_org_name": {
+          "type": ["string", "null"]
+        },
+        "branch_id": {
+          "type": ["string", "null"]
+        },
+        "branch_name": {
+          "type": ["string", "null"]
+        },
+        "repository_id": {
+          "type": ["string", "null"]
+        },
+        "repository_name": {
+          "type": ["string", "null"]
+        },
+        "repository_type": {
+          "type": ["string", "null"]
+        },
+        "path": {
+          "type": ["string", "null"]
+        },
+        "title": {
+          "type": ["string", "null"]
+        },
+        "distinct_id": {
+          "type": ["string", "null"]
+        }
+      }
     },
     "event": {
       "type": "string"
